@@ -13,6 +13,7 @@ from google.cloud.language import types
 
 import json
 
+#see readme about how to setup mykey.json
 CLIENT = language.LanguageServiceClient.from_service_account_json("mykey.json")
 ENCODING_TYPE = enums.EncodingType.UTF8
 
@@ -53,7 +54,7 @@ def analyze_sentiment(text):
 """
 
 Take an input text and return entity results as a list of JSON objects
-Composed of entity name, entity type, entity salience, rounded to nearest tenth
+Composed of entity name, entity type, entity salience, rounded to nearest 100s
 
 """
 def analyze_entities(text):
