@@ -37,7 +37,8 @@
       <scope>provided</scope>
     </dependency>
 
-    <groupId>org.json</groupId>
+    <dependency>
+      <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>20180130</version>
     </dependency>
@@ -59,6 +60,19 @@
       <artifactId>commons-io</artifactId>
       <version>2.6</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.algolia</groupId>
+      <artifactId>algoliasearch-core</artifactId>
+      <version>3.6.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.algolia</groupId>
+      <artifactId>algoliasearch-apache</artifactId>
+      <version>3.6.1</version>
+    </dependency>
+
   </dependencies>
 
   <build>
