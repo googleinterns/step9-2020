@@ -4,6 +4,8 @@
  * Date: June 24, 2020
  */
 import java.util.Date;
+import java.text.DateFormat;  
+import java.text.SimpleDateFormat;
 
 public class Ad {
 
@@ -51,7 +53,11 @@ public class Ad {
   }
   @Override 
   public String toString() {
-    return String.format("ID: %s\nAdvertiser: %s\nSentiment: %s", this.id, this.advertiser, this.contentSentiment); 
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    Date d = new Date(2019, 11, 19);
+    // dateFormat.format(this.startDate)  
+    return String.format("ID: %s\nAdvertiser: %s\nStart Date: %s",  
+      this.id, this.advertiser, dateFormat.format(d)); 
   }
 
   public static class AdBuilder {
@@ -176,15 +182,6 @@ public class Ad {
       Ad ad = new Ad(this);
       return ad; 
     }
-  }
-
-  public static void main(String[] args) {
-    Ad ad1 = new AdBuilder()
-      .id("123456")
-      .advertiser("JOE BIDEN")
-      .contentSentiment("Magnitude: 10")
-      .build(); 
-    System.out.println(ad1.toString());
   }
 
 }

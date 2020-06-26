@@ -3,23 +3,36 @@
  * Author: Kira Toal
  * Date: June 24, 2020
  */ 
-
 import java.util.Arrays;
+import java.util.Date;
+import java.text.DateFormat;  
+import java.text.SimpleDateFormat; 
 import java.util.List;
 
-public class RowProcessor {
-  
-  private static final String CSV_FILE_PATH = "./data/output4.csv";
+public class AdRowProcessor {
 
-  public static void main(String[] args) {
+  private String[] row; 
 
-    List<String[]> allAds = ReportReader.readCSV(CSV_FILE_PATH); // read in the CSV
-    for (int i = 0; i < allAds.size(); i++) {
-      //make a POJO
-      //make an entity w/ AdAdapter 
-      //send entity to firestore 
+  public AdRowProcessor(String[] csvRow) {
+    this.row = csvRow; 
+  }
+
+  public void createAdPojo() {
+    // System.out.println(Arrays.toString(row)); 
+    Ad ad1 = new Ad.AdBuilder()
+      .id(row[0])
+      .advertiser(row[1])
+      .startDate(new Date(2019, 8, 19))
+      .build(); 
+    System.out.println(ad1.toString());
+  }
+
+  public Date stringToDate(String date) {
+    String[] dateArr= date.split("-"); 
+    for (int i = 0; i < dateArr.length; i++) {
+      dateArr[i] = dateArr[i].replace("-", "");
     }
-    // allAds.forEach(array -> System.out.println(Arrays.toString(array)));
+    return new Date(2019, 8, 19); 
   }
 
 }

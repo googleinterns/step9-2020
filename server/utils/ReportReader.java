@@ -11,28 +11,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReportReader {
-  /* 
-   * Reads every row of the CSV into a string array then returns list of row arrays. 
-   */
-  public static List<String[]> readCSV(String csvFile) {
-    List<String[]> allAds = new ArrayList<String[]>();
+
+  private static final String CSV_FILE_PATH = "./data/output.csv";
+
+  public static void readCSV(String csvFile) {
     try {    
+      // set up readers 
       FileReader fileReader = new FileReader(new File(csvFile));
-      BufferedReader bufferedReader = new BufferedReader(fileReader); // wraps file reader
-      String row = "";
-      String[] singleAd = {}; // array stores single row of CSV data (one advertisement)
-      while((row = bufferedReader.readLine()) != null) {
-        singleAd = row.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); // split by CSV column
-        for (int i = 0; i < singleAd.length; i++) {
-          singleAd[i] = singleAd[i].replace("\"", ""); 
+      BufferedReader bufferedReader = new BufferedReader(fileReader);      
+      String[] currentRow = {}; // array stores single row of CSV data (one advertisement)
+      // read header rows separately
+      String primaryHeader = bufferedReader.readLine();
+      String secondaryHeader = bufferedReader.readLine();
+      // read rows and split into array by column
+      int rowIndex = 1; 
+      String row = ""; 
+      while((row = bufferedReader.readLine()) != null && (rowIndex < 3)) {
+        currentRow = row.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); 
+        for (int currentColumn = 0; currentColumn < currentRow.length; currentColumn++) {
+          currentRow[currentColumn] = currentRow[currentColumn].replace("\"", ""); // remove extra quotes
         }
-        allAds.add(singleAd); // add ad array to aggregate list 
+        // process the row
+        System.out.println("\nReading row #" + rowIndex + " ...\n"); 
+        AdRowProcessor processor = new AdRowProcessor(currentRow);
+        processor.createAdPojo();  
+        rowIndex++;  
       }
       bufferedReader.close();
     } catch(IOException e) {
       e.printStackTrace();
     }
-    return allAds; 
+  }
+
+  public static void main(String[] args) {
+    readCSV(CSV_FILE_PATH);
   }
 
 }
