@@ -3,16 +3,16 @@
  * Author: Kira Toal
  * Date: June 24, 2020
  */
-import java.util.Date;
-import java.text.DateFormat;  
-import java.text.SimpleDateFormat;
+
+import java.time.LocalDate; 
+import java.lang.StringBuilder;
 
 public class Ad {
 
   private String id; 
   private String advertiser;  
-  private Date startDate;
-  private Date endDate; 
+  private LocalDate startDate;
+  private LocalDate endDate; 
   private long impressionsMin; 
   private long impressionsMax; 
   private int ageTargetMin; 
@@ -53,19 +53,25 @@ public class Ad {
   }
   @Override 
   public String toString() {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    Date d = new Date(2019, 11, 19);
-    // dateFormat.format(this.startDate)  
-    return String.format("ID: %s\nAdvertiser: %s\nStart Date: %s",  
-      this.id, this.advertiser, dateFormat.format(d)); 
+    String s = new StringBuilder()
+      .append("ID: " + this.id)
+      .append("\nAdvertiser: " + this.advertiser)
+      .append("\nStart Date: " + this.startDate.toString())
+      .append("\nEnd Date: " + this.endDate.toString())
+      .append("\nMinimum Number of Impressions: " + this.impressionsMin)
+      .append("\nMaximum Number of Impressions: " + this.impressionsMax)    
+      .toString(); 
+
+    return s; 
+
   }
 
   public static class AdBuilder {
 
     private String id; 
     private String advertiser;  
-    private Date startDate;
-    private Date endDate; 
+    private LocalDate startDate;
+    private LocalDate endDate; 
     private long impressionsMin; 
     private long impressionsMax; 
     private int ageTargetMin; 
@@ -92,22 +98,22 @@ public class Ad {
       return this; 
     }
 
-    public AdBuilder startDate(Date date) {
+    public AdBuilder startDate(LocalDate date) {
       this.startDate = date; 
       return this; 
     }
 
-    public AdBuilder endDate(Date date) {
+    public AdBuilder endDate(LocalDate date) {
       this.endDate = date; 
       return this; 
     }
 
-    public AdBuilder impressionsMin(int impressions) {
+    public AdBuilder impressionsMin(long impressions) {
       this.impressionsMin = impressions;
       return this; 
     }
 
-    public AdBuilder impressionsMax(int impressions) {
+    public AdBuilder impressionsMax(Long impressions) {
       this.impressionsMax = impressions;
       return this; 
     }

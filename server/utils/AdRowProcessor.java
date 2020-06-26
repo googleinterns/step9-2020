@@ -3,11 +3,9 @@
  * Author: Kira Toal
  * Date: June 24, 2020
  */ 
-import java.util.Arrays;
-import java.util.Date;
-import java.text.DateFormat;  
-import java.text.SimpleDateFormat; 
-import java.util.List;
+import java.time.LocalDate; 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AdRowProcessor {
 
@@ -18,21 +16,31 @@ public class AdRowProcessor {
   }
 
   public void createAdPojo() {
-    // System.out.println(Arrays.toString(row)); 
-    Ad ad1 = new Ad.AdBuilder()
+    Ad ad = new Ad.AdBuilder()
       .id(row[0])
       .advertiser(row[1])
-      .startDate(new Date(2019, 8, 19))
+      .startDate(LocalDate.parse(row[2])) 
+      .endDate(LocalDate.parse(row[3]))
+      .impressionsMin(getImpressionsMin(row[4]))
+      .impressionsMax(getImpressionsMax(row[4]))
       .build(); 
-    System.out.println(ad1.toString());
+    System.out.println(ad.toString());
   }
 
-  public Date stringToDate(String date) {
-    String[] dateArr= date.split("-"); 
-    for (int i = 0; i < dateArr.length; i++) {
-      dateArr[i] = dateArr[i].replace("-", "");
+  public long getImpressionsMin(String str) {
+    String s = str.replace("k", "000").replace("M", "000000").replace(" ","").replace("\u2264", "");
+    String[] arr = s.split("-");
+    if (arr.length > 1) {
+        return Long.parseLong(arr[0]); 
     }
-    return new Date(2019, 8, 19); 
+    return 0;    
   }
+
+  public long getImpressionsMax(String str) {
+    String s = str.replace("k", "000").replace("M", "000000").replace(" ","").replace("\u2264", "");
+    String[] arr = s.split("-");
+    return Long.parseLong(arr[arr.length - 1]);   
+  }
+
 
 }

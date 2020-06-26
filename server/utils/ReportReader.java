@@ -26,6 +26,7 @@ public class ReportReader {
       // read rows and split into array by column
       int rowIndex = 1; 
       String row = ""; 
+      // TODO: make for all (remove && row index)
       while((row = bufferedReader.readLine()) != null && (rowIndex < 3)) {
         currentRow = row.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); 
         for (int currentColumn = 0; currentColumn < currentRow.length; currentColumn++) {
