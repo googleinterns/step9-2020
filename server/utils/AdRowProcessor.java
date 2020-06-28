@@ -4,8 +4,6 @@
  * Date: June 24, 2020
  */ 
 import java.time.LocalDate; 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class AdRowProcessor {
 
@@ -23,6 +21,18 @@ public class AdRowProcessor {
       .endDate(LocalDate.parse(row[3]))
       .impressionsMin(getImpressionsMin(row[4]))
       .impressionsMax(getImpressionsMax(row[4]))
+      .ageTargetingEnabled(isAgeTargetingEnabled(row[5]))
+      .genderTarget(getArray(row[6]))
+      .geoTarget(getArray(row[7]))
+      .spendMin(getLong(row[8]))
+      .spendMax(getLong(row[9]))
+      .headline(row[10].trim())
+      .link(row[11].substring(3)) // trim "Ad" from "Ad {URL}"
+      .content(row[12].trim())
+      .headlineSentiment(row[13].trim())
+      .headlineTerms(row[14].trim())
+      .contentSentiment(row[15].trim())
+      .contentTerms(row[16].trim())
       .build(); 
     System.out.println(ad.toString());
   }
@@ -42,5 +52,18 @@ public class AdRowProcessor {
     return Long.parseLong(arr[arr.length - 1]);   
   }
 
+  public boolean isAgeTargetingEnabled(String str) {
+    if (str.trim().equals("Not targeted")) {
+      return false; 
+    }
+    return true; 
+  }
 
+  public String[] getArray(String str) {
+    return str.trim().split(","); 
+  }
+
+  public long getLong(String value) {
+    return (long)Double.parseDouble(value); 
+  }
 }

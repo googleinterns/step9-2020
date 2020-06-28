@@ -7,8 +7,6 @@ import java.io.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReportReader {
 
@@ -27,7 +25,7 @@ public class ReportReader {
       int rowIndex = 1; 
       String row = ""; 
       // TODO: make for all (remove && row index)
-      while((row = bufferedReader.readLine()) != null && (rowIndex < 3)) {
+      while((row = bufferedReader.readLine()) != null && (rowIndex < 5)) {
         currentRow = row.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); 
         for (int currentColumn = 0; currentColumn < currentRow.length; currentColumn++) {
           currentRow[currentColumn] = currentRow[currentColumn].replace("\"", ""); // remove extra quotes
@@ -47,5 +45,4 @@ public class ReportReader {
   public static void main(String[] args) {
     readCSV(CSV_FILE_PATH);
   }
-
 }

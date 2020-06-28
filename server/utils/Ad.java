@@ -3,8 +3,8 @@
  * Author: Kira Toal
  * Date: June 24, 2020
  */
-
-import java.time.LocalDate; 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.lang.StringBuilder;
 
 public class Ad {
@@ -15,8 +15,7 @@ public class Ad {
   private LocalDate endDate; 
   private long impressionsMin; 
   private long impressionsMax; 
-  private int ageTargetMin; 
-  private int ageTargetMax;
+  private boolean ageTargetingEnabled; 
   private String[] genderTarget; 
   private String[] geoTarget; 
   private long spendMin; 
@@ -37,8 +36,7 @@ public class Ad {
     this.endDate = builder.endDate; 
     this.impressionsMin = builder.impressionsMin;
     this.impressionsMax = builder.impressionsMax; 
-    this.ageTargetMin = builder.ageTargetMin;
-    this.ageTargetMax = builder.ageTargetMax; 
+    this.ageTargetingEnabled = builder.ageTargetingEnabled;
     this.genderTarget = builder.genderTarget; 
     this.geoTarget = builder.geoTarget; 
     this.spendMin = builder.spendMin; 
@@ -51,6 +49,7 @@ public class Ad {
     this.contentSentiment = builder.contentSentiment; 
     this.contentTerms = builder.contentTerms; 
   }
+
   @Override 
   public String toString() {
     String s = new StringBuilder()
@@ -59,11 +58,21 @@ public class Ad {
       .append("\nStart Date: " + this.startDate.toString())
       .append("\nEnd Date: " + this.endDate.toString())
       .append("\nMinimum Number of Impressions: " + this.impressionsMin)
-      .append("\nMaximum Number of Impressions: " + this.impressionsMax)    
+      .append("\nMaximum Number of Impressions: " + this.impressionsMax)  
+      .append("\nAge Targeting Enabled: " + this.ageTargetingEnabled)  
+      .append("\nGender Targets: " + Arrays.toString(this.genderTarget))
+      .append("\nGeo Targets: " + Arrays.toString(this.geoTarget))
+      .append("\nSpend Min: " + this.spendMin)
+      .append("\nSpend Max: " + this.spendMax) 
+      .append("\nHeadline: " + this.headline) 
+      .append("\nLink: " + this.link)
+      .append("\nContent: " + this.content) 
+      .append("\nHeadline Sentiment: " + this.headlineSentiment) 
+      .append("\nHeadline Terms: " + this.headlineTerms) 
+      .append("\nContent Sentiment: " + this.contentSentiment) 
+      .append("\nContent Terms: " + this.contentTerms) 
       .toString(); 
-
     return s; 
-
   }
 
   public static class AdBuilder {
@@ -74,8 +83,7 @@ public class Ad {
     private LocalDate endDate; 
     private long impressionsMin; 
     private long impressionsMax; 
-    private int ageTargetMin; 
-    private int ageTargetMax;
+    private boolean ageTargetingEnabled; 
     private String[] genderTarget; 
     private String[] geoTarget; 
     private long spendMin; 
@@ -118,13 +126,8 @@ public class Ad {
       return this; 
     }
 
-    public AdBuilder ageTargetMin(int age) {
-      this.ageTargetMin = age;
-      return this; 
-    }
-
-    public AdBuilder ageTargetMax(int age) {
-      this.ageTargetMax = age;
+    public AdBuilder ageTargetingEnabled(boolean value) {
+      this.ageTargetingEnabled = value;
       return this; 
     }
 
@@ -189,5 +192,4 @@ public class Ad {
       return ad; 
     }
   }
-
 }
