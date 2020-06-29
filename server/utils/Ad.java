@@ -26,8 +26,11 @@ public class Ad {
   private String headlineSentiment; 
   private String headlineTerms;
   private String contentSentiment; 
-  private String contentTerms;  
+  private String contentTerms;
 
+  public Ad() {
+  // Must have a public no-argument constructor for Firesbase
+  }  
 
   private Ad(AdBuilder builder) {
     this.id = builder.id;

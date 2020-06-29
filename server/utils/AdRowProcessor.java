@@ -1,9 +1,14 @@
 /* 
- * Description: File for building a POJO from a row of CSV data
+ * Description: File for building ad and adding it to Firestore
  * Author: Kira Toal
  * Date: June 24, 2020
  */ 
 import java.time.LocalDate; 
+
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 
 public class AdRowProcessor {
 
@@ -13,7 +18,7 @@ public class AdRowProcessor {
     this.row = csvRow; 
   }
 
-  public void createAdPojo() {
+  public Ad createAdPojo() {
     Ad ad = new Ad.AdBuilder()
       .id(row[0])
       .advertiser(row[1])
@@ -35,6 +40,27 @@ public class AdRowProcessor {
       .contentTerms(row[16].trim())
       .build(); 
     System.out.println(ad.toString());
+    return ad; 
+  }
+
+  public void addAdToDatabase(Ad ad) {
+    // Use the application default credentials
+    GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
+    FirebaseOptions options = new FirebaseOptions.Builder()
+        .setCredentials(credentials)
+        .setProjectId(projectId)
+        .build();
+    FirebaseApp.initializeApp(options);
+    Firestore db = FirestoreClient.getFirestore();
+    DocumentReference docRef = db.collection("ads").document("alovelace");
+    // Add document data  with id "alovelace" using a hashmap
+    Map<String, Object> data = new HashMap<>();
+    data.put("first", "Ada");
+    data.put("last", "Lovelace");
+    data.put("born", 1815);
+    //asynchronously write data
+    ApiFuture<WriteResult> result = docRef.set(data);
+    System.out.println("Update time : " + result.get().getUpdateTime());
   }
 
   public long getImpressionsMin(String str) {

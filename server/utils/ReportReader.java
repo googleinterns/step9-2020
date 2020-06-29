@@ -25,7 +25,7 @@ public class ReportReader {
       int rowIndex = 1; 
       String row = ""; 
       // TODO: make for all (remove && row index)
-      while((row = bufferedReader.readLine()) != null && (rowIndex < 5)) {
+      while((row = bufferedReader.readLine()) != null && (rowIndex < 3)) {
         currentRow = row.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); 
         for (int currentColumn = 0; currentColumn < currentRow.length; currentColumn++) {
           currentRow[currentColumn] = currentRow[currentColumn].replace("\"", ""); // remove extra quotes
@@ -33,7 +33,8 @@ public class ReportReader {
         // process the row
         System.out.println("\nReading row #" + rowIndex + " ...\n"); 
         AdRowProcessor processor = new AdRowProcessor(currentRow);
-        processor.createAdPojo();  
+        Ad ad = processor.createAdPojo(); 
+        processor.addAdToDatabase(ad); 
         rowIndex++;  
       }
       bufferedReader.close();
