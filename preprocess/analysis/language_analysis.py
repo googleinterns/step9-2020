@@ -17,7 +17,6 @@ import json
 CLIENT = language.LanguageServiceClient.from_service_account_json("mykey.json")
 ENCODING_TYPE = enums.EncodingType.UTF8
 
-
 """
 
 Cloud language api will automatically return floats to to like 15 decimal 
@@ -39,13 +38,17 @@ Calls cloud language API once for sentiment analysis
 
 """
 def analyze_sentiment(text):
+  if not isinstance(text, str): 
+    raise TypeError("Input to {0} isn't a string.".format("analyze_sentiment"))
   document = types.Document(content=text, type=enums.Document.Type.PLAIN_TEXT)
 
   document_sentiment = \
       CLIENT.analyze_sentiment(document,encoding_type=ENCODING_TYPE) \
             .document_sentiment
+            
   tens_place_score = round_to_1(document_sentiment.score)
   tens_place_magnitude = round_to_1(document_sentiment.magnitude)
+  
   score_and_magnitude = json.dumps({"score": tens_place_score, \
                                    "magnitude": tens_place_magnitude})
 
@@ -58,6 +61,8 @@ Composed of entity name, entity type, entity salience, rounded to nearest 100s
 
 """
 def analyze_entities(text):
+  if not isinstance(text, str): 
+    raise TypeError("Input to {0} isn't a string.".format("analyze_entities"))
   document = types.Document(content=text, type=enums.Document.Type.PLAIN_TEXT)
 
   document_entities = \
@@ -70,9 +75,11 @@ def analyze_entities(text):
     entity_name = entity.name
     entity_type = enums.Entity.Type(entity.type).name
     entity_salience = round_to_2(entity.salience)
+    
     formatted_entity = json.dumps({"name": entity_name, \
                                    "type": entity_type, \
                                    "salience": entity_salience})
+  
     formatted_entities.append(formatted_entity)
   
   return formatted_entities

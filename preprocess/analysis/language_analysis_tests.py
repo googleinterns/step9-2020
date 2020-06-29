@@ -6,12 +6,20 @@ Created on Tue Jun 23 16:36:57 2020
 @author: robert
 """
 import unittest
-import language_analysis
+from language_analysis import analyze_entities, analyze_sentiment
 import json
 
 
 STRING_ONE = 'Pro Wrestler for Congress | Big Dan Rodimer | Rebuild Nevada'
 STRING_TWO = 'Tell John Bel Edwards Today | No Sanctuary Cities in LA | It’s Up to You to Stop This'
+
+"""
+
+Avoid some repetition with these helpful helpers
+
+"""
+def sentiment_dict(entity_score, entity_magnitude):
+  return {"score": entity_score, "magnitude": entity_magnitude}
 
 def entity_dict(entity_values):
   (entity_name, entity_type, entity_salience) = entity_values
@@ -25,10 +33,12 @@ def entity_list(entities_as_tuple_list):
 def format_entity_list(entity_list):
   return list(map(lambda x: json.loads(x), entity_list))
 
-def sentiment_dict(entity_score, entity_magnitude):
-  return {"score": entity_score, "magnitude": entity_magnitude}
+"""
 
+Tests
+Check that strings get processed as expected, and that not strings don't 
 
+"""
 class test_language_analysis(unittest.TestCase):
 
   def test_string_one_sentiment(self):
@@ -62,8 +72,13 @@ class test_language_analysis(unittest.TestCase):
     formatted_expected_entity_list = entity_list(expected_entity_list)
     
     actual_list = format_entity_list(analyze_entities(STRING_TWO))
-    
+
     self.assertEqual(formatted_expected_entity_list, actual_list)
     
+  def test_malformed_input(self): 
+      not_a_string = 101
+      self.assertRaises(TypeError, analyze_sentiment, not_a_string)
+      self.assertRaises(TypeError, analyze_entities, not_a_string)
+
 if __name__ == '__main__':
     unittest.main()
