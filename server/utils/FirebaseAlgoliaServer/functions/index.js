@@ -19,15 +19,16 @@ const algoliasearch = require('algoliasearch');
  * 3) run: firebase functions:config:set 
  *              algolia.app=APP_ID algolia.key=ADMIN_API_KEY
  * Now you can compile! 
- * Please don't expose the API_KEY to the public.
+ * Please _don't_ expose the API_KEY to the public.
  */
 const APP_ID = functions.config().algolia.app;
 const ADMIN_KEY = functions.config().algolia.key;
 
+// initialize algoliasearch API
 const client = algoliasearch(APP_ID, ADMIN_KEY);
 const index = client.initIndex('dev_ADS');
 
-
+// access an individual document in our `ads` collection
 const DOC_NAME = 'ads/{adId}';
 
 /**
@@ -37,24 +38,35 @@ const DOC_NAME = 'ads/{adId}';
  */
 
 
+/**
+ * when an entity is added to firestore
+ * add it (and all it's fields) to the algolia index
+ */
 exports.addEntityToIndex = functions.firestore
     .document(DOC_NAME)
     .onCreate(snapshot =>  {
       const data = snapshot.data();
-      const objectId = snapshot.id; 
+      const objectID = snapshot.id; 
 
-      return index.saveObject({...data, objectId}); // this is a promise
+      return index.saveObject({data, objectID}); // this is a promise
     });
 
+/**
+ * update record corresponding to ad entity if a change occurs
+ * not sure why we would need this but it seemed like a good and basic idea 
+ */
 exports.updateRecordInIndex = functions.firestore
     .document(DOC_NAME)
     .onUpdate(change => {
       const newData = change.after.data();
-      const objectId = change.after.id;
+      const objectID = change.after.id; 
 
-      return index.saveObject({...newData, objectId}); // this is a promise
+      return index.saveObject({newData, objectID}); // also a promise
     });
 
+/**
+ * If delete an entity from firestore, delete the corresponding record
+ */
 exports.deleteEntityFromIndex = functions.firestore
     .document(DOC_NAME)
     .onDelete(snapshot => index.deleteObject(snapshot.id)); // also a promise
