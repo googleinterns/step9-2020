@@ -18,18 +18,22 @@ STRING_TWO = 'Tell John Bel Edwards Today | No Sanctuary Cities in LA | It’s U
 Avoid some repetition with these helpful helpers
 
 """
+# Type: dict
 def sentiment_dict(entity_score, entity_magnitude):
   return {"score": entity_score, "magnitude": entity_magnitude}
 
+# Type: dict
 def entity_dict(entity_values):
   (entity_name, entity_type, entity_salience) = entity_values
   return {"name": entity_name, \
           "type": entity_type, \
           "salience": entity_salience}
-  
+
+# Type: list
 def entity_list(entities_as_tuple_list):
   return list(map(lambda x: entity_dict(x), entities_as_tuple_list))
 
+# Type: list
 def format_entity_list(entity_list):
   return list(map(lambda x: json.loads(x), entity_list))
 
@@ -77,6 +81,7 @@ class test_language_analysis(unittest.TestCase):
     
   def test_malformed_input(self): 
       not_a_string = 101
+      
       self.assertRaises(TypeError, analyze_sentiment, not_a_string)
       self.assertRaises(TypeError, analyze_entities, not_a_string)
 

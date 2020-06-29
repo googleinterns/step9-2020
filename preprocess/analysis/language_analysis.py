@@ -13,7 +13,7 @@ from google.cloud.language import types
 
 import json
 
-#see readme about how to setup mykey.json
+# See readme about how to setup mykey.json
 CLIENT = language.LanguageServiceClient.from_service_account_json("mykey.json")
 ENCODING_TYPE = enums.EncodingType.UTF8
 
@@ -35,11 +35,13 @@ def round_to_2(x):
 Take an input text and return sentiment as JSON object composed of 
 score and magnitude, both rounded to nearest tenth
 Calls cloud language API once for sentiment analysis
-
+Type: str (a json-ified string)
+  
 """
 def analyze_sentiment(text):
   if not isinstance(text, str): 
     raise TypeError("Input to {0} isn't a string.".format("analyze_sentiment"))
+    
   document = types.Document(content=text, type=enums.Document.Type.PLAIN_TEXT)
 
   document_sentiment = \
@@ -58,11 +60,13 @@ def analyze_sentiment(text):
 
 Take an input text and return entity results as a list of JSON objects
 Composed of entity name, entity type, entity salience, rounded to nearest 100s
+Type: List[str] (of json-ified string)
 
 """
 def analyze_entities(text):
   if not isinstance(text, str): 
     raise TypeError("Input to {0} isn't a string.".format("analyze_entities"))
+    
   document = types.Document(content=text, type=enums.Document.Type.PLAIN_TEXT)
 
   document_entities = \
