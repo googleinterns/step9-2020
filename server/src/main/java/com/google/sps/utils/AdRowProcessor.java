@@ -17,6 +17,9 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.io.FileInputStream;  
+
+
 import com.google.cloud.firestore.WriteResult;
 
 public class AdRowProcessor {
@@ -52,17 +55,18 @@ public class AdRowProcessor {
     return ad; 
   }
 
-  public void addAdToDatabase(Ad ad) throws IOException {
-    // Use the application default credentials
-    GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
+  public void addAdToDatabase(Ad ad, int rowIndex) throws Exception {
+    FileInputStream serviceAccount = new FileInputStream("./serviceAccountKey.json");
     FirebaseOptions options = new FirebaseOptions.Builder()
-        .setCredentials(credentials)
-        .setProjectId("step9-2020-capstone")
-        .build();
-    FirebaseApp.initializeApp(options);
+      .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+      .setDatabaseUrl("https://step9-2020-capstone.firebaseio.com")
+      .build();
+    if(FirebaseApp.getApps().isEmpty()) { //<--- check with this line
+      FirebaseApp.initializeApp(options);
+    }
     Firestore db = FirestoreClient.getFirestore();
-    // SAMPLE ENTITY TO MAKE SURE PROJECT IS LINKED
-    DocumentReference docRef = db.collection("people").document("alovelace");
+
+    DocumentReference docRef = db.collection("ads").document("ad " + rowIndex); // define collection, ad name
     // Add document data  with id "alovelace" using a hashmap
     Map<String, Object> data = new HashMap<>();
     data.put("first", "Ada");
@@ -70,7 +74,8 @@ public class AdRowProcessor {
     data.put("born", 1815);
     //asynchronously write data
     ApiFuture<WriteResult> result = docRef.set(data);
-    // System.out.println("Update time : " + result.get().getUpdateTime());
+    System.out.println("Update time : " + result.get().getUpdateTime());
+    System.out.println(" DONE "); 
   }
 
   public long getImpressionsMin(String str) {

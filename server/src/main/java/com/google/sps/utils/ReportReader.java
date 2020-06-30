@@ -17,10 +17,8 @@ public class ReportReader {
 
   private static final String CSV_FILE_PATH = "/output.csv";
 
-  public static void readCSV(InputStream csvFile) {
+  public static void readCSV(InputStream csvFile) throws Exception {
     try {    
-      // set up readers 
-      // FileReader fileReader = new FileReader(new File(csvFile));
       BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(csvFile));      
       String[] currentRow = {}; // array stores single row of CSV data (one advertisement)
       // read header rows separately
@@ -39,7 +37,7 @@ public class ReportReader {
         System.out.println("\nReading row #" + rowIndex + " ...\n"); 
         AdRowProcessor processor = new AdRowProcessor(currentRow);
         Ad ad = processor.createAdPojo(); 
-        // processor.addAdToDatabase(ad); 
+        processor.addAdToDatabase(ad, rowIndex); 
         rowIndex++;  
       }
       bufferedReader.close();
@@ -48,7 +46,7 @@ public class ReportReader {
     }
   }
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException,Exception {
     System.out.println("I AM RUNNING");
     // InputStream inputStream = getClass().getResourceAsStream("/output.csv");
     InputStream inputStream = ReportReader.class.getResourceAsStream(CSV_FILE_PATH);
