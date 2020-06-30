@@ -83,15 +83,12 @@
       <artifactId>commons-io</artifactId>
       <version>2.5</version>
     </dependency>
-
     <!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
     <dependency>
         <groupId>org.mongodb</groupId>
         <artifactId>mongo-java-driver</artifactId>
         <version>3.12.5</version>
     </dependency>
-
-
   </dependencies>
 
   <build>
@@ -115,18 +112,6 @@
             <mainClass>com.google.sps.utils.ReportReader</mainClass>
         </configuration>
       </plugin>
-      <!-- <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>        
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <mainClass>com.google.sps.utils.ReportReader</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin> -->
     </plugins>
   </build>
 

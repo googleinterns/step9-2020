@@ -5,30 +5,31 @@
  */
 package com.google.sps.utils;
 
+import java.lang.StringBuilder;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.lang.StringBuilder;
+import java.util.List; 
 
 public class Ad {
 
-  private String id; 
-  private String advertiser;  
-  private LocalDate startDate;
-  private LocalDate endDate; 
-  private long impressionsMin; 
-  private long impressionsMax; 
-  private boolean ageTargetingEnabled; 
-  private String[] genderTarget; 
-  private String[] geoTarget; 
-  private long spendMin; 
-  private long spendMax; 
-  private String headline; 
-  private String link; 
-  private String content; 
-  private String headlineSentiment; 
-  private String headlineTerms;
-  private String contentSentiment; 
-  private String contentTerms;
+    public String id; 
+    public String advertiser;  
+    public String startDate;
+    public String endDate;
+    public long impressionsMin; 
+    public long impressionsMax; 
+    public boolean ageTargetingEnabled; 
+    public List<String> genderTarget; 
+    public List<String> geoTarget;
+    public long spendMin; 
+    public long spendMax; 
+    public String headline; 
+    public String link;
+    public String content;  
+    public String headlineSentiment; 
+    public String headlineTerms;
+    public String contentSentiment; 
+    public String contentTerms; 
 
   public Ad() {
   // Must have a public no-argument constructor for Firesbase
@@ -65,8 +66,8 @@ public class Ad {
       .append("\nMinimum Number of Impressions: " + this.impressionsMin)
       .append("\nMaximum Number of Impressions: " + this.impressionsMax)  
       .append("\nAge Targeting Enabled: " + this.ageTargetingEnabled)  
-      .append("\nGender Targets: " + Arrays.toString(this.genderTarget))
-      .append("\nGeo Targets: " + Arrays.toString(this.geoTarget))
+      .append("\nGender Targets: " + this.genderTarget)
+      .append("\nGeo Targets: " + this.geoTarget)
       .append("\nSpend Min: " + this.spendMin)
       .append("\nSpend Max: " + this.spendMax) 
       .append("\nHeadline: " + this.headline) 
@@ -82,24 +83,24 @@ public class Ad {
 
   public static class AdBuilder {
 
-    private String id; 
-    private String advertiser;  
-    private LocalDate startDate;
-    private LocalDate endDate; 
-    private long impressionsMin; 
-    private long impressionsMax; 
-    private boolean ageTargetingEnabled; 
-    private String[] genderTarget; 
-    private String[] geoTarget; 
-    private long spendMin; 
-    private long spendMax; 
-    private String headline; 
-    private String link;
-    private String content;  
-    private String headlineSentiment; 
-    private String headlineTerms;
-    private String contentSentiment; 
-    private String contentTerms; 
+    public String id; 
+    public String advertiser;  
+    public String startDate;
+    public String endDate; 
+    public long impressionsMin; 
+    public long impressionsMax; 
+    public boolean ageTargetingEnabled; 
+    public List<String> genderTarget; 
+    public List<String> geoTarget;
+    public long spendMin; 
+    public long spendMax; 
+    public String headline; 
+    public String link;
+    public String content;  
+    public String headlineSentiment; 
+    public String headlineTerms;
+    public String contentSentiment; 
+    public String contentTerms; 
 
     public AdBuilder id(String adId) {
       this.id = adId; 
@@ -111,12 +112,12 @@ public class Ad {
       return this; 
     }
 
-    public AdBuilder startDate(LocalDate date) {
+    public AdBuilder startDate(String date) {
       this.startDate = date; 
       return this; 
     }
 
-    public AdBuilder endDate(LocalDate date) {
+    public AdBuilder endDate(String date) {
       this.endDate = date; 
       return this; 
     }
@@ -136,12 +137,12 @@ public class Ad {
       return this; 
     }
 
-    public AdBuilder genderTarget(String[] targets) {
+    public AdBuilder genderTarget(List<String> targets) {
       this.genderTarget = targets; 
       return this; 
     }
 
-    public AdBuilder geoTarget(String[] targets) {
+    public AdBuilder geoTarget(List<String> targets) {
       this.geoTarget = targets; 
       return this; 
     }

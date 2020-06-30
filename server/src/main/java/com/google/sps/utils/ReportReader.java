@@ -4,18 +4,21 @@
  * Date: June 24, 2020
  */
 package com.google.sps.utils;
+
+import com.google.sps.utils.Ad;
+import com.google.sps.utils.AdRowProcessor;
 import java.io.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import org.apache.commons.io.IOUtils;
-
-import com.google.sps.utils.AdRowProcessor; 
-import com.google.sps.utils.Ad; 
+import org.apache.commons.io.IOUtils; 
 
 public class ReportReader {
 
   private static final String CSV_FILE_PATH = "/output.csv";
+  private static final String COLLECTION = "testing"; 
+  private static final int START_ROW_INDEX = 1;  // first csv row that gets read in to DB (1 based)
+  private static final int END_ROW_INDEX = 2; // last csv row (exclusive)
 
   public static void readCSV(InputStream csvFile) throws Exception {
     try {    
@@ -24,20 +27,20 @@ public class ReportReader {
       // read header rows separately
       String primaryHeader = bufferedReader.readLine();
       String secondaryHeader = bufferedReader.readLine();
-      // read rows and split into array by column
       int rowIndex = 1; 
       String row = ""; 
-      // TODO: make for all (remove && row index)
-      while((row = bufferedReader.readLine()) != null && (rowIndex < 3)) {
+      while((row = bufferedReader.readLine()) != null && (rowIndex < END_ROW_INDEX)) {
         currentRow = row.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); 
         for (int currentColumn = 0; currentColumn < currentRow.length; currentColumn++) {
           currentRow[currentColumn] = currentRow[currentColumn].replace("\"", ""); // remove extra quotes
         }
         // process the row
-        System.out.println("\nReading row #" + rowIndex + " ...\n"); 
-        AdRowProcessor processor = new AdRowProcessor(currentRow);
-        Ad ad = processor.createAdPojo(); 
-        processor.addAdToDatabase(ad, rowIndex); 
+        if (rowIndex >= START_ROW_INDEX) {
+          System.out.println("\nReading row #" + rowIndex + " ...\n"); 
+          AdRowProcessor processor = new AdRowProcessor(currentRow);
+          Ad ad = processor.createAd(); 
+          processor.addAdToDatabase(ad, rowIndex, COLLECTION); 
+        }
         rowIndex++;  
       }
       bufferedReader.close();
@@ -47,11 +50,7 @@ public class ReportReader {
   }
 
   public static void main(String[] args) throws IOException,Exception {
-    System.out.println("I AM RUNNING");
-    // InputStream inputStream = getClass().getResourceAsStream("/output.csv");
     InputStream inputStream = ReportReader.class.getResourceAsStream(CSV_FILE_PATH);
-    // String content = IOUtils.toString(inputStream);
     readCSV(inputStream);
-  }
-  
+  } 
 }
