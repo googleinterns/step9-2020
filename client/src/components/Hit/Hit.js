@@ -6,7 +6,7 @@ function Hit(props) {
   const { hit } = props;
   return (
     <article>
-      <h1>
+      <h1 className="highlight-header">
         <Highlight attribute="data.headline" hit={hit} />
       </h1>
       <p>
