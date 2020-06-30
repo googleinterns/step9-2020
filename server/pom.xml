@@ -9,6 +9,13 @@
   <version>1</version>
   <packaging>jar</packaging>
 
+  <repositories>
+        <repository>
+            <id>firebase-firestore</id>
+            <url>https://maven.google.com</url>
+        </repository>
+  </repositories>
+
   <properties>
     <!-- This project uses Java 8 -->
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -67,6 +74,20 @@
       <artifactId>firebase-admin</artifactId>
       <version>6.14.0</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.google.firebase/firebase-firestore -->
+    <!-- <dependency>
+      <groupId>com.google.firebase</groupId>
+      <artifactId>firebase-firestore</artifactId>
+      <version>16.0.0</version>
+    </dependency> -->
+    <!-- https://mvnrepository.com/artifact/com.google.firebase/firebase-firestore -->
+    <dependency>
+        <groupId>com.google.firebase</groupId>
+        <artifactId>firebase-firestore</artifactId>
+        <version>21.4.3</version>
+        <type>aar</type>
+    </dependency>
+
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
