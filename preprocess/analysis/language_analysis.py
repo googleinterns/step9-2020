@@ -19,26 +19,54 @@ ENCODING_TYPE = enums.EncodingType.UTF8
 
 """
 
-Cloud language api will automatically return floats to to like 15 decimal 
-places. This rounds to the *nearest* tens place decimal
 
 """
-def round_to_1(x):
-  return round(x, 1)
+def round_to_1(number):
+  """Rounds number to the nearest tenth. 
 
-def round_to_2(x): 
-  return round(x, 2)
+  Cloud language api will automatically return floats to like 15 decimal 
+  places. It's convenient to just round down. 
 
-
-"""
-
-Take an input text and return sentiment as JSON object composed of 
-score and magnitude, both rounded to nearest tenth
-Calls cloud language API once for sentiment analysis
-Type: str (a json-ified string)
+  Args: 
+    number: float or an int.
   
-"""
+  Returns:
+    a float to tens precisions.
+  """
+  
+  return float(round(number, 1))
+
+def round_to_2(number): 
+  """Rounds number to the nearest hundreth.
+  
+  Args: 
+    number: float or an int.
+  
+  Returns:
+    a float to hundreds precisions.
+  """
+  
+  return float(round(number, 2))
+
+
+
 def analyze_sentiment(text):
+  """Applies sentiment analysis to an input string.
+  
+  Calls cloud language API once for sentiment analysis if input is a string. 
+  Rounds sentiment and magnitude to the nearest tenth for convenience. 
+
+  Args: 
+    text: an input string.
+  
+  Returns: 
+    A json string mapping score and magnitude keys to their corresponding
+    value.
+    
+  Raises:
+    TypeError: input is not a string.
+  """
+  
   if not isinstance(text, str): 
     raise TypeError("Input to {0} isn't a string.".format("analyze_sentiment"))
     
@@ -56,14 +84,24 @@ def analyze_sentiment(text):
 
   return score_and_magnitude
 
-"""
-
-Take an input text and return entity results as a list of JSON objects
-Composed of entity name, entity type, entity salience, rounded to nearest 100s
-Type: List[str] (of json-ified string)
-
-"""
 def analyze_entities(text):
+  """Applies entity analysis to an input string.
+  
+  Calls cloud language API once for entity analysis if input is a string. 
+  Rounds salience value to the nearest hundreth for convenience. 
+
+  Args: 
+    text: an input string.
+  
+  Returns: 
+    A list of json strings, where each json string maps 
+    name/type/salience keys to their corresponding string/string/float
+    values.
+    
+  Raises:
+    TypeError: input is not a string.
+  """
+  
   if not isinstance(text, str): 
     raise TypeError("Input to {0} isn't a string.".format("analyze_entities"))
     

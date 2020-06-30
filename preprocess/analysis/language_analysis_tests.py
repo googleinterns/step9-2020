@@ -9,15 +9,12 @@ import unittest
 from language_analysis import analyze_entities, analyze_sentiment
 import json
 
-
+# These strings are used for testing purposes. 
 STRING_ONE = 'Pro Wrestler for Congress | Big Dan Rodimer | Rebuild Nevada'
-STRING_TWO = 'Tell John Bel Edwards Today | No Sanctuary Cities in LA | It’s Up to You to Stop This'
+STRING_TWO = ('Tell John Bel Edwards Today | No Sanctuary Cities in LA | ' +
+              'It’s Up to You to Stop This')
 
-"""
 
-Avoid some repetition with these helpful helpers
-
-"""
 # Type: dict
 def sentiment_dict(entity_score, entity_magnitude):
   return {"score": entity_score, "magnitude": entity_magnitude}
@@ -29,22 +26,47 @@ def entity_dict(entity_values):
           "type": entity_type, \
           "salience": entity_salience}
 
-# Type: list
 def entity_list(entities_as_tuple_list):
+  """Helper function for formatting expected entity analysis results.
+  
+  Properly formats a list of expected entity analysis results by mapping 
+  entity_dict across the input argument. 
+  
+  Args: 
+    entites_as_tuple_list: a 3-tuple list, where each tuple corresponds to 
+    an expected recognized entity, as name, type, salience.
+  
+  Returns:
+    a list of dictionaries, where each dictionary maps name, type, salience
+    to their correspoding string/string/float value.
+  """
+  
   return list(map(lambda x: entity_dict(x), entities_as_tuple_list))
 
-# Type: list
 def format_entity_list(entity_list):
+  """De-stringifies a list of json strings.
+  
+  Default return type for analysis is a json string. For testing it's 
+  convenient to just turn these back into dictionaries. 
+  
+  Args:
+    entity_list: a list of json strings, where each json string corresponds to
+    a recognized entity and its corresponding values (name, type, salience).
+    
+  Returns:
+    a list of dictionaries, where each dictionary maps name, type, salience
+    to their correspoding string/string/float value.
+  """
+  
   return list(map(lambda x: json.loads(x), entity_list))
 
-"""
-
-Tests
-Check that strings get processed as expected, and that not strings don't 
-
-"""
 class test_language_analysis(unittest.TestCase):
-
+  """Unit tests for language analysis
+  
+  Tests sentiment_analysis and entity_analysis with control values, and makes
+  sure that malformed inputs aren't accepted. 
+  """
+  
   def test_string_one_sentiment(self):
     expected_sentiment = sentiment_dict(0.1, 0.1)
     actual_sentiment = json.loads(analyze_sentiment(STRING_ONE))
