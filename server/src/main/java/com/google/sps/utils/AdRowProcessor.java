@@ -14,9 +14,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
 import com.google.firebase.cloud.FirestoreClient;
-import com.google.firebase.cloud.firestore.DocumentReference; 
-
-
+import com.google.cloud.firestore.DocumentReference;
 
 import java.io.IOException;
 
@@ -69,7 +67,7 @@ public class AdRowProcessor {
     // data.put("first", "Ada");
     // data.put("last", "Lovelace");
     // data.put("born", 1815);
-    // //asynchronously write data
+    //asynchronously write data
     // ApiFuture<WriteResult> result = docRef.set(data);
     // System.out.println("Update time : " + result.get().getUpdateTime());
   }
