@@ -4,19 +4,20 @@
  * Date: June 24, 2020
  */ 
 package com.google.sps.utils;
-import java.time.LocalDate;
-import com.google.sps.utils.Ad; 
-
+import com.google.api.core.ApiFuture; 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
-
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-
 import com.google.firebase.cloud.FirestoreClient;
-import com.google.cloud.firestore.DocumentReference;
-
+import com.google.sps.utils.Ad;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.cloud.firestore.WriteResult;
 
 public class AdRowProcessor {
 
@@ -60,15 +61,15 @@ public class AdRowProcessor {
         .build();
     FirebaseApp.initializeApp(options);
     Firestore db = FirestoreClient.getFirestore();
-
-    DocumentReference docRef = db.collection("ads").document("alovelace");
+    // SAMPLE ENTITY TO MAKE SURE PROJECT IS LINKED
+    DocumentReference docRef = db.collection("people").document("alovelace");
     // Add document data  with id "alovelace" using a hashmap
-    // Map<String, Object> data = new HashMap<>();
-    // data.put("first", "Ada");
-    // data.put("last", "Lovelace");
-    // data.put("born", 1815);
+    Map<String, Object> data = new HashMap<>();
+    data.put("first", "Ada");
+    data.put("last", "Lovelace");
+    data.put("born", 1815);
     //asynchronously write data
-    // ApiFuture<WriteResult> result = docRef.set(data);
+    ApiFuture<WriteResult> result = docRef.set(data);
     // System.out.println("Update time : " + result.get().getUpdateTime());
   }
 
