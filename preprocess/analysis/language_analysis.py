@@ -17,10 +17,7 @@ import json
 CLIENT = language.LanguageServiceClient.from_service_account_json("mykey.json")
 ENCODING_TYPE = enums.EncodingType.UTF8
 
-"""
 
-
-"""
 def round_to_1(number):
   """Rounds number to the nearest tenth. 
 
@@ -68,7 +65,7 @@ def analyze_sentiment(text):
   """
   
   if not isinstance(text, str): 
-    raise TypeError("Input to {0} isn't a string.".format("analyze_sentiment"))
+    raise TypeError("Input to analyze_sentiment isn't a string.")
     
   document = types.Document(content=text, type=enums.Document.Type.PLAIN_TEXT)
 
@@ -103,7 +100,7 @@ def analyze_entities(text):
   """
   
   if not isinstance(text, str): 
-    raise TypeError("Input to {0} isn't a string.".format("analyze_entities"))
+    raise TypeError("Input to analyze_entities isn't a string.")
     
   document = types.Document(content=text, type=enums.Document.Type.PLAIN_TEXT)
 

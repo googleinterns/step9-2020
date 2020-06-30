@@ -15,11 +15,11 @@ STRING_TWO = ('Tell John Bel Edwards Today | No Sanctuary Cities in LA | ' +
               'It’s Up to You to Stop This')
 
 
-# Type: dict
+# Return Type: dict
 def sentiment_dict(entity_score, entity_magnitude):
   return {"score": entity_score, "magnitude": entity_magnitude}
 
-# Type: dict
+# Return Type: dict
 def entity_dict(entity_values):
   (entity_name, entity_type, entity_salience) = entity_values
   return {"name": entity_name, \
