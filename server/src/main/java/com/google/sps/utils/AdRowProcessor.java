@@ -3,8 +3,9 @@
  * Author: Kira Toal
  * Date: June 24, 2020
  */ 
-import java.time.LocalDate; 
-
+package com.google.sps.utils;
+import java.time.LocalDate;
+import com.google.sps.utils.Ad; 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
@@ -45,22 +46,22 @@ public class AdRowProcessor {
 
   public void addAdToDatabase(Ad ad) {
     // Use the application default credentials
-    GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
-    FirebaseOptions options = new FirebaseOptions.Builder()
-        .setCredentials(credentials)
-        .setProjectId(projectId)
-        .build();
-    FirebaseApp.initializeApp(options);
-    Firestore db = FirestoreClient.getFirestore();
-    DocumentReference docRef = db.collection("ads").document("alovelace");
-    // Add document data  with id "alovelace" using a hashmap
-    Map<String, Object> data = new HashMap<>();
-    data.put("first", "Ada");
-    data.put("last", "Lovelace");
-    data.put("born", 1815);
-    //asynchronously write data
-    ApiFuture<WriteResult> result = docRef.set(data);
-    System.out.println("Update time : " + result.get().getUpdateTime());
+    // GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
+    // FirebaseOptions options = new FirebaseOptions.Builder()
+    //     .setCredentials(credentials)
+    //     .setProjectId("step9-2020-capstone")
+    //     .build();
+    // FirebaseApp.initializeApp(options);
+    // Firestore db = FirestoreClient.getFirestore();
+    // DocumentReference docRef = db.collection("ads").document("alovelace");
+    // // Add document data  with id "alovelace" using a hashmap
+    // Map<String, Object> data = new HashMap<>();
+    // data.put("first", "Ada");
+    // data.put("last", "Lovelace");
+    // data.put("born", 1815);
+    // //asynchronously write data
+    // ApiFuture<WriteResult> result = docRef.set(data);
+    // System.out.println("Update time : " + result.get().getUpdateTime());
   }
 
   public long getImpressionsMin(String str) {

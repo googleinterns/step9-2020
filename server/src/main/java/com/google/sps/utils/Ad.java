@@ -3,6 +3,8 @@
  * Author: Kira Toal
  * Date: June 24, 2020
  */
+package com.google.sps.utils;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.lang.StringBuilder;

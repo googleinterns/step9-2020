@@ -3,20 +3,25 @@
  * Author: Kira Toal
  * Date: June 24, 2020
  */
+package com.google.sps.utils;
 import java.io.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import org.apache.commons.io.IOUtils;
+
+import com.google.sps.utils.AdRowProcessor; 
+import com.google.sps.utils.Ad; 
 
 public class ReportReader {
 
-  private static final String CSV_FILE_PATH = "./data/output.csv";
+  private static final String CSV_FILE_PATH = "/output.csv";
 
-  public static void readCSV(String csvFile) {
+  public static void readCSV(InputStream csvFile) {
     try {    
       // set up readers 
-      FileReader fileReader = new FileReader(new File(csvFile));
-      BufferedReader bufferedReader = new BufferedReader(fileReader);      
+      // FileReader fileReader = new FileReader(new File(csvFile));
+      BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(csvFile));      
       String[] currentRow = {}; // array stores single row of CSV data (one advertisement)
       // read header rows separately
       String primaryHeader = bufferedReader.readLine();
@@ -34,7 +39,7 @@ public class ReportReader {
         System.out.println("\nReading row #" + rowIndex + " ...\n"); 
         AdRowProcessor processor = new AdRowProcessor(currentRow);
         Ad ad = processor.createAdPojo(); 
-        processor.addAdToDatabase(ad); 
+        // processor.addAdToDatabase(ad); 
         rowIndex++;  
       }
       bufferedReader.close();
@@ -43,7 +48,12 @@ public class ReportReader {
     }
   }
 
-  public static void main(String[] args) {
-    readCSV(CSV_FILE_PATH);
+  public static void main(String[] args) throws IOException {
+    System.out.println("I AM RUNNING");
+    // InputStream inputStream = getClass().getResourceAsStream("/output.csv");
+    InputStream inputStream = ReportReader.class.getResourceAsStream(CSV_FILE_PATH);
+    // String content = IOUtils.toString(inputStream);
+    readCSV(inputStream);
   }
+  
 }
