@@ -2,7 +2,9 @@ import { Highlight } from 'react-instantsearch-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+/* Algolia's Hit: display a result item from search */
 function Hit(props) {
+  // a hit (result) object that contains all info about a result item
   const { hit } = props;
   return (
     <article>

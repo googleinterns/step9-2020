@@ -65,8 +65,8 @@ const Search = () => {
               </div>
             )}
             <div className="search-panel__results center">
+              {/* display a list of results. */}
               <Hits hitComponent={Hit} />
-
               <div className="pagination">
                 <Pagination />
               </div>
