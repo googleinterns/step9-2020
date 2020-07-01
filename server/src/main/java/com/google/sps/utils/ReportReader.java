@@ -18,7 +18,7 @@ public class ReportReader {
   private static final String CSV_FILE_PATH = "/output.csv";
   private static final String COLLECTION = "testing"; 
   private static final int START_ROW_INDEX = 1;  // first csv row that gets read in to DB (1 based)
-  private static final int END_ROW_INDEX = 3; // last csv row (exclusive)
+  private static final int END_ROW_INDEX = 4; // last csv row (exclusive)
 
   public static void readCSV(InputStream csvFile) throws Exception {
     try {    

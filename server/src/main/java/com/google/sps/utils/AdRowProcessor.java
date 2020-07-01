@@ -57,7 +57,7 @@ public class AdRowProcessor {
   }
 
   public void addAdToDatabase(Ad ad, int rowIndex, String COLLECTION) throws Exception {
-    FileInputStream serviceAccount = new FileInputStream("./serviceAccountKey.json");
+    FileInputStream serviceAccount = new FileInputStream("../resources/accountKey.json");
     FirebaseOptions options = new FirebaseOptions.Builder()
       .setCredentials(GoogleCredentials.fromStream(serviceAccount))
       .setDatabaseUrl("https://step9-2020-capstone.firebaseio.com")
