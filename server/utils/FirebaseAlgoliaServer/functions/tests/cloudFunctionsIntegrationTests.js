@@ -46,7 +46,7 @@ var helpers = require('./integrationTestHelpers');
  * Then delete it from both DBs.
  */
 function test_addDelete_singleEntity_SUCCESS() {
-  console.log("Testing test_addDelete_singleEntity_SUCCESS")
+  console.log("Testing test_addDelete_singleEntity_SUCCESS");
 
   // Create in firestore and make sure it gets to algolia
   var addPromise = 
@@ -65,7 +65,7 @@ function test_addDelete_singleEntity_SUCCESS() {
  *       easiest way to test this is through the firebase/algolia console. 
  */
 function test_addUpdateDelete_singleEntity_SUCCESS() {
-  console.log("Testing test_addUpdateDelete_singleEntity_SUCCESS")
+  console.log("Testing test_addUpdateDelete_singleEntity_SUCCESS");
 
   // Create in firestore and make sure it gets to algolia
   var addPromise = 
@@ -76,7 +76,7 @@ function test_addUpdateDelete_singleEntity_SUCCESS() {
   // setTimeout basically preserves the order
   // otherwise delete could happen before update, for example. 
   setTimeout(function(){
-    console.log("In the process of updating the entity")
+    console.log("In the process of updating the entity");
     var updatePromise = 
         helpers
         .updateEntityFromPromise(addPromise, {"Testing" : "if updates reach"});
@@ -131,7 +131,7 @@ function test_update_noSideEffects_SUCCESS() {
   // setTimeout basically preserves the order
   // otherwise delete could happen before update, for example.   
   setTimeout(function(){
-    console.log("In the process of updating the entity")
+    console.log("In the process of updating the entity");
     var updatePromise = 
         helpers
         .updateEntityFromPromise
