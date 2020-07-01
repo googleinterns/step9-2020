@@ -13,7 +13,7 @@ import React, { useState } from 'react';
 
 import Hit from '../Hit/Hit';
 import { searchClient } from '../../constants/algolia_config';
-import tardigrade from '../../images/tardigrade1.png';
+import tardigrade from '../../images/tardigrade.png';
 
 const Search = () => {
   const [showFilter, setShowFilter] = useState(false);
