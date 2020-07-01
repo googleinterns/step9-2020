@@ -12,8 +12,8 @@ admin.initializeApp(config);
 const db = admin.firestore();
 const COLLECTION = 'ads'; 
 
-const functions = require('firebase-functions');
 const algoliasearch = require('algoliasearch');
+const functions = require('firebase-functions');
 
 const APP_ID = functions.config().algolia.app;
 const ADMIN_KEY = functions.config().algolia.key;
@@ -208,10 +208,11 @@ async function checkObjectDeletedFromAlgoliaWithPromise(promise) {
       getObjectFromAlgoliaWithPromise(promise).then(object => {
         throw("Algolia object should not exist but it does")
       }).catch(function onError(error) {
-        console.log("Above malformed message normal. Algolia deletion SUCCESS")
+        console.log("Above malformed message normal. Algolia delete SUCCESS.")
       });
   return algoliaPromise;
 }
+
 /**
  * Gets the entity object from algolia, calls checkEntityEqualsFromPromise
  * with the entityObject as the expectedData
@@ -219,12 +220,13 @@ async function checkObjectDeletedFromAlgoliaWithPromise(promise) {
  * @param {!Promise=} entityPromise promise returned when entity was made
  */
 async function checkAlgoliaObjectEqualsFirestoreEntityFromPromise(entityPromise) {
-//  await sleep(DEFAULT_SLEEP) 
   const algoliaPromise = getObjectFromAlgoliaWithPromise(entityPromise);
   algoliaPromise.then(object => {
     const algoliaData = object.data;
     checkEntityEqualsFromPromise(entityPromise, algoliaData);
-  }).catch((error) => console.log("Weird error while comparing algolia and firebase ", error));
+  }).catch((error) => {
+    console.log("Weird error while comparing algolia and firebase ", error)
+  });
 }
 
 // Various helper functions

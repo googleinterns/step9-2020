@@ -8,8 +8,8 @@
  * Note: Current algolia index is dev_ADS
  */
 
-const functions = require('firebase-functions');
 const algoliasearch = require('algoliasearch');
+const functions = require('firebase-functions');
 
 /**
  * Looking to compile this on your local machine but don't have the keys?
@@ -53,7 +53,6 @@ exports.addEntityToIndex = functions.firestore
 
 /**
  * update record corresponding to ad entity if a change occurs
- * not sure why we would need this but it seemed like a good and basic idea 
  */
 exports.updateRecordInIndex = functions.firestore
     .document(DOC_NAME)

@@ -4,7 +4,8 @@
  * addEntityToIndex, deleteEntityFromIndex, updateRecordInIndex.
  *
  * These functions essentially link two different databases in realtime,
- * And they cannot be directly tested because of how cloud functions work.
+ * And they cannot be directly tested because of how cloud functions work
+ * And because algolia does not provide a JS mocking library (AFAIK.)
  * So testing has to be done in realtime online,
  * Which makes testing somewhat difficult due to asynchronous operations
  * Happening in weird orders.
@@ -44,7 +45,7 @@ var helpers = require('./testHelpers');
  * Add an entity in firestore/algolia
  * Then delete it from both DBs.
  */
-function singleEntityDeliveredAndDeleted_SUCCESS() {
+function test_addDelete_singleEntity_SUCCESS() {
   console.log("Testing singleEntityDeliveredAndDeleted_SUCCESS")
 
   // Create in firestore and make sure it gets to algolia
@@ -63,7 +64,7 @@ function singleEntityDeliveredAndDeleted_SUCCESS() {
  * NOTE: may have problems depending on how long it takes algolia to get update
  *       easiest way to test this is through the firebase/algolia console. 
  */
-function singleEntityUpdated_SUCCESS() {
+function test_addUpdateDelete_singleEntity_SUCCESS() {
   console.log("Testing singleEntityUpdated_SUCCESS")
 
   // Create in firestore and make sure it gets to algolia
@@ -90,7 +91,7 @@ function singleEntityUpdated_SUCCESS() {
 /**
  * Creating two entities and deleting one of them shouldn't delete the other.
  */
-function twoEntitiesAddedDeletedIndependently_SUCCESS() {
+function test_addDelete_noDeletionSideEffect_SUCCESS() {
   console.log("Testing twoEntitiesAddedDeletedIndependently_SUCCESS");
 
   // Create in firestore and make sure it gets to algolia
@@ -119,7 +120,7 @@ function twoEntitiesAddedDeletedIndependently_SUCCESS() {
  * Creating two entities and updating one of them shouldn't change 
  * the state of the other entity.
  */
-function twoEntitiesUpdateIndependently_SUCCESS() {
+function test_update_noSideEffects_SUCCESS() {
   console.log("Testing twoEntitiesUpdateIndependently_SUCCESS");
 
   var addPromiseOne = 
@@ -141,6 +142,5 @@ function twoEntitiesUpdateIndependently_SUCCESS() {
   }, 3000);  
 }
 
+test_addDelete_singleEntity_SUCCESS()
 
-
-singleEntityDeliveredAndDeleted_SUCCESS();
