@@ -139,7 +139,11 @@ function test_update_noSideEffects_SUCCESS() {
     var twoIndependentFromUpdatePromise = 
         helpers
         .checkAlgoliaObjectEqualsFirestoreEntityFromPromise(addPromiseTwo);
-  }, 3000);  
+  }, 3000);
+
+  helpers.deleteFromEverywhere(addPromiseOne);
+  helpers.deleteFromEverywhere(addPromiseTwo);
+  
 }
 
 

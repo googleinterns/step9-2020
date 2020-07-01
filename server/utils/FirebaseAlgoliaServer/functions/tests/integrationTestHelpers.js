@@ -35,8 +35,10 @@ const DEFAULT_SLEEP = 5000; // Firebase->Algolia takes a couple secs, WCS
  */
 async function addEntity(jsonEntity) {
   const entityPromise = await db.collection(COLLECTION).add(jsonEntity);
-  console.log(`Entity added with id ${entityPromise.id}`);
+
   await sleep(DEFAULT_SLEEP); // Give the addition some time to reach Algolia
+  console.log(`Entity added with id ${entityPromise.id}`);
+
   return entityPromise;
 }
 
@@ -47,7 +49,9 @@ async function addEntity(jsonEntity) {
  */
 async function deleteEntity(entityId) {
   const deletePromise = await db.collection(COLLECTION).doc(entityId).delete()
+
   await sleep(DEFAULT_SLEEP); // Give the deletion some time to reach Algolia
+  
   return deletePromise;      
 }
 
@@ -62,6 +66,7 @@ function deleteEntityFromPromise(entityPromise) {
       entityPromise.then(promiseValues => {
             deleteEntity(promiseValues.id);
           }).catch((error) => console.log(error));
+
   return deletePromise;
 }
 
@@ -73,6 +78,7 @@ function deleteEntityFromPromise(entityPromise) {
  */
 async function checkDeleted(entityId) {
   const entity = await db.collection(COLLECTION).doc(entityId).get();
+
   if(entity.exists) {
     throw(`Document ${entityId} delete FAILURE.`)
   } else {
@@ -108,6 +114,7 @@ async function updateEntity(entityId, jsonEntityUpdates) {
   const updatePromise = await db.collection(COLLECTION)
                                 .doc(entityId)
                                 .update(jsonEntityUpdates);
+
   return updatePromise;
 }
 
@@ -115,12 +122,14 @@ async function updateEntity(entityId, jsonEntityUpdates) {
  * Wrapper function for updateEntity
  * @param {!Promise=} entityPromise promise returned when entity was made
  * @param {json=} jsonEntityUpdates new values for entity k:v pairings
+ * @return {!Promise}
  */
 function updateEntityFromPromise(entityPromise, jsonEntityUpdates) {
   var updatePromise = 
     entityPromise.then(promiseValues => {
       updateEntity(promiseValues.id, jsonEntityUpdates);
     });
+
   return entityPromise;
 }
 
@@ -131,19 +140,21 @@ function updateEntityFromPromise(entityPromise, jsonEntityUpdates) {
  * If successful, writes to the console
  * @param {number=} entityId firestore id for entity being updated
  * @param {json=} expectedData expected DB entry
- * @return {!Promise} 
  */
 async function checkEntityEquals(entityId, expectedData) {
   const entity = await db.collection(COLLECTION).doc(entityId).get();
+
   if (!entity.exists) {
     throw(`Document ${entityId} firestore retrieval FAILURE`);
   } else {
-    const entityData = entity.data()
+    const entityData = entity.data();
+    const loggingString = 
+        `\nExpected ${JSON.stringify(expectedData)}\nGot ${JSON.stringify(entityData)}\n`;
     if (!isEquivalent(expectedData, entityData)){
-      throw(`\nExpected ${JSON.stringify(expectedData)}\nGot ${JSON.stringify(entityData)}`); 
+      throw(loggingString); 
     }
-    console.log(`Expected ${JSON.stringify(expectedData)}\nGot ${JSON.stringify(entityData)}\nSUCCESS!`)
-    return true;
+    console.log(loggingString);
+    console.log("SUCCESS.\n");
   }
 }
 
@@ -152,15 +163,12 @@ async function checkEntityEquals(entityId, expectedData) {
  * If the entity doesn't match expected data, catches the error
  * @param {!Promise=} entityPromise promise returned when entity was made
  * @param {json=} expectedData expected DB entry
- * @return {!Promise}
  */
 function checkEntityEqualsFromPromise(entityPromise, expectedData) {
-  const checkEqualsPromise = 
-      entityPromise.then(promiseValue => {
-        checkEntityEquals(promiseValue.id, expectedData)
-        .catch((error) => console.log("Equality check FAILURE", error));
-      });
-  return entityPromise;
+  entityPromise.then(promiseValue => {
+    checkEntityEquals(promiseValue.id, expectedData)
+    .catch((error) => console.log("Equality check FAILURE", error));
+  });
 }
 
 // Algolia helper functions 
@@ -209,7 +217,7 @@ async function checkObjectDeletedFromAlgoliaWithPromise(promise) {
         throw("Algolia object should not exist but it does")
       }).catch(function onError(error) {
         console.log("Above malformed message normal. Algolia delete SUCCESS.")
-        // Above message is an unavoidable 'Malformed object ...' error
+        // 'Above message' is an unavoidable 'Malformed object ...' error
         // The only way to test for existence is to call for it directly
         // And when it isn't found, an error has to be thrown... then caught
       });
