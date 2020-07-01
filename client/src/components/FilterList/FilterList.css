@@ -1,0 +1,25 @@
+.search-panel__filters {
+  border: none;  
+  display: flex;
+  flex-direction: column;    
+  text-align: start;    
+  justify-content: flex-start;
+
+  margin: 30px;
+  margin-top: 0px !important;
+  height: fit-content;
+}
+
+.filter-text {
+  font-size: 20px;
+  color: #0077b5;
+  margin-top: 50px;
+}
+
+.filter-item {
+  flex: 1;
+}
+
+.search-panel__filters .ais-SearchBox-form {
+  width: 80%;
+}

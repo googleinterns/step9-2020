@@ -1,7 +1,3 @@
-import { NumericMenu, RefinementList } from 'react-instantsearch-dom';
-
-import React from 'react';
-
 const IMPRESSIONS = [
   { label: 'All' },
   { label: '≤ 10K', end: 10000 },
@@ -20,39 +16,4 @@ const COST = [
   { label: '> $100,000', start: 100001 },
 ];
 
-const FILTER_ITEMS = [
-  {
-    label: 'U.S States',
-    component: (
-      <RefinementList
-        attribute="data.geoTarget"
-        limit={5}
-        searchable
-        showMore
-      />
-    ),
-  },
-  {
-    label: 'Impressions',
-    component: (
-      <NumericMenu attribute="data.impressionsMin" items={IMPRESSIONS} />
-    ),
-  },
-  {
-    label: 'USD Spent',
-    component: <NumericMenu attribute="data.spendMin" items={COST} />,
-  },
-  {
-    label: 'Gender',
-    component: <RefinementList attribute="data.genderTarget" />,
-  },
-];
-
-const FILTER_LIST = FILTER_ITEMS.map((item, index) => (
-  <div className="filter-item" key={index}>
-    <p className="filter-text">{item.label}</p>
-    {item.component}
-  </div>
-));
-
-export { FILTER_LIST };
+export { IMPRESSIONS, COST };
