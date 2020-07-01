@@ -33,25 +33,25 @@ public class AdRowProcessor {
 
   public Ad createAd() {
     Ad ad = new Ad.AdBuilder()
-      .id(row[0])
-      .advertiser(row[1])
-      .startDate(row[2]) 
-      .endDate(row[3])
-      .impressionsMin(getImpressionsMin(row[4]))
-      .impressionsMax(getImpressionsMax(row[4]))
-      .isTargetingAge(getAgeTargets(row[5]))
-      .genderTarget(getList(row[6]))
-      .geoTarget(getList(row[7]))
-      .spendMin(getLong(row[8]))
-      .spendMax(getLong(row[9]))
-      .headline(row[10].trim())
-      .link(row[11].substring(3)) // trim "Ad" from "Ad {URL}"
-      .content(row[12].trim())
-      .headlineSentiment(row[13].trim())
-      .headlineTerms(row[14].trim())
-      .contentSentiment(row[15].trim())
-      .contentTerms(row[16].trim())
-      .build();
+        .id(row[0])
+        .advertiser(row[1])
+        .startDate(row[2]) 
+        .endDate(row[3])
+        .impressionsMin(getImpressionsMin(row[4]))
+        .impressionsMax(getImpressionsMax(row[4]))
+        .isTargetingAge(getAgeTargets(row[5]))
+        .genderTarget(getList(row[6]))
+        .geoTarget(getList(row[7]))
+        .spendMin(getLong(row[8]))
+        .spendMax(getLong(row[9]))
+        .headline(row[10].trim())
+        .link(row[11].substring(3)) // trim "Ad" from "Ad {URL}"
+        .content(row[12].trim())
+        .headlineSentiment(row[13].trim())
+        .headlineTerms(row[14].trim())
+        .contentSentiment(row[15].trim())
+        .contentTerms(row[16].trim())
+        .build();
     return ad;
   }
 
