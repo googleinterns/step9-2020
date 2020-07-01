@@ -9,13 +9,6 @@
   <version>1</version>
   <packaging>jar</packaging>
 
-  <!-- <repositories>
-    <repository>
-      <id>firebase-firestore</id>
-      <url>https://maven.google.com</url>
-    </repository>
-  </repositories> -->
-
   <properties>
     <!-- This project uses Java 8 -->
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -93,17 +86,6 @@
 
   <build>
     <plugins>
-      <!-- Provides `mvn package appengine:run` for local testing
-           and `mvn package appengine:deploy` for deploying. -->
-      <!-- <plugin>
-        <groupId>com.google.cloud.tools</groupId>
-        <artifactId>appengine-maven-plugin</artifactId>
-        <version>2.2.0</version>
-        <configuration>
-          <deploy.projectId>step9-2020-capstone</deploy.projectId>
-          <deploy.version>1</deploy.version>
-        </configuration>
-      </plugin> -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
