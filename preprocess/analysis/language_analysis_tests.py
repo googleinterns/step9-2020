@@ -5,9 +5,9 @@ Created on Tue Jun 23 16:36:57 2020
 
 @author: robert
 """
-import unittest
-from language_analysis import analyze_entities, analyze_sentiment
 import json
+from language_analysis import analyze_entities, analyze_sentiment
+import unittest
 
 # These strings are used for testing purposes. 
 STRING_ONE = 'Pro Wrestler for Congress | Big Dan Rodimer | Rebuild Nevada'
@@ -61,19 +61,19 @@ def format_entity_list(entity_list):
   return list(map(lambda x: json.loads(x), entity_list))
 
 class test_language_analysis(unittest.TestCase):
-  """Unit tests for language analysis
+  """Unit tests for language analysis.
   
   Tests sentiment_analysis and entity_analysis with control values, and makes
   sure that malformed inputs aren't accepted. 
   """
   
-  def test_string_one_sentiment(self):
+  def test_sentimentAnalysis_stringOneControlSample_equalsControl(self):
     expected_sentiment = sentiment_dict(0.1, 0.1)
     actual_sentiment = json.loads(analyze_sentiment(STRING_ONE))
     
     self.assertEqual(expected_sentiment, actual_sentiment)
     
-  def test_string_one_entities(self):
+  def test_entitAnalysisy_stringOneControlSample_equalsControl(self):
     expected_entity_list = [("Pro Wrestler", "ORGANIZATION", 0.62), 
                            ("Congress", "ORGANIZATION", 0.19),
                            ("Rebuild Nevada", "OTHER", 0.13), 
@@ -84,13 +84,13 @@ class test_language_analysis(unittest.TestCase):
 
     self.assertEqual(formatted_expected_entity_list, actual_list)
     
-  def test_string_two_sentiment(self):
+  def test_sentimentAnalysis_stringTwoControlSample_equalsControl(self):
     expected_sentiment = sentiment_dict(-0.4, 0.4)
     actual_sentiment = json.loads(analyze_sentiment(STRING_TWO))
     
     self.assertEqual(expected_sentiment, actual_sentiment)
     
-  def test_string_two_entities(self):
+  def test_entityAnalysis_stringTwoControlSample_equalsControl(self):
     expected_entity_list = [("John Bel Edwards", "PERSON", 0.41),
                             ("LA", "LOCATION", 0.29),
                             ("No Sanctuary Cities", "LOCATION", 0.22),
@@ -101,11 +101,17 @@ class test_language_analysis(unittest.TestCase):
 
     self.assertEqual(formatted_expected_entity_list, actual_list)
     
-  def test_malformed_input(self): 
-      not_a_string = 101
-      
-      self.assertRaises(TypeError, analyze_sentiment, not_a_string)
-      self.assertRaises(TypeError, analyze_entities, not_a_string)
+  def test_sentimentAnalysis_notStringInput_raisesTypeError(self): 
+    not_a_string = 101
+    
+    self.assertRaises(TypeError, analyze_sentiment, not_a_string)
+    
+
+  def test_entityAnalysis_notStringInput_raisesTypeError(self): 
+    not_a_string = 101
+    
+    self.assertRaises(TypeError, analyze_entities, not_a_string)
+
 
 if __name__ == '__main__':
     unittest.main()

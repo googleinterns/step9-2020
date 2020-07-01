@@ -7,8 +7,8 @@ Created on Tue Jun 23 16:07:17 2020
 """
 
 # Imports the Google Cloud client library
-from google.cloud import language
 from google.cloud.language import enums
+from google.cloud import language
 from google.cloud.language import types
 
 import json
@@ -18,40 +18,11 @@ CLIENT = language.LanguageServiceClient.from_service_account_json("mykey.json")
 ENCODING_TYPE = enums.EncodingType.UTF8
 
 
-def round_to_1(number):
-  """Rounds number to the nearest tenth. 
-
-  Cloud language api will automatically return floats to like 15 decimal 
-  places. It's convenient to just round down. 
-
-  Args: 
-    number: float or an int.
-  
-  Returns:
-    a float to tens precisions.
-  """
-  
-  return float(round(number, 1))
-
-def round_to_2(number): 
-  """Rounds number to the nearest hundreth.
-  
-  Args: 
-    number: float or an int.
-  
-  Returns:
-    a float to hundreds precisions.
-  """
-  
-  return float(round(number, 2))
-
-
-
 def analyze_sentiment(text):
   """Applies sentiment analysis to an input string.
   
   Calls cloud language API once for sentiment analysis if input is a string. 
-  Rounds sentiment and magnitude to the nearest tenth for convenience. 
+  Rounds sentiment and magnitude to tens place. 
 
   Args: 
     text: an input string.
@@ -65,7 +36,8 @@ def analyze_sentiment(text):
   """
   
   if not isinstance(text, str): 
-    raise TypeError("Input to analyze_sentiment isn't a string.")
+    raise TypeError("Input to analyze_sentiment isn't a string: {0}"
+                    .format(text))
     
   document = types.Document(content=text, type=enums.Document.Type.PLAIN_TEXT)
 
@@ -73,11 +45,14 @@ def analyze_sentiment(text):
       CLIENT.analyze_sentiment(document,encoding_type=ENCODING_TYPE) \
             .document_sentiment
             
-  tens_place_score = round_to_1(document_sentiment.score)
-  tens_place_magnitude = round_to_1(document_sentiment.magnitude)
+  # Round to hundreds/tens place respectively 
+  # because that is how control values are. See: 
+  # https://cloud.google.com/natural-language#natural-language-api-demo
+  rounded_score = round(document_sentiment.score, 2) 
+  rounded_magnitude = round(document_sentiment.magnitude, 1)
   
-  score_and_magnitude = json.dumps({"score": tens_place_score, \
-                                   "magnitude": tens_place_magnitude})
+  score_and_magnitude = json.dumps({"score": rounded_score, \
+                                   "magnitude": rounded_magnitude})
 
   return score_and_magnitude
 
@@ -85,8 +60,8 @@ def analyze_entities(text):
   """Applies entity analysis to an input string.
   
   Calls cloud language API once for entity analysis if input is a string. 
-  Rounds salience value to the nearest hundreth for convenience. 
-
+  Rounds salience value to hundreds place. 
+  
   Args: 
     text: an input string.
   
@@ -100,7 +75,8 @@ def analyze_entities(text):
   """
   
   if not isinstance(text, str): 
-    raise TypeError("Input to analyze_entities isn't a string.")
+    raise TypeError("Input to analyze_entities isn't a string: {0}"
+                    .format(text))
     
   document = types.Document(content=text, type=enums.Document.Type.PLAIN_TEXT)
 
@@ -113,7 +89,11 @@ def analyze_entities(text):
   for entity in document_entities: 
     entity_name = entity.name
     entity_type = enums.Entity.Type(entity.type).name
-    entity_salience = round_to_2(entity.salience)
+    
+    # Round to hundreds place because that is how control values are 
+    # returned. See: 
+    # https://cloud.google.com/natural-language#natural-language-api-demo
+    entity_salience = round(entity.salience, 2)
     
     formatted_entity = json.dumps({"name": entity_name, \
                                    "type": entity_type, \
