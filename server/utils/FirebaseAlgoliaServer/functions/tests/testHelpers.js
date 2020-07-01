@@ -22,7 +22,9 @@ const ADMIN_KEY = functions.config().algolia.key;
 // initialize algoliasearch API
 const client = algoliasearch(APP_ID, ADMIN_KEY);
 const index = client.initIndex('dev_ADS');
-const DEFAULT_SLEEP = 5000;
+
+const DEFAULT_SLEEP = 5000; // Firebase->Algolia takes about 2 sec, wcs.
+
 /**
  * Firebase helper functions
  */
@@ -33,7 +35,7 @@ const DEFAULT_SLEEP = 5000;
 async function addEntity(jsonEntity) {
   const entityPromise = await db.collection(COLLECTION).add(jsonEntity);
   console.log(`Entity added with id ${entityPromise.id}`);
-  await sleep(DEFAULT_SLEEP);
+  await sleep(DEFAULT_SLEEP); // Give the addition some time to reach Algolia
   return entityPromise;
 }
 
@@ -43,6 +45,7 @@ async function addEntity(jsonEntity) {
  */
 async function deleteEntity(entityId) {
   const deletePromise = await db.collection(COLLECTION).doc(entityId).delete()
+  await sleep(DEFAULT_SLEEP); // Give the deletion some time to reach Algolia
   return deletePromise;      
 }
 
@@ -66,13 +69,14 @@ async function checkEntityMatches(entityId, expectedData) {
     if (!isEquivalent(expectedData, entityData)){
       throw(`\nExpected ${JSON.stringify(expectedData)}\nGot ${JSON.stringify(entityData)}`); 
     }
+    console.log(`Expected ${JSON.stringify(expectedData)}\nGot ${JSON.stringify(entityData)}\nLGTM!`)
     return true;
   }
 }
 
 async function checkDeleted(entityId) {
   const entity = await db.collection(COLLECTION).doc(entityId).get();
-  if(!entity.exists) {
+  if(entity.exists) {
     throw(`Document ${entityId} never got deleted.`)
   } else {
     console.log(`Document ${entityId} succesfully deleted.`)
@@ -90,7 +94,7 @@ function updateEntityFromPromise(entityPromise, jsonEntityUpdates) {
     entityPromise.then(promiseValues => {
       updateEntity(promiseValues.id, jsonEntityUpdates);
     });
-  return updatePromise;
+  return entityPromise;
 }
 
 /**
@@ -102,24 +106,27 @@ function deleteEntityFromPromise(entityPromise) {
   var deletePromise = 
       entityPromise.then(promiseValues => {
             deleteEntity(promiseValues.id);
-          });
+          }).catch((error) => console.log(error));
   return deletePromise;
 }
 
-function checkDeletedFromPromise(entityPromise) {
+async function checkDeletedFromPromise(entityPromise) {
+  await sleep(DEFAULT_SLEEP);
+
   const checkDeletedPromise = 
     entityPromise.then((promiseValue) => {
       checkDeleted(promiseValue.id)
       .catch((error) => console.log(error));
     });
 }
+
 function checkEntityMatchesFromPromise(entityPromise, expectedData) {
   const checkMatchesPromise = 
       entityPromise.then(promiseValue => {
         checkEntityMatches(promiseValue.id, expectedData)
         .catch((error) => console.log("Equality check failed", error));
       });
-  return checkMatchesPromise;
+  return entityPromise;
 }
 
 
@@ -128,11 +135,36 @@ function checkEntityMatchesFromPromise(entityPromise, expectedData) {
  */
 
 function getObjectFromAlgolia(objectID) {
-  index.getObject(objectID).then(object => console.log(JSON.stringify(object.data))).catch((error) => console.log(error));
+  //index.getObject(objectID).then(object => console.log(JSON.stringify(object.data))).catch((error) => console.log(error));
+  return index.getObject(objectID).catch((error) => console.log(error));
 }
 
 function getObjectFromAlgoliaWithPromise(promise) {
   const algoliaPromise = promise.then(promiseValue => getObjectFromAlgolia(promiseValue.id));
+  algoliaPromise.then(object => {
+    if (typeof object !== 'undefined') {
+      console.log(`Found ${JSON.stringify(object.data)}`);
+    } //else the error message will handle it. 
+  }).catch((error) => console.log(error));
+  
+  return algoliaPromise; 
+}
+
+async function checkObjectDeletedFromAlgoliaWithPromise(promise) {
+  await sleep(DEFAULT_SLEEP*2);
+  getObjectFromAlgoliaWithPromise(promise).then(object => {
+    throw("Algolia object should not exist but it does")
+  }).catch(function onError(error) {console.log("Deleted from algolia. Above message normal.")});
+
+}
+
+async function checkAlgoliaObjectEqualsFirestoreEntityFromPromise(entityPromise) {
+//  await sleep(DEFAULT_SLEEP) 
+  const algoliaPromise = getObjectFromAlgoliaWithPromise(entityPromise);
+  algoliaPromise.then(object => {
+    const algoliaData = object.data;
+    checkEntityMatchesFromPromise(entityPromise, algoliaData);
+  }).catch((error) => console.log("Weird error while comparing algolia and firebase ", error));
 }
 /**
  * Various helper functions
@@ -229,4 +261,7 @@ module.exports.sleep = sleep;
 module.exports.MakeQuerablePromise = MakeQuerablePromise;
 module.exports.checkEntityMatchesFromPromise = checkEntityMatchesFromPromise;
 
-module.exports.getObjectFromAlgoliaWithPromise = getObjectFromAlgoliaWithPromise
+module.exports.getObjectFromAlgoliaWithPromise = getObjectFromAlgoliaWithPromise;
+
+module.exports.checkObjectDeletedFromAlgoliaWithPromise = checkObjectDeletedFromAlgoliaWithPromise;
+module.exports.checkAlgoliaObjectEqualsFirestoreEntityFromPromise = checkAlgoliaObjectEqualsFirestoreEntityFromPromise;
