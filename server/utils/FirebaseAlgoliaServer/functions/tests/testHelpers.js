@@ -288,10 +288,6 @@ function sleep(ms) {
 module.exports.addEntity = addEntity;
 module.exports.updateEntityFromPromise = updateEntityFromPromise;
 
-//module.exports.checkEntityEqualsFromPromise = checkEntityEqualsFromPromise;
-
-//module.exports.getObjectFromAlgoliaWithPromise = getObjectFromAlgoliaWithPromise;
-
 module.exports.checkObjectDeletedFromAlgoliaWithPromise = checkObjectDeletedFromAlgoliaWithPromise;
 module.exports.checkAlgoliaObjectEqualsFirestoreEntityFromPromise = checkAlgoliaObjectEqualsFirestoreEntityFromPromise;
 
