@@ -39,7 +39,7 @@ public class AdRowProcessor {
       .endDate(row[3])
       .impressionsMin(getImpressionsMin(row[4]))
       .impressionsMax(getImpressionsMax(row[4]))
-      .ageTargetingEnabled(isAgeTargetingEnabled(row[5]))
+      .isTargetingAge(getAgeTargets(row[5]))
       .genderTarget(getList(row[6]))
       .geoTarget(getList(row[7]))
       .spendMin(getLong(row[8]))
@@ -52,7 +52,6 @@ public class AdRowProcessor {
       .contentSentiment(row[15].trim())
       .contentTerms(row[16].trim())
       .build();
-    System.out.println(ad.toString());
     return ad;
   }
 
@@ -93,7 +92,7 @@ public class AdRowProcessor {
     return Long.parseLong(arr[arr.length - 1]);   
   }
 
-  public boolean isAgeTargetingEnabled(String str) {
+  public boolean getAgeTargets(String str) {
     if (str.trim().equals("Not targeted")) {
       return false; 
     }

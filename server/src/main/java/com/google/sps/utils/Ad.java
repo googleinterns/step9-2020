@@ -14,11 +14,11 @@ public class Ad {
 
     public String id; 
     public String advertiser;  
-    public String startDate;
-    public String endDate;
+    public String startDate; // isostring format
+    public String endDate; //isostring
     public long impressionsMin; 
     public long impressionsMax; 
-    public boolean ageTargetingEnabled; 
+    public boolean isTargetingAge; 
     public List<String> genderTarget; 
     public List<String> geoTarget;
     public long spendMin; 
@@ -31,9 +31,8 @@ public class Ad {
     public String contentSentiment; 
     public String contentTerms; 
 
-  public Ad() {
   // Must have a public no-argument constructor for Firesbase
-  }  
+  public Ad() {}  
 
   private Ad(AdBuilder builder) {
     this.id = builder.id;
@@ -42,7 +41,7 @@ public class Ad {
     this.endDate = builder.endDate; 
     this.impressionsMin = builder.impressionsMin;
     this.impressionsMax = builder.impressionsMax; 
-    this.ageTargetingEnabled = builder.ageTargetingEnabled;
+    this.isTargetingAge = builder.isTargetingAge;
     this.genderTarget = builder.genderTarget; 
     this.geoTarget = builder.geoTarget; 
     this.spendMin = builder.spendMin; 
@@ -65,7 +64,7 @@ public class Ad {
       .append("\nEnd Date: " + this.endDate.toString())
       .append("\nMinimum Number of Impressions: " + this.impressionsMin)
       .append("\nMaximum Number of Impressions: " + this.impressionsMax)  
-      .append("\nAge Targeting Enabled: " + this.ageTargetingEnabled)  
+      .append("\nAge Targeting Enabled: " + this.isTargetingAge)  
       .append("\nGender Targets: " + this.genderTarget)
       .append("\nGeo Targets: " + this.geoTarget)
       .append("\nSpend Min: " + this.spendMin)
@@ -89,7 +88,7 @@ public class Ad {
     public String endDate; 
     public long impressionsMin; 
     public long impressionsMax; 
-    public boolean ageTargetingEnabled; 
+    public boolean isTargetingAge; 
     public List<String> genderTarget; 
     public List<String> geoTarget;
     public long spendMin; 
@@ -132,8 +131,8 @@ public class Ad {
       return this; 
     }
 
-    public AdBuilder ageTargetingEnabled(boolean value) {
-      this.ageTargetingEnabled = value;
+    public AdBuilder isTargetingAge(boolean value) {
+      this.isTargetingAge = value;
       return this; 
     }
 
