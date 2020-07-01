@@ -20,6 +20,6 @@ html {
     display: inline-block;
   }
   .ais-Hits-item {
-    width: 600px;
+    width: 100%;
   }
 }

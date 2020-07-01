@@ -20,15 +20,22 @@ const Search = () => {
 
   return (
     <div className="search-container">
-      <div className={showFilter ? 'container' : 'no-container'}>
+      <div className="container">
         <InstantSearch searchClient={searchClient} indexName="dev_ADS">
-          <div className="filter-container">
+          <header className="header center">
             <h3
               className="filter-header"
               onClick={() => setShowFilter(!showFilter)}
             >
               {`(${showFilter ? '-' : '+'}) FILTERS`}
             </h3>
+            <img src={tardigrade} className="logo" />
+            <SearchBox
+              className="searchbox"
+              translations={{ placeholder: 'Search Ads...' }}
+            />
+          </header>
+          <div className="search-body">
             {showFilter && (
               <div className="search-panel__filters">
                 <div className="filter-item">
@@ -57,19 +64,12 @@ const Search = () => {
                 </div>
               </div>
             )}
-          </div>
-          <div className="search-panel__results center">
-            <header className="header center">
-              <img src={tardigrade} className="logo" />
-            </header>
-            <SearchBox
-              className="searchbox"
-              translations={{ placeholder: 'Search Ads...' }}
-            />
-            <Hits hitComponent={Hit} />
+            <div className="search-panel__results center">
+              <Hits hitComponent={Hit} />
 
-            <div className="pagination">
-              <Pagination />
+              <div className="pagination">
+                <Pagination />
+              </div>
             </div>
           </div>
         </InstantSearch>
