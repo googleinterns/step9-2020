@@ -5,4 +5,4 @@ in particular, you will need an api key. Don't push your api key to github pleas
 
 The test file with STRING_ONE and STRING_TWO runs for me in about 1 second, so expect about 1/4 of a second per api call. Query rate limit is 600/minute so that's pretty good.  
 
-Credit to Scarlet for putting together the scraping and connecting the analysis to the CSV, thank you scarlet!
+Credit to Scarlet for putting together the scraping and connecting the analysis to the CSV, thank you Scarlet!
