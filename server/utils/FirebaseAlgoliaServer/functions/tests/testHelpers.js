@@ -23,7 +23,7 @@ const ADMIN_KEY = functions.config().algolia.key;
 const client = algoliasearch(APP_ID, ADMIN_KEY);
 const index = client.initIndex('dev_ADS');
 
-const DEFAULT_SLEEP = 5000; // Firebase->Algolia takes about 2 sec, wcs.
+const DEFAULT_SLEEP = 5000; // Firebase->Algolia takes a couple secs, WCS
 
 /**
  * Firebase helper functions
@@ -221,8 +221,7 @@ function isEquivalent(a, b) {
     var aProps = Object.getOwnPropertyNames(a);
     var bProps = Object.getOwnPropertyNames(b);
 
-    // If number of properties is different,
-    // objects are not equivalent
+    // If number of properties is different, objects are not equivalent
     if (aProps.length != bProps.length) {
         return false;
     }
@@ -230,15 +229,13 @@ function isEquivalent(a, b) {
     for (var i = 0; i < aProps.length; i++) {
         var propName = aProps[i];
 
-        // If values of same property are not equal,
-        // objects are not equivalent
+        // If values of same property are not equal, objects are not equivalent
         if (a[propName] !== b[propName]) {
             return false;
         }
     }
 
-    // If we made it this far, objects
-    // are considered equivalent
+    // If we made it this far, objects are considered equivalent
     return true;
 }
 
