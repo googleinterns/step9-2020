@@ -52,7 +52,7 @@ public class AdRowProcessor {
       .contentSentiment(row[15].trim())
       .contentTerms(row[16].trim())
       .build();
-    // System.out.println(ad.toString());
+    System.out.println(ad.toString());
     return ad;
   }
 
