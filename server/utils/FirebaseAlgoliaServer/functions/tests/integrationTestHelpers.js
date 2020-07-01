@@ -25,6 +25,8 @@ const index = client.initIndex('dev_ADS'); // current index
 const DEFAULT_SLEEP = 5000; // Firebase->Algolia takes a couple secs, WCS
 
 // Firebase helper functions 
+// N.B.: A lot of verbose names ahead. Not really sure if better names
+// Exist for most of these. 
 
 /**
  * Add a json entity to COLLECTION 
@@ -38,7 +40,6 @@ async function addEntity(jsonEntity) {
   return entityPromise;
 }
 
-
 /**
  * Delete an entity by it's corresponding firestore id
  * @param {number=} entityId an entities id, taken directly from a promise
@@ -48,6 +49,53 @@ async function deleteEntity(entityId) {
   const deletePromise = await db.collection(COLLECTION).doc(entityId).delete()
   await sleep(DEFAULT_SLEEP); // Give the deletion some time to reach Algolia
   return deletePromise;      
+}
+
+/**
+ * Wrapper function for deleteEntity
+ * Node JS requires a catch statement 
+ * @param {!Promise=} entityPromise promise returned when entity was made
+ * @return {!Promise} 
+ */
+function deleteEntityFromPromise(entityPromise) {
+  var deletePromise = 
+      entityPromise.then(promiseValues => {
+            deleteEntity(promiseValues.id);
+          }).catch((error) => console.log(error));
+  return deletePromise;
+}
+
+/**
+ * Validates that an entity has been deleted from firestore
+ * If it still exists, throws an error
+ * If it's been deleted, writes to the console
+ * @param {number=} entityId firestore id for entity being updated
+ */
+async function checkDeleted(entityId) {
+  const entity = await db.collection(COLLECTION).doc(entityId).get();
+  if(entity.exists) {
+    throw(`Document ${entityId} delete FAILURE.`)
+  } else {
+    console.log(`Document ${entityId} delete SUCCESS.`)
+  }
+}
+
+/**
+ * Wrapper function for checkDeleted
+ * If an error is thrown (i.e., entity not deleted), it will be caught
+ * @param {!Promise=} entityPromise promise returned when entity was made
+ * @return {!Promise} 
+ */
+async function checkDeletedFromPromise(entityPromise) {
+  await sleep(DEFAULT_SLEEP); // Allow the delete some time to propogate 
+
+  const checkDeletedPromise = 
+    entityPromise.then((promiseValue) => {
+      checkDeleted(promiseValue.id)
+      .catch((error) => console.log(error));
+    });
+
+  return checkDeletedPromise;
 }
 
 /**
@@ -61,6 +109,19 @@ async function updateEntity(entityId, jsonEntityUpdates) {
                                 .doc(entityId)
                                 .update(jsonEntityUpdates);
   return updatePromise;
+}
+
+/**
+ * Wrapper function for updateEntity
+ * @param {!Promise=} entityPromise promise returned when entity was made
+ * @param {json=} jsonEntityUpdates new values for entity k:v pairings
+ */
+function updateEntityFromPromise(entityPromise, jsonEntityUpdates) {
+  var updatePromise = 
+    entityPromise.then(promiseValues => {
+      updateEntity(promiseValues.id, jsonEntityUpdates);
+    });
+  return entityPromise;
 }
 
 /**
@@ -87,66 +148,6 @@ async function checkEntityEquals(entityId, expectedData) {
 }
 
 /**
- * Validates that an entity has been deleted from firestore
- * If it still exists, throws an error
- * If it's been deleted, writes to the console
- * @param {number=} entityId firestore id for entity being updated
- */
-async function checkDeleted(entityId) {
-  const entity = await db.collection(COLLECTION).doc(entityId).get();
-  if(entity.exists) {
-    throw(`Document ${entityId} delete FAILURE.`)
-  } else {
-    console.log(`Document ${entityId} delete SUCCESS.`)
-  }
-}
-
-/**
- * Wrapper function for updateEntity
- * @param {!Promise=} entityPromise promise returned when entity was made
- * @param {json=} jsonEntityUpdates new values for entity k:v pairings
- */
-function updateEntityFromPromise(entityPromise, jsonEntityUpdates) {
-  var updatePromise = 
-    entityPromise.then(promiseValues => {
-      updateEntity(promiseValues.id, jsonEntityUpdates);
-    });
-  return entityPromise;
-}
-
-/**
- * Wrapper function for deleteEntity
- * Node JS requires a catch statement 
- * @param {!Promise=} entityPromise promise returned when entity was made
- * @return {!Promise} 
- */
-function deleteEntityFromPromise(entityPromise) {
-  var deletePromise = 
-      entityPromise.then(promiseValues => {
-            deleteEntity(promiseValues.id);
-          }).catch((error) => console.log(error));
-  return deletePromise;
-}
-
-/**
- * Wrapper function for checkDeleted
- * If an error is thrown (i.e., entity not deleted), it will be caught
- * @param {!Promise=} entityPromise promise returned when entity was made
- * @return {!Promise} 
- */
-async function checkDeletedFromPromise(entityPromise) {
-  await sleep(DEFAULT_SLEEP); // Allow the delete some time to propogate 
-
-  const checkDeletedPromise = 
-    entityPromise.then((promiseValue) => {
-      checkDeleted(promiseValue.id)
-      .catch((error) => console.log(error));
-    });
-
-  return checkDeletedPromise;
-}
-
-/**
  * Wrapper for checkEntityEquals
  * If the entity doesn't match expected data, catches the error
  * @param {!Promise=} entityPromise promise returned when entity was made
@@ -161,7 +162,6 @@ function checkEntityEqualsFromPromise(entityPromise, expectedData) {
       });
   return entityPromise;
 }
-
 
 // Algolia helper functions 
 
@@ -209,6 +209,9 @@ async function checkObjectDeletedFromAlgoliaWithPromise(promise) {
         throw("Algolia object should not exist but it does")
       }).catch(function onError(error) {
         console.log("Above malformed message normal. Algolia delete SUCCESS.")
+        // Above message is an unavoidable 'Malformed object ...' error
+        // The only way to test for existence is to call for it directly
+        // And when it isn't found, an error has to be thrown... then caught
       });
   return algoliaPromise;
 }
@@ -220,7 +223,10 @@ async function checkObjectDeletedFromAlgoliaWithPromise(promise) {
  * @param {!Promise=} entityPromise promise returned when entity was made
  */
 async function checkAlgoliaObjectEqualsFirestoreEntityFromPromise(entityPromise) {
+  await sleep(DEFAULT_SLEEP); // Give time for propogation to algolia
+
   const algoliaPromise = getObjectFromAlgoliaWithPromise(entityPromise);
+
   algoliaPromise.then(object => {
     const algoliaData = object.data;
     checkEntityEqualsFromPromise(entityPromise, algoliaData);
@@ -239,6 +245,7 @@ async function checkAlgoliaObjectEqualsFirestoreEntityFromPromise(entityPromise)
 function deleteFromEverywhere(initialPromise) {
   setTimeout(function(){
     console.log("Attemping to delete from everywhere"); 
+
     const deletePromise = deleteEntityFromPromise(initialPromise);
     const checkDeleted = checkDeletedFromPromise(initialPromise);
     const checkDeletedFromAlgolia = checkObjectDeletedFromAlgoliaWithPromise(initialPromise)
@@ -247,6 +254,8 @@ function deleteFromEverywhere(initialPromise) {
 
 /**
  * Checks equivalence of JSON objects piecewise
+ * Q: Why not just JSON.stringify(a) = JSON.stringify(b)?
+ * A: JS does not guarantee a particular key order :(. 
  * @param {json=} jsonObjectA initial json object
  * @param {json=} jsonObjectB json object to compare against
  */
@@ -282,9 +291,6 @@ function isEquivalent(jsonObjectA, jsonObjectB) {
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-
-
 
 // Make some functions available for import
 module.exports.addEntity = addEntity;

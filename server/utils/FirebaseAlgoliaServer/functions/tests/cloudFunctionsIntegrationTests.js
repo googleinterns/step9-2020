@@ -1,6 +1,6 @@
 /**
  * BACKGROUND
- * This code indirectly tests the firebase cloud functions:
+ * Integration tests for: 
  * addEntityToIndex, deleteEntityFromIndex, updateRecordInIndex.
  *
  * These functions essentially link two different databases in realtime,
@@ -18,9 +18,9 @@
  * Experimentally determined times so that calls get processed correctly 
  *
  * TL;DR: 
- * - Can't test normally, so test it this abnormal and _painful_ way
- * - Kind of stupid
- * - If it's stupid but it works...  
+ * - These are integration test
+ * - To compile a specific test use
+ *   `node -e 'require("./cloudFunctionsIntegrationTests").foo()'`
  */
 
 /*
@@ -38,7 +38,7 @@
  * RUN TESTS INDIVIDUALLY TO AVOID ASYNC ISSUES!
  */
 
-var helpers = require('./testHelpers');
+var helpers = require('./integrationTestHelpers');
 
 
 /**
@@ -46,7 +46,7 @@ var helpers = require('./testHelpers');
  * Then delete it from both DBs.
  */
 function test_addDelete_singleEntity_SUCCESS() {
-  console.log("Testing singleEntityDeliveredAndDeleted_SUCCESS")
+  console.log("Testing test_addDelete_singleEntity_SUCCESS")
 
   // Create in firestore and make sure it gets to algolia
   var addPromise = 
@@ -65,7 +65,7 @@ function test_addDelete_singleEntity_SUCCESS() {
  *       easiest way to test this is through the firebase/algolia console. 
  */
 function test_addUpdateDelete_singleEntity_SUCCESS() {
-  console.log("Testing singleEntityUpdated_SUCCESS")
+  console.log("Testing test_addUpdateDelete_singleEntity_SUCCESS")
 
   // Create in firestore and make sure it gets to algolia
   var addPromise = 
@@ -92,7 +92,7 @@ function test_addUpdateDelete_singleEntity_SUCCESS() {
  * Creating two entities and deleting one of them shouldn't delete the other.
  */
 function test_addDelete_noDeletionSideEffect_SUCCESS() {
-  console.log("Testing twoEntitiesAddedDeletedIndependently_SUCCESS");
+  console.log("Testing test_addDelete_noDeletionSideEffect_SUCCESS");
 
   // Create in firestore and make sure it gets to algolia
   var addPromiseOne = 
@@ -142,5 +142,4 @@ function test_update_noSideEffects_SUCCESS() {
   }, 3000);  
 }
 
-test_addDelete_singleEntity_SUCCESS()
 
