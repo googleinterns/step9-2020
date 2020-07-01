@@ -2,12 +2,12 @@ import './ResultList.css';
 
 import { Hits, Pagination } from 'react-instantsearch-dom';
 
-import Hit from '../Hit/Hit';
 import React from 'react';
+import ResultItem from '../ResultItem/ResultItem';
 
 const ResultList = () => (
   <div className="search-panel__results center">
-    <Hits hitComponent={Hit} /> {/* display a list of results. */}
+    <Hits hitComponent={ResultItem} /> {/* display a list of results. */}
     <div className="pagination">
       <Pagination />
     </div>

@@ -1,0 +1,14 @@
+.highlight-header {
+  color: #0169a1 !important;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.highlight-body {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.ais-Hits-item {
+  padding: 25px;
+}
