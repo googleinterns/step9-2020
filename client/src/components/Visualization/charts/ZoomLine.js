@@ -7,16 +7,19 @@ import {
   VictoryZoomContainer,
 } from 'victory';
 
+import { generateRandomHexColor } from '../../../utils/Utils';
+
 const ZoomLine = () => {
   const [zoomDomain, setZoomDomain] = useState({
     x: [new Date(1990, 1, 1), new Date(2009, 1, 1)],
   });
+  const randomColor = generateRandomHexColor();
 
   return (
     <div className="chart search-body center">
       <VictoryChart
         width={500}
-        height={470}
+        height={500}
         scale={{ x: 'time' }}
         containerComponent={
           <VictoryZoomContainer
@@ -28,7 +31,7 @@ const ZoomLine = () => {
       >
         <VictoryLine
           style={{
-            data: { stroke: 'tomato' },
+            data: { stroke: randomColor },
           }}
           data={[
             { a: new Date(1982, 1, 1), b: 125 },
@@ -60,7 +63,7 @@ const ZoomLine = () => {
         <VictoryAxis tickFormat={x => new Date(x).getFullYear()} />
         <VictoryLine
           style={{
-            data: { stroke: 'tomato' },
+            data: { stroke: randomColor },
           }}
           data={[
             { key: new Date(1982, 1, 1), b: 125 },

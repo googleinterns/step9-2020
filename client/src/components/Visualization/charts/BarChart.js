@@ -1,18 +1,19 @@
 import { Bar, VictoryBar, VictoryChart } from 'victory';
 
 import React from 'react';
+import { generateRandomHexColor } from '../../../utils/Utils';
 
 const BarChart = () => (
   <div className="chart">
     <VictoryChart
-      height={400}
-      width={400}
+      height={500}
+      width={500}
       domainPadding={{ x: 50, y: [0, 20] }}
       scale={{ x: 'time' }}
     >
       <VictoryBar
         dataComponent={<Bar />}
-        style={{ data: { fill: 'green' } }}
+        style={{ data: { fill: generateRandomHexColor() } }}
         data={[
           { x: new Date(1986, 1, 1), y: 2 },
           { x: new Date(1996, 1, 1), y: 3 },
