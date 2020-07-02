@@ -5,14 +5,14 @@
 .container {
   margin: 0 auto;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   flex-direction: column;
 }
 
 .filter-header {
   position: absolute;
   left: 20px;
-  top: 5px;
+  top: 80px;
   cursor: pointer;
   user-select: none;
   color: white;

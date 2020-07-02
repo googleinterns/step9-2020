@@ -1,0 +1,25 @@
+.visualization-container {
+  width: 100%;
+}
+
+.chart {
+  margin-bottom: 50px;
+}
+
+select {
+  width: 200px;
+  padding: 7px 5px;
+  margin-bottom: 2em;
+  outline: none;
+  color: rgb(63, 63, 63);
+  font-size: 16px;
+}
+
+label {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.margin-right {
+  margin-right: 50px;
+}

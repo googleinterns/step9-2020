@@ -19,7 +19,8 @@
     "react-dom": "16.12.0",
     "react-input-range": "^1.3.0",
     "react-instantsearch-dom": "6.6.0",
-    "react-scripts": "^3.4.1"
+    "react-scripts": "^3.4.1",
+    "victory": "^35.0.2"
   },
   "devDependencies": {
     "eslint": "6.6.0",
