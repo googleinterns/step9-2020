@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 const Header = props => {
-  const { setCurrentPage } = props;
+  const { currentPage, setCurrentPage } = props;
 
   return (
     <div className="header">
@@ -14,7 +14,11 @@ const Header = props => {
       </h2>
       <div className="search-body">
         {HEADERS.map((item, index) => (
-          <p key={index} onClick={() => setCurrentPage(item)}>
+          <p
+            className={currentPage === item ? 'selected-header' : ''}
+            key={index}
+            onClick={() => setCurrentPage(item)}
+          >
             {item}
           </p>
         ))}
@@ -24,6 +28,7 @@ const Header = props => {
 };
 
 Header.propTypes = {
+  currentPage: PropTypes.string,
   setCurrentPage: PropTypes.func,
 };
 

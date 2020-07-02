@@ -19,7 +19,3 @@
 .filter-item {
   flex: 1;
 }
-
-.search-panel__filters .ais-SearchBox-form {
-  width: 80%;
-}

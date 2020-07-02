@@ -16,7 +16,7 @@ const App = () => {
 
   return (
     <div>
-      <Header setCurrentPage={setCurrentPage} />
+      <Header currentPage={currentPage} setCurrentPage={setCurrentPage} />
       {pageMap[currentPage]}
     </div>
   );

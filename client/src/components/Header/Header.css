@@ -7,10 +7,16 @@
 
 .header p {
   color: #6e6e6e;
-  margin: 0px 30px;
+  padding: 5px 10px;
+  margin-right: 20px;
   user-select: none;
   cursor: pointer;
   font-weight: 500;
+}
+
+.selected-header {
+  background-color: rgb(218, 238, 255);
+  border-left: #0077b5 solid 2px;
 }
 
 .header p:hover {
