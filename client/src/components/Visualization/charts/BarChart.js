@@ -1,28 +1,32 @@
 import { Bar, VictoryBar, VictoryChart } from 'victory';
 
+import PropTypes from 'prop-types';
 import React from 'react';
-import { generateRandomHexColor } from '../../../utils/Utils';
 
-const BarChart = () => (
-  <div className="chart">
-    <VictoryChart
-      height={500}
-      width={500}
-      domainPadding={{ x: 50, y: [0, 20] }}
-      scale={{ x: 'time' }}
-    >
-      <VictoryBar
-        dataComponent={<Bar />}
-        style={{ data: { fill: generateRandomHexColor() } }}
-        data={[
-          { x: new Date(1986, 1, 1), y: 2 },
-          { x: new Date(1996, 1, 1), y: 3 },
-          { x: new Date(2006, 1, 1), y: 5 },
-          { x: new Date(2016, 1, 1), y: 4 },
-        ]}
-      />
-    </VictoryChart>
-  </div>
-);
+const COLOR = 'tomato';
+
+const BarChart = props => {
+  const { data } = props;
+  return (
+    <div className="chart">
+      <VictoryChart
+        padding={120}
+        height={600}
+        width={800}
+        scale={{ x: 'time' }}
+      >
+        <VictoryBar
+          dataComponent={<Bar />}
+          style={{ data: { fill: COLOR } }}
+          data={data}
+        />
+      </VictoryChart>
+    </div>
+  );
+};
+
+BarChart.propTypes = {
+  data: PropTypes.array,
+};
 
 export default BarChart;

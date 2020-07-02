@@ -5,47 +5,74 @@ import {
   X_VALUES,
   Y_VALUES,
 } from '../../constants/visualization_constant';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import BarChart from './charts/BarChart';
+import CustomSelect from '../CustomSelect/CustomSelect';
 import Interpolation from './charts/Interpolation';
-import PropTypes from 'prop-types';
 import ZoomLine from './charts/ZoomLine';
+import { convertStringToObject } from '../../utils/Utils';
+import { database } from '../../firebase/firebase';
 import tardigrade from '../../images/tardigrade.png';
-
-const CustomSelect = props => {
-  const { label, value, list, setFunction } = props;
-
-  return (
-    <div className={`container${label !== 'y-axis' ? ' margin-right' : ''}`}>
-      <label>{label}</label>
-      <select value={value} onChange={e => setFunction(e.target.value)}>
-        {list.map((item, index) => (
-          <option value={item} key={index}>
-            {item}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-};
-
-CustomSelect.propTypes = {
-  label: PropTypes.string,
-  value: PropTypes.string,
-  list: PropTypes.array,
-  setFunction: PropTypes.func,
-};
 
 const Visualization = () => {
   const [chartType, setChartType] = useState('Zoomable Line');
-  const [x, setX] = useState('USD Spent');
-  const [y, setY] = useState('Time');
+  const [x, setX] = useState('Time');
+  const [y, setY] = useState('USD Spent');
+  const [data, setData] = useState([]);
+
+  const spendData = [];
+  const impressionData = [];
+  const regionData = [];
+  const genderData = [];
+  const contentSentimentData = [];
+
+  const handleChart = () => {
+    const dataMap = {
+      'USD Spent': spendData,
+      Impressions: impressionData,
+      Region: regionData,
+      Gender: genderData,
+      'Content Sentiment': contentSentimentData,
+    };
+    setData(dataMap[y]);
+  };
+
+  const handleDoc = doc => {
+    const {
+      startDate,
+      endDate,
+      impressionsMax,
+      spendMax,
+      geoTarget,
+      genderTarget,
+      contentSentiment,
+    } = doc.data();
+    const dateRange = [new Date(startDate), new Date(endDate)];
+    const magnitude = convertStringToObject(contentSentiment).magnitude;
+    dateRange.map(date => {
+      spendData.push({ x: date, y: spendMax });
+      impressionData.push({ x: date, y: impressionsMax });
+      contentSentimentData.push({ x: date, y: magnitude });
+      geoTarget.map(geo => regionData.push({ x: date, y: geo }));
+      genderTarget.map(gender => genderData.push({ x: date, y: gender }));
+    });
+  };
+
+  useEffect(() => {
+    database
+      .collection('ads')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => handleDoc(doc));
+        handleChart();
+      });
+  }, [spendData, impressionData]);
 
   const chartMap = {
-    'Zoomable Line': <ZoomLine />,
-    Interpolation: <Interpolation />,
-    'Vertical Bar': <BarChart />,
+    'Zoomable Line': <ZoomLine data={data} />,
+    Interpolation: <Interpolation data={data} />,
+    'Vertical Bar': <BarChart data={data} />,
   };
 
   return (
@@ -60,6 +87,7 @@ const Visualization = () => {
             setFunction={setChartType}
           />
           <CustomSelect
+            disabled={true}
             label={'x-axis'}
             value={x}
             list={X_VALUES}
@@ -73,7 +101,7 @@ const Visualization = () => {
           />
         </div>
       </header>
-      <div className="center">{chartMap[chartType]}</div>
+      <div className="center">{data.length > 0 && chartMap[chartType]}</div>
     </div>
   );
 };
