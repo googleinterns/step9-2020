@@ -13,26 +13,45 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import com.google.sps.utils.Ad.Builder;
 import com.google.sps.utils.Ad;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.ArrayList; 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AdRowProcessor {
 
+  private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
   private String[] row; 
 
-  public AdRowProcessor(String[] csvRow) {
+  public AdRowProcessor(String[] csvRow) throws Exception {
     this.row = csvRow; 
+    // initialize app
+    FileInputStream serviceAccount = new FileInputStream(PATH_TO_SERVICE_ACCOUNT);
+    FirebaseOptions options = new FirebaseOptions.Builder()
+        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+        .setDatabaseUrl("https://step9-2020-capstone.firebaseio.com")
+        .build();
+    if(FirebaseApp.getApps().isEmpty()) {
+      FirebaseApp.initializeApp(options);
+    }
+  }
+
+  public void addAdToDatabase(Ad ad, int rowIndex, String COLLECTION) throws Exception {
+    Firestore db = FirestoreClient.getFirestore();    
+    ApiFuture<WriteResult> result = db.collection(COLLECTION).document(ad.id).set(ad);
+    System.out.println("Update time : " + result.get().getUpdateTime());
   }
 
   public Ad createAd() {
-    Ad ad = new Ad.AdBuilder()
+    Ad ad = Ad.newBuilder()
         .id(row[0])
         .advertiser(row[1])
         .startDate(row[2]) 
@@ -40,8 +59,8 @@ public class AdRowProcessor {
         .impressionsMin(getImpressionsMin(row[4]))
         .impressionsMax(getImpressionsMax(row[4]))
         .isTargetingAge(getAgeTargets(row[5]))
-        .genderTarget(getList(row[6]))
-        .geoTarget(getList(row[7]))
+        .genderTargets(convertStringToList(row[6]))
+        .geoTargets(convertStringToList(row[7]))
         .spendMin(getLong(row[8]))
         .spendMax(getLong(row[9]))
         .headline(row[10].trim())
@@ -52,22 +71,7 @@ public class AdRowProcessor {
         .contentSentiment(row[15].trim())
         .contentTerms(row[16].trim())
         .build();
-    return ad;
-  }
-
-  public void addAdToDatabase(Ad ad, int rowIndex, String COLLECTION) throws Exception {
-    FileInputStream serviceAccount = new FileInputStream("../resources/accountKey.json");
-    FirebaseOptions options = new FirebaseOptions.Builder()
-      .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-      .setDatabaseUrl("https://step9-2020-capstone.firebaseio.com")
-      .build();
-    // initialize only if necessary 
-    if(FirebaseApp.getApps().isEmpty()) {
-      FirebaseApp.initializeApp(options);
-    }
-    Firestore db = FirestoreClient.getFirestore();    
-    ApiFuture<WriteResult> result = db.collection(COLLECTION).document(ad.id).set(ad);
-    System.out.println("Update time : " + result.get().getUpdateTime());
+    return ad; 
   }
 
   public long getImpressionsMin(String str) {
@@ -99,13 +103,11 @@ public class AdRowProcessor {
     return true; 
   }
 
-  public List<String> getList(String str) {
-    List<String> l = Arrays.asList(str.split(","));
-    List<String> trimmedList = new ArrayList<String>();  
-    for(String s: l) {
-      trimmedList.add(s.trim());
-    }
-    return trimmedList; 
+  public List<String> convertStringToList(String str) {
+    List<String> trimmedList = Arrays.stream(str.split(","))
+        .map(String::trim)
+        .collect(Collectors.toList());
+    return trimmedList;  
   }
 
   public long getLong(String str) {
