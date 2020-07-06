@@ -144,75 +144,75 @@ public class Ad {
       instance = new Ad(); 
     }
     public Ad.Builder id(String id) {
-      instance.id = id; 
+      instance.setId(id);  
       return this; 
     }
     public Ad.Builder advertiser(String advertiser) {
-      instance.advertiser = advertiser; 
+      instance.setAdvertiser(advertiser); 
       return this; 
     }
     public Ad.Builder startDate(String startDate) {
-      instance.startDate = startDate; 
+      instance.setStartDate(startDate); 
       return this; 
     }
     public Ad.Builder endDate(String endDate) {
-      instance.endDate = endDate; 
+      instance.setEndDate(endDate); 
       return this; 
     }
     public Ad.Builder impressionsMin(long impressionsMin) {
-      instance.impressionsMin = impressionsMin; 
+      instance.setImpressionsMin(impressionsMin); 
       return this; 
     }
     public Ad.Builder impressionsMax(long impressionsMax) {
-      instance.impressionsMax = impressionsMax; 
+      instance.setImpressionsMax(impressionsMax); 
       return this; 
     }
     public Ad.Builder isTargetingAge(boolean isTargetingAge) {
-      instance.isTargetingAge = isTargetingAge; 
+      instance.setIsTargetingAge(isTargetingAge); 
       return this; 
     }
     public Ad.Builder genderTargets(List<String> genderTargets) {
-      instance.genderTargets = genderTargets; 
+      instance.setGenderTargets(genderTargets); 
       return this; 
     }
     public Ad.Builder geoTargets(List<String> geoTargets) {
-      instance.geoTargets = geoTargets; 
+      instance.setGeoTargets(geoTargets); 
       return this; 
     }
     public Ad.Builder spendMin(long spendMin) {
-      instance.spendMin = spendMin; 
+      instance.setSpendMin(spendMin); 
       return this; 
     }
     public Ad.Builder spendMax(long spendMax) {
-      instance.spendMax = spendMax; 
+      instance.setSpendMax(spendMax); 
       return this; 
     }
     public Ad.Builder headline(String headline) {
-      instance.headline = headline; 
+      instance.setHeadline(headline); 
       return this; 
     }
     public Ad.Builder link(String link) {
-      instance.link = link; 
+      instance.setLink(link); 
       return this; 
     }
     public Ad.Builder content(String content) {
-      instance.content = content; 
+      instance.setContent(content); 
       return this; 
     }
     public Ad.Builder headlineSentiment(String headlineSentiment) {
-      instance.headlineSentiment = headlineSentiment; 
+      instance.setHeadlineSentiment(headlineSentiment); 
       return this; 
     }
     public Ad.Builder headlineTerms(String headlineTerms) {
-      instance.headlineTerms = headlineTerms; 
+      instance.setHeadlineTerms(headlineTerms); 
       return this; 
     }
     public Ad.Builder contentSentiment(String contentSentiment) {
-      instance.contentSentiment = contentSentiment; 
+      instance.setContentSentiment(contentSentiment); 
       return this; 
     }
     public Ad.Builder contentTerms(String contentTerms) {
-      instance.contentTerms = contentTerms; 
+      instance.setContentTerms(contentTerms); 
       return this; 
     }
     public Ad build() {
