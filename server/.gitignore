@@ -1,3 +1,5 @@
 *.iml
 target/
+node_modules/
+testKey.json
 .idea
