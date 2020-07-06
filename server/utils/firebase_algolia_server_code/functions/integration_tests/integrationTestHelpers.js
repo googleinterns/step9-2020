@@ -218,6 +218,7 @@ async function checkObjectDeletedFromAlgoliaWithPromise(promise) {
         throw new Error("Algolia object should not exist but it does");
       }).catch(function onError(error) {
         console.log("Above malformed message normal. Algolia delete SUCCESS.");
+        
         // 'Above message' is an unavoidable 'Malformed object ...' error
         // The only way to test for existence is to call for it directly
         // And when it isn't found, an error has to be thrown... then caught

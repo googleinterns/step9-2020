@@ -9,6 +9,7 @@
  */
 
 const algoliasearch = require('algoliasearch');
+const algoliaFunctions = require('./algoliaFunctions');
 const functions = require('firebase-functions');
 
 /**
@@ -20,16 +21,18 @@ const functions = require('firebase-functions');
  *              algolia.app=APP_ID algolia.key=ADMIN_API_KEY
  * Now you can compile! 
  * Please _don't_ expose the API_KEY to the public.
+ * _don't_ commit runtimeconfig either please. 
  */
 const APP_ID = functions.config().algolia.app;
 const ADMIN_KEY = functions.config().algolia.key;
 
-// initialize algoliasearch API
+// Initialize algoliasearch API
 const client = algoliasearch(APP_ID, ADMIN_KEY);
 const index = client.initIndex('dev_ADS');
 
-// access an individual document in our `ads` collection
+// Access an individual document in our `ads` documents collection
 const DOC_NAME = 'ads/{adId}';
+const DOCS = functions.firestore.document(DOC_NAME);
 
 /**
  * Cloud functions below
@@ -43,45 +46,41 @@ const DOC_NAME = 'ads/{adId}';
  * https://cloud.google.com/functions/docs/bestpractices/retries
  */
 
+/**
+ * add an entity and all it's field to algolia
+ * with the same objectID
+ */
+function addEntityToIndex(algoliaIndex) {
+  exports.addEntityToIndex = 
+      DOCS.onCreate(snapshot => {
+        return algoliaFunctions.addEntityToIndex(algoliaIndex, snapshot);
+      });
+}
 
 /**
- * When an entity is added to firestore
- * add it (and all it's fields) to the algolia index.
- */
-
-/*
-exports.addEntityToIndex = functions.firestore
-    .document(DOC_NAME)
-    .onCreate(snapshot =>  { // snapshot is a standard naming convention 
-      const data = snapshot.data();
-      const objectID = snapshot.id; 
-
-      return index.saveObject({data, objectID}); // this is a promise
-    });
+* Update record corresponding to ad entity if a change occurs.
 */
-const cloudFunctions = require('./cloudFunctions');
-
-//exports.addEntityToIndex = cloudFunctions.addEntityToIndex(index, DOC_NAME);
-
-
-exports.addEntityToIndex = functions.firestore
-    .document(DOC_NAME)
-    .onCreate(snapshot => cloudFunctions.addEntityToIndex(index, snapshot));
-/**
- * Update record corresponding to ad entity if a change occurs.
- */
-exports.updateRecordInIndex = functions.firestore
-    .document(DOC_NAME)
-    .onUpdate(change => {
-      const newData = change.after.data();
-      const objectID = change.after.id; 
-
-      return index.saveObject({newData, objectID}); // also a promise
-    });
+function updateRecordInIndex(algoliaIndex) {
+  exports.updateRecordInIndex = 
+      DOCS.onUpdate(change => {
+        return algoliaFunctions.updateRecordInIndex(algoliaIndex, change);
+      });
+}
 
 /**
- * If delete an entity from firestore, delete the corresponding record
- */
-exports.deleteEntityFromIndex = functions.firestore
-    .document(DOC_NAME)
-    .onDelete(snapshot => index.deleteObject(snapshot.id)); // also a promise
+* If delete an entity from firestore, delete the corresponding record
+*/
+function deleteEntityFromIndex(algoliaIndex) {
+  exports.deleteEntityFromIndex = 
+      DOCS.onDelete(snapshot => {
+        return algoliaFunctions.deleteEntityFromIndex(algoliaIndex, snapshot);
+      }); 
+}
+
+addEntityToIndex(index);
+updateRecordInIndex(index);
+deleteEntityFromIndex(index);
+
+module.exports.addEntityToIndex = addEntityToIndex;
+module.exports.updateRecordInIndex = updateRecordInIndex;
+module.exports.deleteEntityFromIndex = deleteEntityFromIndex;
