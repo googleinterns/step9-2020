@@ -1,4 +1,4 @@
-/* 
+/* Description: Ad defines the ad objects that we write to Firebase.
  * Author: Kira Toal
  * Date: June 24, 2020
  */
@@ -6,26 +6,26 @@ package com.google.sps.utils;
 import java.util.List; 
  
 public class Ad {
-  // fields
-  public String id; 
-  public String advertiser;  
-  public String startDate; // isostring format
-  public String endDate; //isostring
-  public long impressionsMin; 
-  public long impressionsMax; 
-  public boolean isTargetingAge; 
-  public List<String> genderTargets; 
-  public List<String> geoTargets;
-  public long spendMin; 
-  public long spendMax; 
-  public String headline; 
-  public String link;
-  public String content;  
-  public String headlineSentiment; 
-  public String headlineTerms;
-  public String contentSentiment; 
-  public String contentTerms; 
-  // setter methods
+
+  private String id; 
+  private String advertiser;  
+  private String startDate; // isostring format
+  private String endDate; //isostring
+  private long impressionsMin; 
+  private long impressionsMax; 
+  private boolean isTargetingAge; 
+  private List<String> genderTargets; 
+  private List<String> geoTargets;
+  private long spendMin; 
+  private long spendMax; 
+  private String headline; 
+  private String link;
+  private String content;  
+  private String headlineSentiment; 
+  private String headlineTerms;
+  private String contentSentiment; 
+  private String contentTerms; 
+
   public void setId(String id) {
     this.id = id; 
   }
@@ -80,7 +80,7 @@ public class Ad {
   public void setContentTerms(String contentTerms) {
     this.contentTerms = contentTerms; 
   }
-  // getter methods 
+
   public String getId() {
     return this.id; 
   }

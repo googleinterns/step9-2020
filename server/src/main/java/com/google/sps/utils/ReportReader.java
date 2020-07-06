@@ -1,4 +1,5 @@
-/*
+/* Description: ReportReader reads in lines of CSV data and sends them 
+ *              to the processor. 
  * Author: Kira Toal
  * Date: June 24, 2020
  */
@@ -41,14 +42,14 @@ public class ReportReader {
       if (rowIndex >= START_ROW_INDEX) {
         AdRowProcessor processor = new AdRowProcessor(currentRow);
         Ad ad = processor.createAd(); 
-        processor.addAdToDatabase(ad, rowIndex, COLLECTION); 
+        processor.writeAd(ad, rowIndex, COLLECTION); 
       }
       rowIndex++;  
     }
     bufferedReader.close();
   }
 
-  public static void main(String[] args) throws IOException,Exception {
+  public static void main(String[] args) throws IOException, Exception {
     InputStream inputStream = ReportReader.class.getResourceAsStream(CSV_FILE_PATH);
     readCSV(inputStream);
   } 

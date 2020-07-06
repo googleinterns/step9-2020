@@ -30,6 +30,23 @@ public class AdRowProcessor {
 
   private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
+  private static final int ID_ROW = 0;
+  private static final int ADVERTISER_ROW = 1; 
+  private static final int START_DATE_ROW = 2;
+  private static final int END_DATE_ROW = 3;
+  private static final int IMPRESSIONS_ROW = 4;
+  private static final int IS_TARGETING_AGE_ROW = 5; 
+  private static final int GENDER_TARGETS_ROW = 6; 
+  private static final int GEO_TARGETS_ROW = 7;
+  private static final int SPEND_MIN_ROW = 8;
+  private static final int SPEND_MAX_ROW = 9; 
+  private static final int HEADLINE_ROW = 10; 
+  private static final int LINK_ROW = 11;
+  private static final int CONTENT_ROW = 12;
+  private static final int HEADLINE_SENTIMENT_ROW = 13;
+  private static final int HEADLINE_TERMS_ROW = 14;
+  private static final int CONTENT_SENTIMENT_ROW = 15;
+  private static final int CONTENT_TERMS_ROW = 16; 
   private String[] row; 
 
   public AdRowProcessor(String[] csvRow) throws Exception {
@@ -45,32 +62,32 @@ public class AdRowProcessor {
     }
   }
 
-  public void addAdToDatabase(Ad ad, int rowIndex, String collection) throws Exception {
+  public void writeAd(Ad ad, int rowIndex, String collection) throws Exception {
     Firestore db = FirestoreClient.getFirestore();    
-    ApiFuture<WriteResult> result = db.collection(collection).document(ad.id).set(ad);
+    ApiFuture<WriteResult> result = db.collection(collection).document(ad.getId()).set(ad);
     System.out.println("Update time : " + result.get().getUpdateTime());
   }
 
   public Ad createAd() {
     Ad ad = Ad.newBuilder()
-        .id(row[0])
-        .advertiser(row[1])
-        .startDate(row[2]) 
-        .endDate(row[3])
-        .impressionsMin(getImpressionsMin(row[4]))
-        .impressionsMax(getImpressionsMax(row[4]))
-        .isTargetingAge(getAgeTargets(row[5]))
-        .genderTargets(convertStringToList(row[6]))
-        .geoTargets(convertStringToList(row[7]))
-        .spendMin(convertStringToLong(row[8]))
-        .spendMax(convertStringToLong(row[9]))
-        .headline(row[10].trim())
-        .link(row[11].substring(3)) // trim "Ad" from "Ad {URL}"
-        .content(row[12].trim())
-        .headlineSentiment(row[13].trim())
-        .headlineTerms(row[14].trim())
-        .contentSentiment(row[15].trim())
-        .contentTerms(row[16].trim())
+        .id(row[ID_ROW])
+        .advertiser(row[ADVERTISER_ROW])
+        .startDate(row[START_DATE_ROW]) 
+        .endDate(row[END_DATE_ROW])
+        .impressionsMin(getImpressionsMin(row[IMPRESSIONS_ROW]))
+        .impressionsMax(getImpressionsMax(row[IMPRESSIONS_ROW]))
+        .isTargetingAge(getAgeTargets(row[IS_TARGETING_AGE_ROW]))
+        .genderTargets(convertStringToList(row[GENDER_TARGETS_ROW]))
+        .geoTargets(convertStringToList(row[GEO_TARGETS_ROW]))
+        .spendMin(convertStringToLong(row[SPEND_MIN_ROW]))
+        .spendMax(convertStringToLong(row[SPEND_MAX_ROW]))
+        .headline(row[HEADLINE_ROW].trim())
+        .link(row[LINK_ROW].substring(3)) // trim "Ad" from "Ad {URL}"
+        .content(row[CONTENT_ROW].trim())
+        .headlineSentiment(row[HEADLINE_SENTIMENT_ROW].trim())
+        .headlineTerms(row[HEADLINE_TERMS_ROW].trim())
+        .contentSentiment(row[CONTENT_SENTIMENT_ROW].trim())
+        .contentTerms(row[CONTENT_TERMS_ROW].trim())
         .build();
     return ad; 
   }
@@ -84,7 +101,7 @@ public class AdRowProcessor {
     return impressionsArray; 
   }
 
-  public long getImpressionsMin(String impressionsField) throws IllegalArgumentException{
+  public long getImpressionsMin(String impressionsField) throws IllegalArgumentException {
     String[] impressionsArray = formatImpressionField(impressionsField); 
     // If csv field uses "<=", arr has length 1 and min number of impressions is 0.
     if (impressionsArray.length > 1) {
