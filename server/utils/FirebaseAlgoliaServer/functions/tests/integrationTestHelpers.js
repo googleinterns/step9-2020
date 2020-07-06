@@ -64,7 +64,7 @@ async function deleteEntity(entityId) {
 function deleteEntityFromPromise(entityPromise) {
   var deletePromise = 
       entityPromise.then(promiseValues => {
-            deleteEntity(promiseValues.id);
+            return deleteEntity(promiseValues.id);
           }).catch((error) => console.log(error));
 
   return deletePromise;
@@ -80,9 +80,10 @@ async function checkDeleted(entityId) {
   const entity = await db.collection(COLLECTION).doc(entityId).get();
 
   if(entity.exists) {
-    throw(`Document ${entityId} delete FAILURE.`)
+    throw new Error(`Document ${entityId} delete FAILURE.`);
   } else {
-    console.log(`Document ${entityId} delete SUCCESS.`)
+    console.log(`Document ${entityId} delete SUCCESS.`);
+    return true;
   }
 }
 
@@ -97,9 +98,8 @@ async function checkDeletedFromPromise(entityPromise) {
 
   const checkDeletedPromise = 
     entityPromise.then((promiseValue) => {
-      checkDeleted(promiseValue.id)
-      .catch((error) => console.log(error));
-    });
+      return checkDeleted(promiseValue.id);
+    }).catch((error) => console.log(error));
 
   return checkDeletedPromise;
 }
@@ -127,7 +127,7 @@ async function updateEntity(entityId, jsonEntityUpdates) {
 function updateEntityFromPromise(entityPromise, jsonEntityUpdates) {
   var updatePromise = 
     entityPromise.then(promiseValues => {
-      updateEntity(promiseValues.id, jsonEntityUpdates);
+      return updateEntity(promiseValues.id, jsonEntityUpdates);
     });
 
   return entityPromise;
@@ -145,7 +145,7 @@ async function checkEntityEquals(entityId, expectedData) {
   const entity = await db.collection(COLLECTION).doc(entityId).get();
 
   if (!entity.exists) {
-    throw(`Document ${entityId} firestore retrieval FAILURE`);
+    throw new Error(`Document ${entityId} firestore retrieval FAILURE`);
   } else {
     const entityData = entity.data();
     const loggingString = 
@@ -155,6 +155,7 @@ async function checkEntityEquals(entityId, expectedData) {
     }
     console.log(loggingString);
     console.log("SUCCESS.\n");
+    return true;
   }
 }
 
@@ -166,9 +167,8 @@ async function checkEntityEquals(entityId, expectedData) {
  */
 function checkEntityEqualsFromPromise(entityPromise, expectedData) {
   entityPromise.then(promiseValue => {
-    checkEntityEquals(promiseValue.id, expectedData)
-    .catch((error) => console.log("Equality check FAILURE", error));
-  });
+    return checkEntityEquals(promiseValue.id, expectedData);
+  }).catch((error) => console.log("Equality check FAILURE", error));
 }
 
 // Algolia helper functions 
@@ -196,8 +196,9 @@ function getObjectFromAlgoliaWithPromise(promise) {
   algoliaPromise.then(object => {
     if (typeof object !== 'undefined') {
       console.log(`Found ${JSON.stringify(object.data)}`);
+      return null; // Each then should return a value...
     } else {
-      throw("Malformed object returned from algolia");
+      throw new Error("Malformed object returned from algolia");
     }
   }).catch((error) => console.log(error));
   
@@ -214,9 +215,9 @@ async function checkObjectDeletedFromAlgoliaWithPromise(promise) {
   await sleep(DEFAULT_SLEEP*2); // Wait for deletion to propogate
   const algoliaPromise = 
       getObjectFromAlgoliaWithPromise(promise).then(object => {
-        throw("Algolia object should not exist but it does")
+        throw new Error("Algolia object should not exist but it does");
       }).catch(function onError(error) {
-        console.log("Above malformed message normal. Algolia delete SUCCESS.")
+        console.log("Above malformed message normal. Algolia delete SUCCESS.");
         // 'Above message' is an unavoidable 'Malformed object ...' error
         // The only way to test for existence is to call for it directly
         // And when it isn't found, an error has to be thrown... then caught
@@ -237,7 +238,7 @@ async function checkAlgoliaObjectEqualsFirestoreEntityFromPromise(entityPromise)
 
   algoliaPromise.then(object => {
     const algoliaData = object.data;
-    checkEntityEqualsFromPromise(entityPromise, algoliaData);
+    return checkEntityEqualsFromPromise(entityPromise, algoliaData);
   }).catch((error) => {
     console.log("Weird error while comparing algolia and firebase ", error)
   });
@@ -273,7 +274,7 @@ function isEquivalent(jsonObjectA, jsonObjectB) {
     var bProps = Object.getOwnPropertyNames(jsonObjectB);
 
     // If number of properties is different, objects are not equivalent
-    if (aProps.length != bProps.length) {
+    if (aProps.length !== bProps.length) {
         return false;
     }
 

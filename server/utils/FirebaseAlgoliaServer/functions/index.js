@@ -48,6 +48,8 @@ const DOC_NAME = 'ads/{adId}';
  * When an entity is added to firestore
  * add it (and all it's fields) to the algolia index.
  */
+
+/*
 exports.addEntityToIndex = functions.firestore
     .document(DOC_NAME)
     .onCreate(snapshot =>  { // snapshot is a standard naming convention 
@@ -56,7 +58,15 @@ exports.addEntityToIndex = functions.firestore
 
       return index.saveObject({data, objectID}); // this is a promise
     });
+*/
+const cloudFunctions = require('./cloudFunctions');
 
+//exports.addEntityToIndex = cloudFunctions.addEntityToIndex(index, DOC_NAME);
+
+
+exports.addEntityToIndex = functions.firestore
+    .document(DOC_NAME)
+    .onCreate(snapshot => cloudFunctions.addEntityToIndex(index, snapshot));
 /**
  * Update record corresponding to ad entity if a change occurs.
  */

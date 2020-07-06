@@ -58,7 +58,7 @@ function test_addDelete_singleEntity_SUCCESS() {
   // This will also validate that the entities actually got deleted
   helpers.deleteFromEverywhere(addPromise);
 }
-
+test_addDelete_singleEntity_SUCCESS() 
 /**
  * Create an entity, update it, make sure the algolia version is updated
  * NOTE: may have problems depending on how long it takes algolia to get update
@@ -134,8 +134,7 @@ function test_update_noSideEffects_SUCCESS() {
     console.log("In the process of updating the entity");
     var updatePromise = 
         helpers
-        .updateEntityFromPromise
-        (addPromiseOne, {"Testing" : "if updates reach"});
+        .updateEntityFromPromise(addPromiseOne, {"Testing" : "if updates"});
     var twoIndependentFromUpdatePromise = 
         helpers
         .checkAlgoliaObjectEqualsFirestoreEntityFromPromise(addPromiseTwo);
