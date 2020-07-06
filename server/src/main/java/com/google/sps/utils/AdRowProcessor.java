@@ -74,31 +74,32 @@ public class AdRowProcessor {
     return ad; 
   }
 
-  public long getImpressionsMin(String str) throws IllegalArgumentException{
-    if (str.isEmpty()) {
-      return -1; 
-    }
-    String s = str.replace("k", "000").replace("M", "000000").replace(" ","").replace("\u2264", "");
-    String[] arr = s.split("-");
+  /* Min and max impression fields contain letters k and M as well as ≤. The 
+  formatImpressionField helper method makes the fields easier to parse later.
+  */ 
+  public String[] formatImpressionField(String str) {
+    String impressionsString = str.replace("k", "000").replace("M", "000000").replace(" ","").replace("≤", "");
+    String[] impressionsArray = impressionsString.split("-");
+    return impressionsArray; 
+  }
+
+  public long getImpressionsMin(String impressionsField) throws IllegalArgumentException{
+    String[] impressionsArray = formatImpressionField(impressionsField); 
     // If csv field uses "<=", arr has length 1 and min number of impressions is 0.
-    if (arr.length > 1) {
-        try {
-          return Long.parseLong(arr[0]);
-        } catch (IllegalArgumentException e) {
-          return -1; 
-        }
+    if (impressionsArray.length > 1) {
+      try {
+        return Long.parseLong(impressionsArray[0]);
+      } catch (IllegalArgumentException e) {
+        return -1; 
+      }
     }
     return 0;
   }
 
-  public long getImpressionsMax(String str) throws IllegalArgumentException {
-    if (str.isEmpty()) {
-      return -1; 
-    }
-    String s = str.replace("k", "000").replace("M", "000000").replace(" ","").replace("\u2264", "");
-    String[] arr = s.split("-");
+  public long getImpressionsMax(String impressionsField) throws IllegalArgumentException {
+    String[] impressionsArray = formatImpressionField(impressionsField); 
     try {
-      return Long.parseLong(arr[arr.length - 1]);   
+      return Long.parseLong(impressionsArray[impressionsArray.length - 1]);   
     } catch (IllegalArgumentException e) {
       return -1; 
     }
@@ -122,6 +123,6 @@ public class AdRowProcessor {
     if (str.isEmpty()) {
       return -1; 
     }
-    return (long)Double.parseDouble(str); 
+    return (long) Double.parseDouble(str); 
   }
 }
