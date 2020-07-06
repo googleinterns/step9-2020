@@ -1,0 +1,26 @@
+@import url("../../styles/colors.css");
+
+.search-panel-filters {
+  border: none;  
+  display: flex;
+  flex-direction: column;     
+  justify-content: flex-start;
+
+  margin: 30px;
+  margin-top: 0px !important;
+  height: fit-content;
+}
+
+.filter-text {
+  font-size: 20px;
+  color: var(--primary-color);
+  margin-top: 50px;
+}
+
+.filter-item {
+  flex: 1;
+}
+
+.search-panel-filters .ais-SearchBox-form {
+  width: 100%;
+}

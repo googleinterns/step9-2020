@@ -1,0 +1,16 @@
+@import url("../../styles/colors.css");
+
+.highlight-header {
+  color: var(--primary-color);
+  font-weight: 600;
+  line-height: 30px;
+}
+
+.highlight-body {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.ais-Hits-item {
+  padding: 25px;
+}
