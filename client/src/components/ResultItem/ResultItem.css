@@ -1,7 +1,9 @@
+@import url("../../styles/colors.css");
+
 .highlight-header {
-  color: #0169a1 !important;
-  cursor: pointer;
-  text-decoration: underline;
+  color: var(--primary-color);
+  font-weight: 600;
+  line-height: 30px;
 }
 
 .highlight-body {

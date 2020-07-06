@@ -41,7 +41,7 @@ const FilterList = () => {
     </div>
   ));
 
-  return <div className="search-panel__filters">{list}</div>;
+  return <div className="search-panel-filters">{list}</div>;
 };
 
 export default FilterList;

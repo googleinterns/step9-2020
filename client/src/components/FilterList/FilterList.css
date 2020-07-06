@@ -1,8 +1,9 @@
-.search-panel__filters {
+@import url("../../styles/colors.css");
+
+.search-panel-filters {
   border: none;  
   display: flex;
-  flex-direction: column;    
-  text-align: start;    
+  flex-direction: column;     
   justify-content: flex-start;
 
   margin: 30px;
@@ -12,7 +13,7 @@
 
 .filter-text {
   font-size: 20px;
-  color: #0077b5;
+  color: var(--primary-color);
   margin-top: 50px;
 }
 
@@ -20,6 +21,6 @@
   flex: 1;
 }
 
-.search-panel__filters .ais-SearchBox-form {
-  width: 80%;
+.search-panel-filters .ais-SearchBox-form {
+  width: 100%;
 }
