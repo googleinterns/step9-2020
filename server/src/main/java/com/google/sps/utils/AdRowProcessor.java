@@ -74,7 +74,7 @@ public class AdRowProcessor {
     return ad; 
   }
 
-  public long getImpressionsMin(String str) {
+  public long getImpressionsMin(String str) throws IllegalArgumentException{
     if (str.isEmpty()) {
       return -1; 
     }
@@ -82,18 +82,26 @@ public class AdRowProcessor {
     String[] arr = s.split("-");
     // If csv field uses "<=", arr has length 1 and min number of impressions is 0.
     if (arr.length > 1) {
-        return Long.parseLong(arr[0]);
+        try {
+          return Long.parseLong(arr[0]);
+        } catch (IllegalArgumentException e) {
+          return -1; 
+        }
     }
     return 0;
   }
 
-  public long getImpressionsMax(String str) {
+  public long getImpressionsMax(String str) throws IllegalArgumentException {
     if (str.isEmpty()) {
       return -1; 
     }
     String s = str.replace("k", "000").replace("M", "000000").replace(" ","").replace("\u2264", "");
     String[] arr = s.split("-");
-    return Long.parseLong(arr[arr.length - 1]);   
+    try {
+      return Long.parseLong(arr[arr.length - 1]);   
+    } catch (IllegalArgumentException e) {
+      return -1; 
+    }
   }
 
   public boolean getAgeTargets(String str) {
