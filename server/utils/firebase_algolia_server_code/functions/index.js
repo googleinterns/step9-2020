@@ -55,6 +55,8 @@ function addEntityToIndex(algoliaIndex) {
       DOCS.onCreate(snapshot => {
         return algoliaFunctions.addEntityToIndex(algoliaIndex, snapshot);
       });
+
+  return exports.addEntityToIndex;
 }
 
 /**
@@ -65,6 +67,7 @@ function updateRecordInIndex(algoliaIndex) {
       DOCS.onUpdate(change => {
         return algoliaFunctions.updateRecordInIndex(algoliaIndex, change);
       });
+  return exports.updateRecordInIndex;
 }
 
 /**
@@ -75,6 +78,7 @@ function deleteEntityFromIndex(algoliaIndex) {
       DOCS.onDelete(snapshot => {
         return algoliaFunctions.deleteEntityFromIndex(algoliaIndex, snapshot);
       }); 
+  return exports.deleteEntityFromIndex;
 }
 
 addEntityToIndex(index);

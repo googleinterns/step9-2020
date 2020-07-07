@@ -11,14 +11,14 @@ function addEntityToIndex(algoliaIndex, snapshot) {
 }
 
 function updateRecordInIndex(algoliaIndex, change) {
-  const newData = change.after.data();
+  const data = change.after.data();
   const objectID = change.after.id; 
 
-  return algoliaIndex.saveObject({newData, objectID}); // also a promise
+  return algoliaIndex.saveObject({data, objectID}); // This is a promise.
 }
 
 function deleteEntityFromIndex(algoliaIndex, snapshot) {
-  return algoliaIndex.deleteObject(snapshot.id); // also a promise
+  return algoliaIndex.deleteObject(snapshot.id); // This is a promise.
 }
   
 
