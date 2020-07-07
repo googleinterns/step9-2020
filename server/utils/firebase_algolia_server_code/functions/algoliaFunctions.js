@@ -3,25 +3,27 @@
  * @param {Object=} algoliaIndex an algolia index object
  * @return {!Promise}
  */
-function addEntityToIndex(algoliaIndex, snapshot) {
+function addEntityToIndex(algoliaOperation, snapshot) {
   const data = snapshot.data();
   const objectID = snapshot.id;
 
-  return algoliaIndex.saveObject({data, objectID}); // This is a promise.
+  return algoliaOperation({data, objectID}); // This is a promise.
 }
 
-function updateRecordInIndex(algoliaIndex, change) {
+function updateRecordInIndex(algoliaOperation, change) {
   const data = change.after.data();
   const objectID = change.after.id; 
 
-  return algoliaIndex.saveObject({data, objectID}); // This is a promise.
+  return algoliaOperation({data, objectID}); // This is a promise.
 }
 
-function deleteEntityFromIndex(algoliaIndex, snapshot) {
-  return algoliaIndex.deleteObject(snapshot.id); // This is a promise.
+function deleteEntityFromIndex(algoliaOperation, snapshot) {
+  return algoliaOperation(snapshot.id); // This is a promise.
 }
   
 
 module.exports.addEntityToIndex = addEntityToIndex;
 module.exports.updateRecordInIndex = updateRecordInIndex;
 module.exports.deleteEntityFromIndex = deleteEntityFromIndex;
+
+

@@ -50,10 +50,10 @@ const DOCS = functions.firestore.document(DOC_NAME);
  * add an entity and all it's field to algolia
  * with the same objectID
  */
-function addEntityToIndex(algoliaIndex) {
+function addEntityToIndex(algoliaOperation) {
   exports.addEntityToIndex = 
       DOCS.onCreate(snapshot => {
-        return algoliaFunctions.addEntityToIndex(algoliaIndex, snapshot);
+        return algoliaFunctions.addEntityToIndex(algoliaOperation, snapshot);
       });
 
   return exports.addEntityToIndex;
@@ -62,10 +62,10 @@ function addEntityToIndex(algoliaIndex) {
 /**
 * Update record corresponding to ad entity if a change occurs.
 */
-function updateRecordInIndex(algoliaIndex) {
+function updateRecordInIndex(algoliaOperation) {
   exports.updateRecordInIndex = 
       DOCS.onUpdate(change => {
-        return algoliaFunctions.updateRecordInIndex(algoliaIndex, change);
+        return algoliaFunctions.updateRecordInIndex(algoliaOperation, change);
       });
   return exports.updateRecordInIndex;
 }
@@ -73,17 +73,17 @@ function updateRecordInIndex(algoliaIndex) {
 /**
 * If delete an entity from firestore, delete the corresponding record
 */
-function deleteEntityFromIndex(algoliaIndex) {
+function deleteEntityFromIndex(algoliaOperation) {
   exports.deleteEntityFromIndex = 
       DOCS.onDelete(snapshot => {
-        return algoliaFunctions.deleteEntityFromIndex(algoliaIndex, snapshot);
+        return algoliaFunctions.deleteEntityFromIndex(algoliaOperation, snapshot);
       }); 
   return exports.deleteEntityFromIndex;
 }
 
-addEntityToIndex(index);
-updateRecordInIndex(index);
-deleteEntityFromIndex(index);
+addEntityToIndex(index.saveObject);
+updateRecordInIndex(index.saveObject);
+deleteEntityFromIndex(index.deleteObject);
 
 module.exports.addEntityToIndex = addEntityToIndex;
 module.exports.updateRecordInIndex = updateRecordInIndex;

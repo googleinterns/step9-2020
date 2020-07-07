@@ -2,17 +2,13 @@
  * Idempotent mock algolia functions
  * Sadly algolia does not provide any mocks
  */
-function algoliaIndex() {
-  function saveObject({data, objectID}) {
-    return {data, objectID};
-  }
-  
-  function  (objectID) {
-    return objectID;
-  }
-
-  algoliaIndex.saveObject = saveObject;
-  algoliaIndex.deleteObject = deleteObject;
+function deleteObject(objectID) {
+  return objectID;
 }
 
-module.exports.algoliaIndex = algoliaIndex; 
+function saveObject({data, objectID}) {
+  return {data, objectID};
+}
+
+module.exports.deleteObject = deleteObject; 
+module.exports.saveObject = saveObject;
