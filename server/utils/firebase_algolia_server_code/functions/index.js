@@ -4,8 +4,7 @@
  *              Basically compile with `firebase deploy --only functions`
  *              These will then appear in functions tab of firestore 
  * Author: Robert Marcus
- * Date: June 26, 2020
- * Note: Current algolia index is dev_ADS
+ * Date: July 7, 2020
  */
 
 const algoliasearch = require('algoliasearch');

@@ -1,27 +1,14 @@
 /**
- * Unit tests for index.js
- * Uses dependency injection to mock algolia save/delete functions
- * Uses sinon/chai to spy on calls and validate behavior
- * compile with `npm run test`
- * Having problems running this on your local? 
- * - Download a firebase service key.
- * - *DON'T* push this key to github please.  
+ * Description: Unit tests for index.js
+ *              Uses dependency injection to mock algolia save/delete functions
+ *              Uses sinon/chai to spy on calls and validate behavior
+ *              compile with `npm run test`
+ * Author: Robert Marcus
+ * Date: July 7, 2020
  */
 
-// Initialize the firebase test mocking environment.
-const test = require('firebase-functions-test')({
-  databaseURL: 'https://step9-2020-capstone.firebaseio.com',
-  storageBucket: 'step9-2020-capstone.appspot.com',
-  projectId: 'step9-2020-capstone',
-}, 'step9-2020-capstone.json');
-
-// Initialize chai, sinon, sinon-chai. 
-var assert = require('chai').assert;
-var chai = require("chai");
-var sinon = require("sinon");
-var sinonChai = require("sinon-chai");
-chai.should();
-chai.use(sinonChai);
+// Import the testing environment configuration
+const {test, assert, sinon} = require('./testConfig');
 
 // Import the generic cloud functions.
 const {createRecordFromEntity, updateRecord, deleteRecord} = 
@@ -42,7 +29,7 @@ describe("test_createRecordFromEntity", () => {
   });
 
   it('createRecordFromEntity calls saveObject exactly once', () => {
-    var saveSpy = sinon.spy(saveObject);
+    const saveSpy = sinon.spy(saveObject);
     const wrappedAdd = test.wrap(createRecordFromEntity(saveSpy));
 
     const snap = test.firestore.exampleDocumentSnapshot();
@@ -52,7 +39,7 @@ describe("test_createRecordFromEntity", () => {
   })
 
   it('createRecordFromEntity calls saveObject with the correct parameter', () => {
-    var saveSpy = sinon.spy(saveObject);
+    const saveSpy = sinon.spy(saveObject);
     const wrappedAdd = test.wrap(createRecordFromEntity(saveSpy));
 
     const snap = test.firestore.exampleDocumentSnapshot();
@@ -73,7 +60,7 @@ describe("test_updateRecord", () => {
   });
 
   it('updateRecord calls saveObject exactly once', () => {
-    var saveSpy = sinon.spy(saveObject);
+    const saveSpy = sinon.spy(saveObject);
     const wrappedUpdate = test.wrap(updateRecord(saveSpy));
 
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
@@ -95,7 +82,7 @@ describe("test_updateRecord", () => {
 
 describe("test_deleteRecord", () => {
   it('deleteRecord returns the deleted objects ID', () => {
-    var deleteSpy = sinon.spy(deleteObject);
+    const deleteSpy = sinon.spy(deleteObject);
     const exampleID = {id: "1"};
 
     const wrappedDelete = test.wrap(deleteRecord(deleteSpy));
