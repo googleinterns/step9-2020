@@ -39,8 +39,8 @@ CustomSelect.propTypes = {
 
 const Visualization = () => {
   const [chartType, setChartType] = useState('Zoomable Line');
-  const [x, setX] = useState('USD Spent');
-  const [y, setY] = useState('Time');
+  const [x, setX] = useState('All');
+  const [y, setY] = useState('USD Spent');
 
   const chartMap = {
     'Zoomable Line': <ZoomLine />,
@@ -60,13 +60,13 @@ const Visualization = () => {
             setFunction={setChartType}
           />
           <CustomSelect
-            label={'x-axis'}
+            label={'x-axis (timeline)'}
             value={x}
             list={X_VALUES}
             setFunction={setX}
           />
           <CustomSelect
-            label={'y-axis'}
+            label={'y-axis (variables)'}
             value={y}
             list={Y_VALUES}
             setFunction={setY}

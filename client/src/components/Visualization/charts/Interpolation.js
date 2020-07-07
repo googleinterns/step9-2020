@@ -4,7 +4,7 @@ import { VictoryChart, VictoryLine, VictoryScatter } from 'victory';
 import PropTypes from 'prop-types';
 import { generateRandomHexColor } from '../../../utils/Utils';
 
-const data = [
+const MOCK_DATA = [
   { x: 0, y: 0 },
   { x: 1, y: 2 },
   { x: 2, y: 1 },
@@ -77,11 +77,11 @@ const Interpolation = () => {
       <VictoryChart polar={polar} height={500}>
         <VictoryLine
           interpolation={interpolation}
-          data={data}
+          data={MOCK_DATA}
           style={{ data: { stroke: randomColor } }}
         />
         <VictoryScatter
-          data={data}
+          data={MOCK_DATA}
           size={5}
           style={{ data: { fill: randomColor } }}
         />
