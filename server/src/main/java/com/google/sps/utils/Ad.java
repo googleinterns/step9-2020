@@ -84,7 +84,7 @@ public class Ad {
    *        at least one of the following: "Female", "Male", "Unknown gender".
    *        (Ex: ["Female", "Unknown gender"])
    */ 
-  public void setGenderTargets(List<String> genderTarget) {
+  public void setGenderTargets(List<String> genderTargets) {
     this.genderTargets = genderTargets; 
   }
   /*

@@ -16,7 +16,6 @@ import com.google.firebase.cloud.FirestoreClient;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-
 public final class WriteAd {
 
   public static void writeAd(Ad ad, String collection, String pathToServiceAccount, String databaseURL) throws Exception {

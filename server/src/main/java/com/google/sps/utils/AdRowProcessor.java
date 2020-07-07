@@ -36,7 +36,7 @@ public final class AdRowProcessor {
   private static final int CONTENT_SENTIMENT_ROW = 15;
   private static final int CONTENT_TERMS_ROW = 16; 
 
-  public static Ad createAd(String[] row) {
+  public static Ad convertRowToAd(String[] row) {
     Ad ad = Ad.newBuilder()
         .id(row[ID_ROW])
         .advertiser(row[ADVERTISER_ROW])
@@ -77,8 +77,9 @@ public final class AdRowProcessor {
     if (impressionsArray.length > 1) {
       try {
         return Long.parseLong(impressionsArray[0]);
-      } catch (IllegalArgumentException e) {
-        return -1; 
+      } catch (NumberFormatException e) {
+        System.out.println("Error: " + e);
+        System.exit(0);
       }
     }
     return 0;
@@ -88,9 +89,11 @@ public final class AdRowProcessor {
     String[] impressionsArray = formatImpressionField(impressionsField); 
     try {
       return Long.parseLong(impressionsArray[impressionsArray.length - 1]);   
-    } catch (IllegalArgumentException e) {
-      return -1; 
+    } catch (NumberFormatException e) {
+      System.out.println("Error: " + e);
+      System.exit(0);
     }
+    return -1;
   }
 
   public static boolean getAgeTargets(String str) {
@@ -108,9 +111,12 @@ public final class AdRowProcessor {
   }
 
   public static long convertStringToLong(String str) {
-    if (str.isEmpty()) {
-      return -1; 
+    try {
+      return (long) Double.parseDouble(str);
+    } catch (IllegalArgumentException e) {
+      System.out.println("Error: " + e);
+      System.exit(0);
     }
-    return (long) Double.parseDouble(str); 
+    return -1;
   }
 }

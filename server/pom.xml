@@ -78,9 +78,14 @@
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
     <dependency>
-        <groupId>org.mongodb</groupId>
-        <artifactId>mongo-java-driver</artifactId>
-        <version>3.12.5</version>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>3.12.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>1.5</version>
     </dependency>
   </dependencies>
 
