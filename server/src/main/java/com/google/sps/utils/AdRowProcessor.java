@@ -1,23 +1,7 @@
-/* 
- * Description: File for building ads and adding them to Firestore
- * Author: Kira Toal
- * Date: June 24, 2020
- */ 
 package com.google.sps.utils;
-
-import com.google.api.core.ApiFuture;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteResult;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.cloud.FirestoreClient;
 import com.google.sps.utils.Ad.Builder;
 import com.google.sps.utils.Ad;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,94 +10,112 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AdRowProcessor {
+/* 
+ * Description: Utility class that processes a CSV row and converts between row format and Ad format. 
+ * Author: Kira Toal
+ * Date: June 24, 2020
+ */ 
+public final class AdRowProcessor {
 
-  private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
-  private String[] row; 
+  private static final int ID_COLUMN = 0;
+  private static final int ADVERTISER_COLUMN = 1; 
+  private static final int START_DATE_COLUMN = 2;
+  private static final int END_DATE_COLUMN = 3;
+  private static final int IMPRESSIONS_COLUMN = 4;
+  private static final int IS_TARGETING_AGE_COLUMN = 5; 
+  private static final int GENDER_TARGETS_COLUMN = 6; 
+  private static final int GEO_TARGETS_COLUMN = 7;
+  private static final int SPEND_MIN_COLUMN = 8;
+  private static final int SPEND_MAX_COLUMN = 9; 
+  private static final int HEADLINE_COLUMN = 10; 
+  private static final int LINK_COLUMN = 11;
+  private static final int CONTENT_COLUMN = 12;
+  private static final int HEADLINE_SENTIMENT_COLUMN = 13;
+  private static final int HEADLINE_TERMS_COLUMN = 14;
+  private static final int CONTENT_SENTIMENT_COLUMN = 15;
+  private static final int CONTENT_TERMS_COLUMN = 16; 
 
-  public AdRowProcessor(String[] csvRow) throws Exception {
-    this.row = csvRow; 
-    // initialize app
-    FileInputStream serviceAccount = new FileInputStream(PATH_TO_SERVICE_ACCOUNT);
-    FirebaseOptions options = new FirebaseOptions.Builder()
-        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-        .setDatabaseUrl("https://step9-2020-capstone.firebaseio.com")
-        .build();
-    if(FirebaseApp.getApps().isEmpty()) {
-      FirebaseApp.initializeApp(options);
-    }
-  }
-
-  public void addAdToDatabase(Ad ad, int rowIndex, String COLLECTION) throws Exception {
-    Firestore db = FirestoreClient.getFirestore();    
-    ApiFuture<WriteResult> result = db.collection(COLLECTION).document(ad.id).set(ad);
-    System.out.println("Update time : " + result.get().getUpdateTime());
-  }
-
-  public Ad createAd() {
+  public static Ad convertRowToAd(String[] row) {
     Ad ad = Ad.newBuilder()
-        .id(row[0])
-        .advertiser(row[1])
-        .startDate(row[2]) 
-        .endDate(row[3])
-        .impressionsMin(getImpressionsMin(row[4]))
-        .impressionsMax(getImpressionsMax(row[4]))
-        .isTargetingAge(getAgeTargets(row[5]))
-        .genderTargets(convertStringToList(row[6]))
-        .geoTargets(convertStringToList(row[7]))
-        .spendMin(getLong(row[8]))
-        .spendMax(getLong(row[9]))
-        .headline(row[10].trim())
-        .link(row[11].substring(3)) // trim "Ad" from "Ad {URL}"
-        .content(row[12].trim())
-        .headlineSentiment(row[13].trim())
-        .headlineTerms(row[14].trim())
-        .contentSentiment(row[15].trim())
-        .contentTerms(row[16].trim())
+        .id(row[ID_COLUMN])
+        .advertiser(row[ADVERTISER_COLUMN])
+        .startDate(row[START_DATE_COLUMN]) 
+        .endDate(row[END_DATE_COLUMN])
+        .impressionsMin(getImpressionsMin(row[IMPRESSIONS_COLUMN]))
+        .impressionsMax(getImpressionsMax(row[IMPRESSIONS_COLUMN]))
+        .isTargetingAge(getAgeTargets(row[IS_TARGETING_AGE_COLUMN]))
+        .genderTargets(convertStringToList(row[GENDER_TARGETS_COLUMN]))
+        .geoTargets(convertStringToList(row[GEO_TARGETS_COLUMN]))
+        .spendMin(convertStringToLong(row[SPEND_MIN_COLUMN]))
+        .spendMax(convertStringToLong(row[SPEND_MAX_COLUMN]))
+        .headline(row[HEADLINE_COLUMN].trim())
+        .link(row[LINK_COLUMN].substring(3)) // trim "Ad" from "Ad {URL}"
+        .content(row[CONTENT_COLUMN].trim())
+        .headlineSentiment(row[HEADLINE_SENTIMENT_COLUMN].trim())
+        .headlineTerms(row[HEADLINE_TERMS_COLUMN].trim())
+        .contentSentiment(row[CONTENT_SENTIMENT_COLUMN].trim())
+        .contentTerms(row[CONTENT_TERMS_COLUMN].trim())
         .build();
     return ad; 
   }
 
-  public long getImpressionsMin(String str) {
-    if (str.isEmpty()) {
-      return -1; 
-    }
-    String s = str.replace("k", "000").replace("M", "000000").replace(" ","").replace("\u2264", "");
-    String[] arr = s.split("-");
+  /* 
+   * Min and max impression fields contain letters k and M as well as ≤. The 
+   * formatImpressionField helper method makes the fields easier to parse later.
+   */ 
+  public static String[] formatImpressionField(String str) {
+    String impressionsString = str.replace("k", "000").replace("M", "000000").replace(" ","").replace("≤", "");
+    String[] impressionsArray = impressionsString.split("-");
+    return impressionsArray; 
+  }
+
+  public static long getImpressionsMin(String impressionsField) throws IllegalArgumentException {
+    String[] impressionsArray = formatImpressionField(impressionsField); 
+    
     // If csv field uses "<=", arr has length 1 and min number of impressions is 0.
-    if (arr.length > 1) {
-        return Long.parseLong(arr[0]);
+    if (impressionsArray.length > 1) {
+      try {
+        return Long.parseLong(impressionsArray[0]);
+      } catch (NumberFormatException e) {
+        System.out.println("Error: " + e);
+        System.exit(0);
+      }
     }
     return 0;
   }
 
-  public long getImpressionsMax(String str) {
-    if (str.isEmpty()) {
-      return -1; 
+  public static long getImpressionsMax(String impressionsField) throws IllegalArgumentException {
+    String[] impressionsArray = formatImpressionField(impressionsField); 
+    try {
+      return Long.parseLong(impressionsArray[impressionsArray.length - 1]);   
+    } catch (NumberFormatException e) {
+      System.out.println("Error: " + e);
+      System.exit(0);
     }
-    String s = str.replace("k", "000").replace("M", "000000").replace(" ","").replace("\u2264", "");
-    String[] arr = s.split("-");
-    return Long.parseLong(arr[arr.length - 1]);   
+    return -1;
   }
 
-  public boolean getAgeTargets(String str) {
+  public static boolean getAgeTargets(String str) {
     if (str.trim().equals("Not targeted")) {
       return false; 
     }
     return true; 
   }
 
-  public List<String> convertStringToList(String str) {
+  public static List<String> convertStringToList(String str) {
     List<String> trimmedList = Arrays.stream(str.split(","))
         .map(String::trim)
         .collect(Collectors.toList());
     return trimmedList;  
   }
 
-  public long getLong(String str) {
-    if (str.isEmpty()) {
-      return -1; 
+  public static long convertStringToLong(String str) {
+    try {
+      return (long) Double.parseDouble(str);
+    } catch (IllegalArgumentException e) {
+      System.out.println("Error: " + e);
+      System.exit(0);
     }
-    return (long)Double.parseDouble(str); 
+    return -1;
   }
 }
