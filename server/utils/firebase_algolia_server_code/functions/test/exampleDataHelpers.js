@@ -3,7 +3,7 @@
  * @param {Object} snap a json string
  * @return {Object}
  */
-function formattedSnap(snap) {
+function getFormattedSnap(snap) {
   return {data: snap.data(), objectID: snap.id};
 }
 
@@ -12,9 +12,9 @@ function formattedSnap(snap) {
  * @param {Object} change a json string
  * @return {Object}
  */
-function formattedChange(change) {
+function getFormattedChange(change) {
   return {data: change.after.data(), objectID: change.after.id};
 }
 
-module.exports.formattedChange = formattedChange;
-module.exports.formattedSnap = formattedSnap;
+module.exports.getFormattedChange = getFormattedChange;
+module.exports.getFormattedSnap = getFormattedSnap;

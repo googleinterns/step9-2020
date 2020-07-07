@@ -13,14 +13,13 @@ const algoliaFunctions = require('./algoliaFunctions');
 const functions = require('firebase-functions');
 
 /**
- * Looking to compile this on your local machine but don't have the keys?
- * Save api keys in `environment variables`
+ * Keys required to run this locally. 
+ * How to get the keys: 
  * 1) Go to algolia, log in (ask robbie for credentials.) 
- * 2) Retrieve relevant keys
- * 3) run: `firebase functions:config:set algolia.app=APP_ID algolia.key=ADMIN_API_KEY`
- * Now you can compile! 
+ * 2) Retrieve relevant keys. Save the api keys in `environment variables`
+ * 3) Specifically: `firebase functions:config:set algolia.app=APP_ID algolia.key=ADMIN_API_KEY`
+ * Now you can compile.
  * Please *don't* expose the API_KEY to the public.
- * *don't* commit runtimeconfig either please. 
  */
 const APP_ID = functions.config().algolia.app;
 const ADMIN_KEY = functions.config().algolia.key;
@@ -46,22 +45,23 @@ const DOCS = functions.firestore.document(DOC_NAME);
  */
 
 /**
- * Create's an algolia record from a firebase entity snapshot.
+ * Creates an algolia record from a firebase entity snapshot.
  * Use default value unless mocking an algoliaOperation.
  * @param {function(string): !Promise=} algoliaOperation a save function
  * @return {function} 
  */
-function addEntityToIndex(algoliaOperation = index.saveObject) {
-  exports.addEntityToIndex = 
+function createRecordFromEntity(algoliaOperation = index.saveObject) {
+  exports.createRecordFromEntity = 
       DOCS.onCreate(snapshot => {
-        return algoliaFunctions.addEntityToIndex(algoliaOperation, snapshot);
+        return algoliaFunctions
+                  .createRecordFromEntity(algoliaOperation, snapshot);
       });
 
-  return exports.addEntityToIndex;
+  return exports.createRecordFromEntity;
 }
 
 /**
- * Update's an algolia record from a firebase change type. 
+ * Updates an algolia record from a firebase change type. 
  * If the record does not exist in algolia, it will be created.
  * Use default value unless mocking an algoliaOperation.
  * @param {function(string): !Promise=} algoliaOperation a save function
@@ -90,10 +90,10 @@ function deleteEntityFromIndex(algoliaOperation = index.deleteObject) {
   return exports.deleteEntityFromIndex;
 }
 
-addEntityToIndex();
+createRecordFromEntity();
 updateRecordInIndex();
 deleteEntityFromIndex();
 
-module.exports.addEntityToIndex = addEntityToIndex;
+module.exports.createRecordFromEntity = createRecordFromEntity;
 module.exports.updateRecordInIndex = updateRecordInIndex;
 module.exports.deleteEntityFromIndex = deleteEntityFromIndex;

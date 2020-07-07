@@ -24,26 +24,26 @@ chai.should();
 chai.use(sinonChai);
 
 // Import the generic cloud functions.
-const {addEntityToIndex, updateRecordInIndex, deleteEntityFromIndex} = 
+const {createRecordFromEntity, updateRecordInIndex, deleteEntityFromIndex} = 
     require('../index.js');
 
 // Import mock saveObject, mock deleteObject, and helpers.
 const {saveObject, deleteObject} = require('./algoliaMocks');
-const {formattedSnap, formattedChange} = require('./exampleDataHelpers');
+const {getFormattedSnap, getFormattedChange} = require('./exampleDataHelpers');
 
-describe("test_addEntityToIndex", () => {
-  it('addEntityToIndex returns exactly the input data', () => {
-    const wrappedAdd = test.wrap(addEntityToIndex(saveObject));
+describe("test_createRecordFromEntity", () => {
+  it('createRecordFromEntity returns exactly the input data', () => {
+    const wrappedAdd = test.wrap(createRecordFromEntity(saveObject));
 
     const snap = test.firestore.exampleDocumentSnapshot();
     const addedSnap = wrappedAdd(snap);
 
-    assert.deepEqual(addedSnap, formattedSnap(snap));
+    assert.deepEqual(addedSnap, getFormattedSnap(snap));
   });
 
-  it('addEntityToIndex calls saveObject exactly once', () => {
+  it('createRecordFromEntity calls saveObject exactly once', () => {
     var saveSpy = sinon.spy(saveObject);
-    const wrappedAdd = test.wrap(addEntityToIndex(saveSpy));
+    const wrappedAdd = test.wrap(createRecordFromEntity(saveSpy));
 
     const snap = test.firestore.exampleDocumentSnapshot();
     const addedSnap = wrappedAdd(snap);
@@ -51,14 +51,14 @@ describe("test_addEntityToIndex", () => {
     assert.isTrue(saveSpy.calledOnce);
   })
 
-  it('addEntityToIndex calls saveObject with the correct parameter', () => {
+  it('createRecordFromEntity calls saveObject with the correct parameter', () => {
     var saveSpy = sinon.spy(saveObject);
-    const wrappedAdd = test.wrap(addEntityToIndex(saveSpy));
+    const wrappedAdd = test.wrap(createRecordFromEntity(saveSpy));
 
     const snap = test.firestore.exampleDocumentSnapshot();
     const addedSnap = wrappedAdd(snap);
 
-    assert.isTrue(saveSpy.calledWith(formattedSnap(snap)));
+    assert.isTrue(saveSpy.calledWith(getFormattedSnap(snap)));
   })
 });
 
@@ -69,7 +69,7 @@ describe("test_updateRecordInIndex", () => {
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
     const updatedChange = wrappedUpdate(randomChange);
 
-    assert.deepEqual(updatedChange, formattedChange(randomChange));
+    assert.deepEqual(updatedChange, getFormattedChange(randomChange));
   });
 
   it('updateRecordInIndex calls saveObject exactly once', () => {
@@ -89,7 +89,7 @@ describe("test_updateRecordInIndex", () => {
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
     const updatedChange = wrappedUpdate(randomChange);
 
-    assert.isTrue(saveSpy.calledWith(formattedChange(randomChange)));    
+    assert.isTrue(saveSpy.calledWith(getFormattedChange(randomChange)));    
   });
 });
 
