@@ -1,7 +1,5 @@
 /**
  * Delete an entity by it's corresponding firestore id
- * @param {Object=} algoliaIndex an algolia index object
- * @return {!Promise}
  */
 function addEntityToIndex(algoliaOperation, snapshot) {
   const data = snapshot.data();

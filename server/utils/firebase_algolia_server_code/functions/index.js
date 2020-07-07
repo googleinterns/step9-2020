@@ -20,8 +20,8 @@ const functions = require('firebase-functions');
  * 3) run: firebase functions:config:set 
  *              algolia.app=APP_ID algolia.key=ADMIN_API_KEY
  * Now you can compile! 
- * Please _don't_ expose the API_KEY to the public.
- * _don't_ commit runtimeconfig either please. 
+ * Please *don't* expose the API_KEY to the public.
+ * *don't* commit runtimeconfig either please. 
  */
 const APP_ID = functions.config().algolia.app;
 const ADMIN_KEY = functions.config().algolia.key;
@@ -47,8 +47,7 @@ const DOCS = functions.firestore.document(DOC_NAME);
  */
 
 /**
- * add an entity and all it's field to algolia
- * with the same objectID
+ * Create's an algolia record from a firebase entity snapshot.
  */
 function addEntityToIndex(algoliaOperation) {
   exports.addEntityToIndex = 
@@ -60,8 +59,9 @@ function addEntityToIndex(algoliaOperation) {
 }
 
 /**
-* Update record corresponding to ad entity if a change occurs.
-*/
+ * Update's an algolia record from a firebase change type. 
+ * If the record does not exist in algolia, it will be created.
+ */
 function updateRecordInIndex(algoliaOperation) {
   exports.updateRecordInIndex = 
       DOCS.onUpdate(change => {
@@ -71,8 +71,8 @@ function updateRecordInIndex(algoliaOperation) {
 }
 
 /**
-* If delete an entity from firestore, delete the corresponding record
-*/
+ * Delete's an algolia record from an entity snapshot. 
+ */
 function deleteEntityFromIndex(algoliaOperation) {
   exports.deleteEntityFromIndex = 
       DOCS.onDelete(snapshot => {
