@@ -44,7 +44,7 @@ public class ReportReader {
           currentRow[i] = csvRecords[currentRowIndex].get(i); 
         }
         Ad ad = AdRowProcessor.convertRowToAd(currentRow);
-        WriteAd.writeAd(ad, COLLECTION, PATH_TO_SERVICE_ACCOUNT, DATABASE_URL); 
+        FirebaseAdWriter.writeAd(ad, COLLECTION, PATH_TO_SERVICE_ACCOUNT, DATABASE_URL); 
       }
       currentRowIndex++;
     }
