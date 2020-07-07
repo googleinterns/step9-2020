@@ -16,5 +16,4 @@ function getFormattedChange(change) {
   return getFormattedSnap(change.after); // change.after is a snap.
 }
 
-module.exports.getFormattedChange = getFormattedChange;
-module.exports.getFormattedSnap = getFormattedSnap;
+module.exports = {getFormattedChange, getFormattedSnap};

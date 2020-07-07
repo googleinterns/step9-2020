@@ -25,8 +25,9 @@ const APP_ID = functions.config().algolia.app;
 const ADMIN_KEY = functions.config().algolia.key;
 
 // Initialize algoliasearch API
-const client = algoliasearch(APP_ID, ADMIN_KEY);
-const index = client.initIndex('dev_ADS');
+const CLIENT = algoliasearch(APP_ID, ADMIN_KEY);
+const INDEX_NAME = 'dev_ADS';
+const INDEX = CLIENT.initIndex(INDEX_NAME);
 
 // Access an individual document in our `ads` documents collection
 const DOC_NAME = 'ads/{adId}';
@@ -50,7 +51,7 @@ const DOCS = functions.firestore.document(DOC_NAME);
  * @param {function(string): !Promise=} algoliaOperation a save function
  * @return {function} 
  */
-function createRecordFromEntity(algoliaOperation = index.saveObject) {
+function createRecordFromEntity(algoliaOperation = INDEX.saveObject) {
   exports.createRecordFromEntity = 
       DOCS.onCreate(snapshot => {
         return algoliaFunctions
@@ -67,12 +68,12 @@ function createRecordFromEntity(algoliaOperation = index.saveObject) {
  * @param {function(string): !Promise=} algoliaOperation a save function
  * @return {function} 
  */
-function updateRecordInIndex(algoliaOperation = index.saveObject) {
-  exports.updateRecordInIndex = 
+function updateRecord(algoliaOperation = INDEX.saveObject) {
+  exports.updateRecord = 
       DOCS.onUpdate(change => {
-        return algoliaFunctions.updateRecordInIndex(algoliaOperation, change);
+        return algoliaFunctions.updateRecord(algoliaOperation, change);
       });
-  return exports.updateRecordInIndex;
+  return exports.updateRecord;
 }
 
 /**
@@ -81,19 +82,17 @@ function updateRecordInIndex(algoliaOperation = index.saveObject) {
  * @param {function(string): !Promise=} algoliaOperation a delete function
  * @return {function} 
  */
-function deleteEntityFromIndex(algoliaOperation = index.deleteObject) {
-  exports.deleteEntityFromIndex = 
+function deleteRecord(algoliaOperation = INDEX.deleteObject) {
+  exports.deleteRecord = 
       DOCS.onDelete(snapshot => {
         return algoliaFunctions
-                  .deleteEntityFromIndex(algoliaOperation, snapshot);
+                  .deleteRecord(algoliaOperation, snapshot);
       }); 
-  return exports.deleteEntityFromIndex;
+  return exports.deleteRecord;
 }
 
 createRecordFromEntity();
-updateRecordInIndex();
-deleteEntityFromIndex();
+updateRecord();
+deleteRecord();
 
-module.exports.createRecordFromEntity = createRecordFromEntity;
-module.exports.updateRecordInIndex = updateRecordInIndex;
-module.exports.deleteEntityFromIndex = deleteEntityFromIndex;
+module.exports = {createRecordFromEntity, updateRecord, deleteRecord};

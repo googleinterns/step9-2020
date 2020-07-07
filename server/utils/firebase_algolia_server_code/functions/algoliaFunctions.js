@@ -18,7 +18,7 @@ function createRecordFromEntity(algoliaOperation, snapshot) {
  * @param {Object} change a json string
  * @return {!Promise}
  */
-function updateRecordInIndex(algoliaOperation, change) {
+function updateRecord(algoliaOperation, change) {
   const data = change.after.data();
   const objectID = change.after.id; 
 
@@ -30,12 +30,9 @@ function updateRecordInIndex(algoliaOperation, change) {
  * @param {function(string): !Promise=} algoliaOperation a delete function
  * @return {!Promise} 
  */
-function deleteEntityFromIndex(algoliaOperation, snapshot) {
+function deleteRecord(algoliaOperation, snapshot) {
   return algoliaOperation(snapshot.id);
 }
-  
-module.exports.createRecordFromEntity = createRecordFromEntity;
-module.exports.updateRecordInIndex = updateRecordInIndex;
-module.exports.deleteEntityFromIndex = deleteEntityFromIndex;
 
+module.exports = {createRecordFromEntity, updateRecord, deleteRecord};
 

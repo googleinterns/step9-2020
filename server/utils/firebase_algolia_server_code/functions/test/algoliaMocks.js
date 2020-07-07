@@ -15,5 +15,4 @@ function saveObject({data, objectID}) {
   return {data, objectID};
 }
 
-module.exports.deleteObject = deleteObject; 
-module.exports.saveObject = saveObject;
+module.exports = {deleteObject, saveObject};

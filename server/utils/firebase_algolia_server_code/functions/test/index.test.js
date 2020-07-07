@@ -24,7 +24,7 @@ chai.should();
 chai.use(sinonChai);
 
 // Import the generic cloud functions.
-const {createRecordFromEntity, updateRecordInIndex, deleteEntityFromIndex} = 
+const {createRecordFromEntity, updateRecord, deleteRecord} = 
     require('../index.js');
 
 // Import mock saveObject, mock deleteObject, and helpers.
@@ -62,9 +62,9 @@ describe("test_createRecordFromEntity", () => {
   })
 });
 
-describe("test_updateRecordInIndex", () => {
-  it('updateRecordInIndex returns exactly the updated data', () => {
-    const wrappedUpdate = test.wrap(updateRecordInIndex(saveObject));
+describe("test_updateRecord", () => {
+  it('updateRecord returns exactly the updated data', () => {
+    const wrappedUpdate = test.wrap(updateRecord(saveObject));
     
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
     const updatedChange = wrappedUpdate(randomChange);
@@ -72,9 +72,9 @@ describe("test_updateRecordInIndex", () => {
     assert.deepEqual(updatedChange, getFormattedChange(randomChange));
   });
 
-  it('updateRecordInIndex calls saveObject exactly once', () => {
+  it('updateRecord calls saveObject exactly once', () => {
     var saveSpy = sinon.spy(saveObject);
-    const wrappedUpdate = test.wrap(updateRecordInIndex(saveSpy));
+    const wrappedUpdate = test.wrap(updateRecord(saveSpy));
 
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
     const updatedChange = wrappedUpdate(randomChange);
@@ -82,9 +82,9 @@ describe("test_updateRecordInIndex", () => {
     assert.isTrue(saveSpy.calledOnce);
   });
 
-  it('updateRecordInIndex calls saveObject with the correct parameter', () => {
+  it('updateRecord calls saveObject with the correct parameter', () => {
     var saveSpy = sinon.spy(saveObject);
-    const wrappedUpdate = test.wrap(updateRecordInIndex(saveSpy));
+    const wrappedUpdate = test.wrap(updateRecord(saveSpy));
 
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
     const updatedChange = wrappedUpdate(randomChange);
@@ -93,32 +93,32 @@ describe("test_updateRecordInIndex", () => {
   });
 });
 
-describe("test_deleteEntityFromIndex", () => {
-  it('deleteEntityFromIndex returns the deleted objects ID', () => {
+describe("test_deleteRecord", () => {
+  it('deleteRecord returns the deleted objects ID', () => {
     var deleteSpy = sinon.spy(deleteObject);
     const exampleID = {id: "1"};
 
-    const wrappedDelete = test.wrap(deleteEntityFromIndex(deleteSpy));
+    const wrappedDelete = test.wrap(deleteRecord(deleteSpy));
     const deletedID = wrappedDelete(exampleID);
 
     deleteSpy.should.have.been.calledWith(deletedID);
   });
 
-  it('deleteEntityFromIndex calls deleteObject exactly once', () => {
+  it('deleteRecord calls deleteObject exactly once', () => {
     var deleteSpy = sinon.spy(deleteObject);
     const exampleID = {id: "1"};
 
-    const wrappedDelete = test.wrap(deleteEntityFromIndex(deleteSpy));
+    const wrappedDelete = test.wrap(deleteRecord(deleteSpy));
     const deletedID = wrappedDelete(exampleID);
 
     assert.isTrue(deleteSpy.calledOnce);
   });
 
-  it('deleteEntityFromIndex calls deleteObject with the correct parameters', () => {
+  it('deleteRecord calls deleteObject with the correct parameters', () => {
     var deleteSpy = sinon.spy(deleteObject);
     const exampleID = {id: "1"};
 
-    const wrappedDelete = test.wrap(deleteEntityFromIndex(deleteSpy));
+    const wrappedDelete = test.wrap(deleteRecord(deleteSpy));
     const deletedID = wrappedDelete(exampleID);
     
     assert.isTrue(deleteSpy.calledWith(deletedID));    
