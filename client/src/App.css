@@ -1,13 +1,7 @@
-em {
-  background: cyan;
-  font-style: normal;
-}
-
 .center {
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
 }
 
 html {

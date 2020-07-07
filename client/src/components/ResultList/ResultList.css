@@ -1,14 +1,9 @@
-.search-panel__results {
+.search-panel-results {
   width: 100%;
   flex-direction: column;
   margin: 30px;
 }
 
 .pagination {
-  margin: 2rem auto;
-  text-align: center;
-}
-
-ul {
-  justify-content: center;
+  margin: 32px auto;
 }
