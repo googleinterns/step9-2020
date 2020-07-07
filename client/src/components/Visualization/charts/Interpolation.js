@@ -55,23 +55,25 @@ const Interpolation = () => {
   const randomColor = generateRandomHexColor();
 
   return (
-    <div className="chart">
-      <InterpolationSelect
-        currentValue={interpolation}
-        values={polar ? polarInterpolations : cartesianInterpolations}
-        onChange={e => setInterpolation(e.target.value)}
-      />
-      <input
-        type="checkbox"
-        id="polar"
-        value={polar}
-        onChange={event => {
-          setPolar(event.target.checked);
-          setInterpolation('linear');
-        }}
-        style={{ marginLeft: 25, marginRight: 5 }}
-      />
-      <label htmlFor="polar">polar</label>
+    <div className="chart center">
+      <div>
+        <InterpolationSelect
+          currentValue={interpolation}
+          values={polar ? polarInterpolations : cartesianInterpolations}
+          onChange={e => setInterpolation(e.target.value)}
+        />
+        <input
+          type="checkbox"
+          id="polar"
+          value={polar}
+          onChange={event => {
+            setPolar(event.target.checked);
+            setInterpolation('linear');
+          }}
+          style={{ marginLeft: 25, marginRight: 5 }}
+        />
+        <label htmlFor="polar">polar</label>
+      </div>
       <VictoryChart polar={polar} height={500}>
         <VictoryLine
           interpolation={interpolation}
