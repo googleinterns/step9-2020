@@ -89,10 +89,8 @@ public final class AdRowProcessor {
     try {
       return Long.parseLong(impressionsArray[impressionsArray.length - 1]);   
     } catch (NumberFormatException e) {
-      System.out.println("Error: " + e);
-      System.exit(0);
+      throw new NumberFormatException();
     }
-    return -1;
   }
 
   public static boolean getAgeTargets(String str) {
@@ -113,9 +111,7 @@ public final class AdRowProcessor {
     try {
       return (long) Double.parseDouble(str);
     } catch (IllegalArgumentException e) {
-      System.out.println("Error: " + e);
-      System.exit(0);
+      throw new IllegalArgumentException();
     }
-    return -1;
   }
 }
