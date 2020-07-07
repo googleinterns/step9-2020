@@ -32,7 +32,7 @@ public class ReportReader {
 
   public static void readCSV(InputStream csv) throws Exception {
     CSVParser csvParser = CSVFormat.DEFAULT.parse(new InputStreamReader(csv));
-    List<CSVRecord> csvRecordList = csvParser.getRecords(); 
+    List<CSVRecord> csvRecordList = csvParser.getRecords();
     CSVRecord[] csvRecords = new CSVRecord[csvRecordList.size()];
     csvRecords = csvRecordList.toArray(csvRecords);
     int currentRowIndex = 0; 

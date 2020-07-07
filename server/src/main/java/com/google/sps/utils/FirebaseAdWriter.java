@@ -18,12 +18,12 @@ import java.io.InputStream;
 public final class FirebaseAdWriter {
 
   public static void writeAd(Ad ad, String collection, String pathToServiceAccount, String databaseURL) throws Exception {
-    // Initialize app.
     FileInputStream serviceAccount = new FileInputStream(pathToServiceAccount);
     FirebaseOptions options = new FirebaseOptions.Builder()
         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
         .setDatabaseUrl(databaseURL)
         .build();
+    // Initialize app.
     if(FirebaseApp.getApps().isEmpty()) {
       FirebaseApp.initializeApp(options);
     }
