@@ -19,95 +19,95 @@ const {saveObject, deleteObject} = require('./algoliaMocks');
 const {getFormattedSnap, getFormattedChange} = require('./exampleDataHelpers');
 
 describe("test_createRecordFromEntity", () => {
-  it('createRecordFromEntity returns exactly the input data', () => {
-    const wrappedAdd = test.wrap(createRecordFromEntity(saveObject));
+  it('calls saveObject exactly once', () => {
+    const saveSpy = sinon.spy(saveObject);
+    const createRecordWrapper = test.wrap(createRecordFromEntity(saveSpy));
 
     const snap = test.firestore.exampleDocumentSnapshot();
-    const addedSnap = wrappedAdd(snap);
+    const addedSnap = createRecordWrapper(snap);
+
+    assert.isTrue(saveSpy.calledOnce);
+  });
+
+  it('calls saveObject with the correct parameter', () => {
+    const saveSpy = sinon.spy(saveObject);
+    const createRecordWrapper = test.wrap(createRecordFromEntity(saveSpy));
+
+    const snap = test.firestore.exampleDocumentSnapshot();
+    const addedSnap = createRecordWrapper(snap);
+
+    assert.isTrue(saveSpy.calledWith(getFormattedSnap(snap)));
+  });
+  
+  it('should return input data + "altered" field', () => {
+    const createRecordWrapper = test.wrap(createRecordFromEntity(saveObject));
+
+    const snap = test.firestore.exampleDocumentSnapshot();
+    const addedSnap = createRecordWrapper(snap);
 
     assert.deepEqual(addedSnap, getFormattedSnap(snap));
   });
-
-  it('createRecordFromEntity calls saveObject exactly once', () => {
-    const saveSpy = sinon.spy(saveObject);
-    const wrappedAdd = test.wrap(createRecordFromEntity(saveSpy));
-
-    const snap = test.firestore.exampleDocumentSnapshot();
-    const addedSnap = wrappedAdd(snap);
-
-    assert.isTrue(saveSpy.calledOnce);
-  })
-
-  it('createRecordFromEntity calls saveObject with the correct parameter', () => {
-    const saveSpy = sinon.spy(saveObject);
-    const wrappedAdd = test.wrap(createRecordFromEntity(saveSpy));
-
-    const snap = test.firestore.exampleDocumentSnapshot();
-    const addedSnap = wrappedAdd(snap);
-
-    assert.isTrue(saveSpy.calledWith(getFormattedSnap(snap)));
-  })
 });
 
 describe("test_updateRecord", () => {
-  it('updateRecord returns exactly the updated data', () => {
-    const wrappedUpdate = test.wrap(updateRecord(saveObject));
-    
-    const randomChange = test.firestore.exampleDocumentSnapshotChange();
-    const updatedChange = wrappedUpdate(randomChange);
-
-    assert.deepEqual(updatedChange, getFormattedChange(randomChange));
-  });
-
-  it('updateRecord calls saveObject exactly once', () => {
+  it('calls saveObject exactly once', () => {
     const saveSpy = sinon.spy(saveObject);
-    const wrappedUpdate = test.wrap(updateRecord(saveSpy));
+    const updateWrapper = test.wrap(updateRecord(saveSpy));
 
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
-    const updatedChange = wrappedUpdate(randomChange);
+    const updatedChange = updateWrapper(randomChange);
     
     assert.isTrue(saveSpy.calledOnce);
   });
 
-  it('updateRecord calls saveObject with the correct parameter', () => {
+  it('calls saveObject with the correct parameter', () => {
     var saveSpy = sinon.spy(saveObject);
-    const wrappedUpdate = test.wrap(updateRecord(saveSpy));
+    const updateWrapper = test.wrap(updateRecord(saveSpy));
 
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
-    const updatedChange = wrappedUpdate(randomChange);
+    const updatedChange = updateWrapper(randomChange);
 
     assert.isTrue(saveSpy.calledWith(getFormattedChange(randomChange)));    
+  });
+
+  it('should return input data + "altered" field', () => {
+    const updateWrapper = test.wrap(updateRecord(saveObject));
+    
+    const randomChange = test.firestore.exampleDocumentSnapshotChange();
+    const updatedChange = updateWrapper(randomChange);
+
+    assert.deepEqual(updatedChange, getFormattedChange(randomChange));
   });
 });
 
 describe("test_deleteRecord", () => {
-  it('deleteRecord returns the deleted objects ID', () => {
-    const deleteSpy = sinon.spy(deleteObject);
-    const exampleID = {id: "1"};
-
-    const wrappedDelete = test.wrap(deleteRecord(deleteSpy));
-    const deletedID = wrappedDelete(exampleID);
-
-    deleteSpy.should.have.been.calledWith(deletedID);
-  });
-
-  it('deleteRecord calls deleteObject exactly once', () => {
+  it('calls deleteObject exactly once', () => {
     var deleteSpy = sinon.spy(deleteObject);
     const exampleID = {id: "1"};
 
-    const wrappedDelete = test.wrap(deleteRecord(deleteSpy));
-    const deletedID = wrappedDelete(exampleID);
+    const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
+    const deletedID = deleteWrapper(exampleID);
 
     assert.isTrue(deleteSpy.calledOnce);
   });
 
-  it('deleteRecord calls deleteObject with the correct parameters', () => {
+  it('calls deleteObject with the correct parameters', () => {
     var deleteSpy = sinon.spy(deleteObject);
     const exampleID = {id: "1"};
 
-    const wrappedDelete = test.wrap(deleteRecord(deleteSpy));
-    const deletedID = wrappedDelete(exampleID);
+    const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
+    const deletedID = deleteWrapper(exampleID);
     
     assert.isTrue(deleteSpy.calledWith(deletedID));    
-  })
+  });
+
+  it('should return input data + "altered" field', () => {
+    const deleteSpy = sinon.spy(deleteObject);
+    const exampleID = {id: "1"};
+
+    const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
+    const deletedID = deleteWrapper(exampleID);
+
+    deleteSpy.should.have.been.calledWith(deletedID);
+  });
 });

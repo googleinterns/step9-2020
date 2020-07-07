@@ -1,10 +1,14 @@
+const {addField} = require('./algoliaMocks');
+
 /**
  * Returns a snap as it would be by an algolia add mock
  * @param {Object} snap a firebase snap object
  * @return {Object}
  */
 function getFormattedSnap(snap) {
-  return {data: snap.data(), objectID: snap.id};
+  var data = addField(snap.data());
+  var objectID = addField(snap.id)
+  return {data, objectID};
 }
 
 /**
