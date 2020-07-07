@@ -1,7 +1,7 @@
 package com.google.sps.utils;
 import com.google.sps.utils.Ad;
 import com.google.sps.utils.AdRowProcessor;
-import com.google.sps.utils.WriteAd;
+import com.google.sps.utils.FirebaseAdWriter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.IOException;
@@ -22,6 +22,8 @@ import org.apache.commons.csv.CSVRecord;
 public class ReportReader {
 
   private static final String CSV_FILE_PATH = "/output.csv";
+  // NUMBER_CSV_HEADER_ROWS helps the parser know what rows to skip when reading the CSV.
+  private static final int NUMBER_CSV_HEADER_ROWS = 2; 
   private static final String COLLECTION = "testing"; 
   private static final int START_ROW_INDEX = 1;  // First row sent to processor (inclusive).
   private static final int END_ROW_INDEX = 3; // Last row sent to processor (inclusive).
@@ -34,8 +36,8 @@ public class ReportReader {
     CSVRecord[] csvRecords = new CSVRecord[csvRecordList.size()];
     csvRecords = csvRecordList.toArray(csvRecords);
     int currentRowIndex = 0; 
-    while (currentRowIndex <= END_ROW_INDEX + 2) { // Adding two accounts for the two header rows.
-      if (currentRowIndex >= START_ROW_INDEX + 2) {
+    while (currentRowIndex <= END_ROW_INDEX + NUMBER_CSV_HEADER_ROWS) {
+      if (currentRowIndex >= START_ROW_INDEX + NUMBER_CSV_HEADER_ROWS) {
         int currentRowSize = csvRecords[currentRowIndex].size(); 
         String[] currentRow = new String[currentRowSize];
         for (int i = 0; i < currentRowSize; i++) {

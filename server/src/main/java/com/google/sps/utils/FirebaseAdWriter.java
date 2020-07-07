@@ -15,7 +15,7 @@ import java.io.InputStream;
  * Author: Kira Toal
  * Date: July 6, 2020
  */ 
-public final class WriteAd {
+public final class FirebaseAdWriter {
 
   public static void writeAd(Ad ad, String collection, String pathToServiceAccount, String databaseURL) throws Exception {
     // Initialize app.
