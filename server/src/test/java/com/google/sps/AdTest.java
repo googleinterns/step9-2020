@@ -10,7 +10,7 @@ import org.junit.runners.JUnit4;
  * 
  */
 @RunWith(JUnit4.class)
-public final class TimeRangeTest {
+public final class AdTest {
   @Test
   public void equality() {
     Assert.assertEquals(2, 2);

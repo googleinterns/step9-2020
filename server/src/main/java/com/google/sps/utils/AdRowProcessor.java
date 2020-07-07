@@ -69,28 +69,19 @@ public final class AdRowProcessor {
     return impressionsArray; 
   }
 
-  public static long getImpressionsMin(String impressionsField) throws IllegalArgumentException {
+  public static long getImpressionsMin(String impressionsField) throws IllegalArgumentException, NumberFormatException {
     String[] impressionsArray = formatImpressionField(impressionsField); 
     
     // If csv field uses "<=", arr has length 1 and min number of impressions is 0.
     if (impressionsArray.length > 1) {
-      try {
-        return Long.parseLong(impressionsArray[0]);
-      } catch (NumberFormatException e) {
-        System.out.println("Error: " + e);
-        System.exit(0);
-      }
+      return Long.parseLong(impressionsArray[0]);
     }
     return 0;
   }
 
-  public static long getImpressionsMax(String impressionsField) throws IllegalArgumentException {
+  public static long getImpressionsMax(String impressionsField) throws IllegalArgumentException, NumberFormatException {
     String[] impressionsArray = formatImpressionField(impressionsField); 
-    try {
-      return Long.parseLong(impressionsArray[impressionsArray.length - 1]);   
-    } catch (NumberFormatException e) {
-      throw new NumberFormatException();
-    }
+    return Long.parseLong(impressionsArray[impressionsArray.length - 1]);   
   }
 
   public static boolean getAgeTargets(String str) {
@@ -107,11 +98,7 @@ public final class AdRowProcessor {
     return trimmedList;  
   }
 
-  public static long convertStringToLong(String str) {
-    try {
-      return (long) Double.parseDouble(str);
-    } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException();
-    }
+  public static long convertStringToLong(String str) throws IllegalArgumentException {
+    return (long) Double.parseDouble(str);
   }
 }
