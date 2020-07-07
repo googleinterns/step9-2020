@@ -82,12 +82,12 @@ function updateRecordInIndex(algoliaOperation = index.saveObject) {
  * @return {function} 
  */
 function deleteEntityFromIndex(algoliaOperation = index.deleteObject) {
-  var deleteEntityFromIndex = 
+  exports.deleteEntityFromIndex = 
       DOCS.onDelete(snapshot => {
         return algoliaFunctions
                   .deleteEntityFromIndex(algoliaOperation, snapshot);
       }); 
-  return deleteEntityFromIndex;
+  return exports.deleteEntityFromIndex;
 }
 
 addEntityToIndex();
