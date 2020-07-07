@@ -1,0 +1,24 @@
+.search-container {
+  width: 100%;
+}
+
+.container {
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.filter-header {
+  position: absolute;
+  left: 20px;
+  top: 5px;
+  cursor: pointer;
+  user-select: none;
+  color: white;
+}
+
+.search-body {
+  display: flex;
+  flex-direction: row;
+}

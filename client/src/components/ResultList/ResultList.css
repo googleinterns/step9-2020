@@ -1,0 +1,9 @@
+.search-panel-results {
+  width: 100%;
+  flex-direction: column;
+  margin: 30px;
+}
+
+.pagination {
+  margin: 32px auto;
+}
