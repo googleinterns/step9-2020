@@ -6,7 +6,7 @@
  * @return {Object}
  */
 function addField(someJson) {
-  someJson.altered = true;  
+  someJson.alteredByMockAlgolia = true;  
   return someJson;
 } 
 
