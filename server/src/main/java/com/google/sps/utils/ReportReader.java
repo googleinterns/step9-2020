@@ -1,10 +1,4 @@
-/* Description: ReportReader reads in lines of CSV data and sends them 
- *              to the processor. 
- * Author: Kira Toal
- * Date: June 24, 2020
- */
 package com.google.sps.utils;
-
 import com.google.sps.utils.Ad;
 import com.google.sps.utils.AdRowProcessor;
 import com.google.sps.utils.WriteAd;
@@ -20,6 +14,11 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+/* Description: ReportReader reads in lines of CSV data and sends them 
+ *              to the processor. 
+ * Author: Kira Toal
+ * Date: June 24, 2020
+ */
 public class ReportReader {
 
   private static final String CSV_FILE_PATH = "/output.csv";

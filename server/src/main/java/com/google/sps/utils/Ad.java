@@ -1,10 +1,10 @@
+package com.google.sps.utils;
+import java.util.List; 
+
 /* Description: Ad defines the ad objects that we write to Firebase.
  * Author: Kira Toal
  * Date: June 24, 2020
  */
-package com.google.sps.utils;
-import java.util.List; 
- 
 public class Ad {
 
   private String id; 
