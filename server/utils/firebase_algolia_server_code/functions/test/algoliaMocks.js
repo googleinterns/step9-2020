@@ -6,7 +6,7 @@
  * @return {Object}
  */
 function addField(someJson) {
-  //someJson.altered = true;  
+  someJson.altered = true;  
   return someJson;
 } 
 
@@ -26,9 +26,7 @@ function deleteObject(objectID) {
  * @return {Object}
  */
 function saveObject({data, objectID}) {
-  var data = addField(data);
-  var objectID = addField(objectID);
-  return {data, objectID};
+  return {data: addField(data), objectID: addField(objectID)};
 }
 
 module.exports = {deleteObject, saveObject, addField};
