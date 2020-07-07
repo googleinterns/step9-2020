@@ -1,5 +1,5 @@
 /**
- * Return a snap as it would be by an algolia add mock
+ * Returns a snap as it would be by an algolia add mock
  * @param {Object} snap a firebase snap object
  * @return {Object}
  */
@@ -8,12 +8,12 @@ function getFormattedSnap(snap) {
 }
 
 /**
- * Return a change as it would be by an algolia update mock
+ * Returns a change as it would be by an algolia update mock
  * @param {Object} change a firebase change object
  * @return {Object}
  */
 function getFormattedChange(change) {
-  return getFormattedSnap(change.after); // Change.after is a snap.
+  return getFormattedSnap(change.after); // change.after is a snap.
 }
 
 module.exports.getFormattedChange = getFormattedChange;
