@@ -6,8 +6,8 @@ import React from 'react';
 import ResultItem from '../ResultItem/ResultItem';
 
 const ResultList = () => (
-  <div className="search-panel__results center">
-    <Hits hitComponent={ResultItem} /> {/* display a list of results. */}
+  <div className="search-panel-results center">
+    <Hits hitComponent={ResultItem} />
     <div className="pagination">
       <Pagination />
     </div>

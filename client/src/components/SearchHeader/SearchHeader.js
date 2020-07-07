@@ -1,9 +1,12 @@
 import './SearchHeader.css';
 
 import React from 'react';
-import { SEARCHBOX_CONFIG } from '../../constants/searchbox_constant';
 import { SearchBox } from 'react-instantsearch-dom';
 import tardigrade from '../../images/tardigrade.png';
+
+const SEARCHBOX_CONFIG = {
+  placeholder: 'Search Ads...',
+};
 
 const SearchHeader = () => (
   <header className="search-header center">
