@@ -2,16 +2,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 const CustomSelect = props => {
-  const { label, value, list, setFunction, disabled = false } = props;
+  const { label, value, list, setFunction } = props;
 
   return (
     <div className={`container${label !== 'y-axis' ? ' margin-right' : ''}`}>
       <label>{label}</label>
-      <select
-        value={value}
-        onChange={e => setFunction(e.target.value)}
-        disabled={disabled}
-      >
+      <select value={value} onChange={e => setFunction(e.target.value)}>
         {list.map((item, index) => (
           <option value={item} key={index}>
             {item}
@@ -23,7 +19,6 @@ const CustomSelect = props => {
 };
 
 CustomSelect.propTypes = {
-  disabled: PropTypes.bool,
   label: PropTypes.string,
   value: PropTypes.string,
   list: PropTypes.array,

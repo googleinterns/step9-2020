@@ -6,18 +6,18 @@ import {
   Y_VALUES,
 } from '../../constants/visualization_constant';
 import React, { useEffect, useState } from 'react';
+import { convertStringToObject, getAverage } from '../../utils/Utils';
 
 import BarChart from './charts/BarChart';
 import CustomSelect from '../CustomSelect/CustomSelect';
 import Interpolation from './charts/Interpolation';
 import ZoomLine from './charts/ZoomLine';
-import { convertStringToObject } from '../../utils/Utils';
 import { database } from '../../firebase/firebase';
 import tardigrade from '../../images/tardigrade.png';
 
 const Visualization = () => {
   const [chartType, setChartType] = useState('Zoomable Line');
-  const [x, setX] = useState('Time');
+  const [x, setX] = useState('All');
   const [y, setY] = useState('USD Spent');
   const [data, setData] = useState([]);
 
@@ -42,7 +42,9 @@ const Visualization = () => {
     const {
       startDate,
       endDate,
+      impressionsMin,
       impressionsMax,
+      spendMin,
       spendMax,
       geoTarget,
       genderTarget,
@@ -51,11 +53,15 @@ const Visualization = () => {
     const dateRange = [new Date(startDate), new Date(endDate)];
     const magnitude = convertStringToObject(contentSentiment).magnitude;
     dateRange.map(date => {
-      spendData.push({ x: date, y: spendMax });
-      impressionData.push({ x: date, y: impressionsMax });
+      spendData.push({ x: date, y: getAverage([spendMin, spendMax]) });
+      impressionData.push({
+        x: date,
+        y: getAverage([impressionsMin, impressionsMax]),
+      });
       contentSentimentData.push({ x: date, y: magnitude });
       geoTarget.map(geo => regionData.push({ x: date, y: geo }));
       genderTarget.map(gender => genderData.push({ x: date, y: gender }));
+      return date;
     });
   };
 
@@ -67,12 +73,19 @@ const Visualization = () => {
         querySnapshot.forEach(doc => handleDoc(doc));
         handleChart();
       });
-  }, [spendData, impressionData]);
+  });
 
-  const chartMap = {
-    'Zoomable Line': <ZoomLine data={data} />,
-    Interpolation: <Interpolation data={data} />,
-    'Vertical Bar': <BarChart data={data} />,
+  const displayChart = () => {
+    const filteredData =
+      x === 'All'
+        ? data
+        : data.filter(d => d.x.getFullYear() === parseInt(x, 10));
+    const chartMap = {
+      'Zoomable Line': <ZoomLine data={filteredData} />,
+      Interpolation: <Interpolation data={filteredData} />,
+      'Vertical Bar': <BarChart data={filteredData} />,
+    };
+    return chartMap[chartType];
   };
 
   return (
@@ -87,21 +100,22 @@ const Visualization = () => {
             setFunction={setChartType}
           />
           <CustomSelect
-            disabled={true}
-            label={'x-axis'}
+            label={'x-axis (timeline)'}
             value={x}
             list={X_VALUES}
             setFunction={setX}
           />
           <CustomSelect
-            label={'y-axis'}
+            label={'y-axis (variables)'}
             value={y}
             list={Y_VALUES}
             setFunction={setY}
           />
         </div>
       </header>
-      <div className="center">{data.length > 0 && chartMap[chartType]}</div>
+      <div className="center">
+        {data.length > 0 ? displayChart() : 'Loading...'}
+      </div>
     </div>
   );
 };

@@ -25,4 +25,14 @@ const getDatesBetween = function(startDate, endDate) {
   return dates;
 };
 
-export { generateRandomHexColor, convertStringToObject, getDatesBetween };
+const getAverage = valueList => {
+  const total = valueList.reduce((a, b) => a + b, 0);
+  return total / valueList.length;
+};
+
+export {
+  generateRandomHexColor,
+  convertStringToObject,
+  getDatesBetween,
+  getAverage,
+};

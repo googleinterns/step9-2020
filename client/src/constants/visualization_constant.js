@@ -6,6 +6,6 @@ const Y_VALUES = [
   'Gender',
   'Content Sentiment',
 ];
-const X_VALUES = ['Time'];
+const X_VALUES = ['All', '2020', '2019', '2018'];
 
 export { CHART_TYPES, X_VALUES, Y_VALUES };

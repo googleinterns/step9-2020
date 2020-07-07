@@ -13,9 +13,7 @@ const COLOR = 'tomato';
 
 const ZoomLine = props => {
   const { data } = props;
-  const [zoomDomain, setZoomDomain] = useState({
-    x: [new Date(2020, 1, 1), new Date(2019, 1, 1)],
-  });
+  const [zoomDomain, setZoomDomain] = useState();
 
   return (
     <div className="chart search-body center">
