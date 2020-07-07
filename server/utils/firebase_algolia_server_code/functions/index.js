@@ -17,8 +17,7 @@ const functions = require('firebase-functions');
  * Save api keys in `environment variables`
  * 1) Go to algolia, log in (ask robbie for credentials.) 
  * 2) Retrieve relevant keys
- * 3) run: firebase functions:config:set 
- *              algolia.app=APP_ID algolia.key=ADMIN_API_KEY
+ * 3) run: `firebase functions:config:set algolia.app=APP_ID algolia.key=ADMIN_API_KEY`
  * Now you can compile! 
  * Please *don't* expose the API_KEY to the public.
  * *don't* commit runtimeconfig either please. 
@@ -48,8 +47,11 @@ const DOCS = functions.firestore.document(DOC_NAME);
 
 /**
  * Create's an algolia record from a firebase entity snapshot.
+ * Use default value unless mocking an algoliaOperation.
+ * @param {function(string): !Promise=} algoliaOperation a save function
+ * @return {function} 
  */
-function addEntityToIndex(algoliaOperation) {
+function addEntityToIndex(algoliaOperation = index.saveObject) {
   exports.addEntityToIndex = 
       DOCS.onCreate(snapshot => {
         return algoliaFunctions.addEntityToIndex(algoliaOperation, snapshot);
@@ -61,8 +63,11 @@ function addEntityToIndex(algoliaOperation) {
 /**
  * Update's an algolia record from a firebase change type. 
  * If the record does not exist in algolia, it will be created.
+ * Use default value unless mocking an algoliaOperation.
+ * @param {function(string): !Promise=} algoliaOperation a save function
+ * @return {function} 
  */
-function updateRecordInIndex(algoliaOperation) {
+function updateRecordInIndex(algoliaOperation = index.saveObject) {
   exports.updateRecordInIndex = 
       DOCS.onUpdate(change => {
         return algoliaFunctions.updateRecordInIndex(algoliaOperation, change);
@@ -72,18 +77,22 @@ function updateRecordInIndex(algoliaOperation) {
 
 /**
  * Delete's an algolia record from an entity snapshot. 
+ * Use default value unless mocking an algoliaOperation.
+ * @param {function(string): !Promise=} algoliaOperation a delete function
+ * @return {function} 
  */
-function deleteEntityFromIndex(algoliaOperation) {
-  exports.deleteEntityFromIndex = 
+function deleteEntityFromIndex(algoliaOperation = index.deleteObject) {
+  var deleteEntityFromIndex = 
       DOCS.onDelete(snapshot => {
-        return algoliaFunctions.deleteEntityFromIndex(algoliaOperation, snapshot);
+        return algoliaFunctions
+                  .deleteEntityFromIndex(algoliaOperation, snapshot);
       }); 
-  return exports.deleteEntityFromIndex;
+  return deleteEntityFromIndex;
 }
 
-addEntityToIndex(index.saveObject);
-updateRecordInIndex(index.saveObject);
-deleteEntityFromIndex(index.deleteObject);
+addEntityToIndex();
+updateRecordInIndex();
+deleteEntityFromIndex();
 
 module.exports.addEntityToIndex = addEntityToIndex;
 module.exports.updateRecordInIndex = updateRecordInIndex;

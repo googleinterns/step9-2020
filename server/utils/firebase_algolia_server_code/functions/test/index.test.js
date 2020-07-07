@@ -7,25 +7,27 @@
  * - Download a firebase service key.
  * - *DON'T* push this key to github please.  
  */
+
+// Initialize the firebase test mocking environment.
 const test = require('firebase-functions-test')({
   databaseURL: 'https://step9-2020-capstone.firebaseio.com',
   storageBucket: 'step9-2020-capstone.appspot.com',
   projectId: 'step9-2020-capstone',
 }, 'step9-2020-capstone.json');
-const functions = require('firebase-functions');
 
+// Initialize chai, sinon, sinon-chai. 
 var assert = require('chai').assert;
 var chai = require("chai");
 var sinon = require("sinon");
 var sinonChai = require("sinon-chai");
 chai.should();
 chai.use(sinonChai);
-var expect = chai.expect;
-chai.use(sinonChai);
 
+// Import the generic cloud functions.
 const {addEntityToIndex, updateRecordInIndex, deleteEntityFromIndex} = 
     require('../index.js');
 
+// Import mock saveObject, mock deleteObject, and helpers.
 const {saveObject, deleteObject} = require('./algoliaMocks');
 const {formattedSnap, formattedChange} = require('./exampleDataHelpers');
 
@@ -49,7 +51,7 @@ describe("test_addEntityToIndex", () => {
     assert.isTrue(saveSpy.calledOnce);
   })
 
-  it('addEntityToIndex calls saveObject with the correct parameters', () => {
+  it('addEntityToIndex calls saveObject with the correct parameter', () => {
     var saveSpy = sinon.spy(saveObject);
     const wrappedAdd = test.wrap(addEntityToIndex(saveSpy));
 
@@ -79,7 +81,7 @@ describe("test_updateRecordInIndex", () => {
     assert.isTrue(saveSpy.calledOnce);
   });
 
-  it('updateRecordInIndex calls saveObject with the correct parameters', () => {
+  it('updateRecordInIndex calls saveObject with the correct parameter', () => {
     var saveSpy = sinon.spy(saveObject);
     const wrappedUpdate = test.wrap(updateRecordInIndex(saveSpy));
 
