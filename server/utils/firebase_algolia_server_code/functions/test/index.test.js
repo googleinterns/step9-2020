@@ -36,9 +36,9 @@ describe("test_addEntityToIndex", () => {
     const wrappedAdd = test.wrap(addEntityToIndex(saveObject));
 
     const snap = test.firestore.exampleDocumentSnapshot();
-
     const addedSnap = wrappedAdd(snap);
-    return chai.assert.deepEqual(addedSnap, formattedSnap(snap));
+
+    assert.deepEqual(addedSnap, formattedSnap(snap));
   });
 
   it('addEntityToIndex calls saveObject exactly once', () => {
@@ -65,6 +65,7 @@ describe("test_addEntityToIndex", () => {
 describe("test_updateRecordInIndex", () => {
   it('updateRecordInIndex returns exactly the updated data', () => {
     const wrappedUpdate = test.wrap(updateRecordInIndex(saveObject));
+    
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
     const updatedChange = wrappedUpdate(randomChange);
 
