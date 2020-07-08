@@ -16,8 +16,8 @@ const {createRecordFromEntity, updateRecord, deleteRecord} =
 
 // Import mock saveObject, mock deleteObject, and helpers.
 const {saveObject, deleteObject} = require('./algoliaMocks');
-const {getFormattedID, getFormattedSnap, getFormattedChange} = 
-    require('./exampleDataHelpers');
+const {getExpectedOutputID, getExpectedOutputSnap, getExpectedOutputChange} =
+    require('./expectedMockOutputHelpers');
 
 describe("test_createRecordFromEntity", () => {
   it('calls saveObject exactly once', () => {
@@ -37,7 +37,7 @@ describe("test_createRecordFromEntity", () => {
     const snap = test.firestore.exampleDocumentSnapshot();
     const addedSnap = createRecordWrapper(snap);
 
-    assert.isTrue(saveSpy.calledWith(getFormattedSnap(snap)));
+    assert.isTrue(saveSpy.calledWith(getExpectedOutputSnap(snap)));
   });
   
   it('should return input data + "altered" field', () => {
@@ -46,7 +46,7 @@ describe("test_createRecordFromEntity", () => {
     const snap = test.firestore.exampleDocumentSnapshot();
     const addedSnap = createRecordWrapper(snap);
 
-    assert.deepEqual(addedSnap, getFormattedSnap(snap));
+    assert.deepEqual(addedSnap, getExpectedOutputSnap(snap));
   });
 });
 
@@ -68,7 +68,7 @@ describe("test_updateRecord", () => {
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
     const updatedChange = updateWrapper(randomChange);
 
-    assert.isTrue(saveSpy.calledWith(getFormattedChange(randomChange)));    
+    assert.isTrue(saveSpy.calledWith(getExpectedOutputChange(randomChange)));    
   });
 
   it('should return input data + "altered" field', () => {
@@ -77,7 +77,7 @@ describe("test_updateRecord", () => {
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
     const updatedChange = updateWrapper(randomChange);
 
-    assert.deepEqual(updatedChange, getFormattedChange(randomChange));
+    assert.deepEqual(updatedChange, getExpectedOutputChange(randomChange));
   });
 });
 
@@ -101,13 +101,13 @@ describe("test_deleteRecord", () => {
 
     assert.isTrue(deleteSpy.calledWith(deletedID.objectID));    
   });
-  
+
   it('should return input data + "altered" field', () => {
     const deleteWrapper = test.wrap(deleteRecord(deleteObject));
     
     const snap = test.firestore.exampleDocumentSnapshot();
     const deletedID = deleteWrapper(snap);
 
-    assert.deepEqual(deletedID, getFormattedID(snap));
+    assert.deepEqual(deletedID, getExpectedOutputID(snap));
   });  
 });
