@@ -103,7 +103,7 @@ public final class AdRowProcessor {
   }
 
   public static boolean getAgeTargets(String str) {
-    if (str.trim().equals("Not targeted")) {
+    if (str.trim().toLowerCase().equals("not targeted")) {
       return false; 
     }
     return true; 

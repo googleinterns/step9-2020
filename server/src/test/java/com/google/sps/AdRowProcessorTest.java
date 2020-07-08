@@ -70,4 +70,23 @@ public final class AdRowProcessorTest {
     Ad ad = AdRowProcessor.convertRowToAd(row);
   }
 
+  @Test
+  public void ageTargeting() {
+    String untargeted = "    Not Targeted  ";
+    String[] firstRow = {"CR53959591413","FRIENDS OF SUZY GLOWIAK","2018-09-22","2018-10-01","≤ 10k",
+            untargeted,"Not targeted","Illinois, California","100","1000.0",
+            "The reasonable choice", "Ad suzyforsenate.com/about","Suzy Glowiak is the common-sense pick for the 24th.",
+            "Headline Sentiment", "Headline Terms", "Content Sentiment", "Content Terms"};
+    Ad ad1 = AdRowProcessor.convertRowToAd(firstRow);
+    Assert.assertEquals(ad1.getIsTargetingAge(), false); 
+
+    String targeted = " 18-48 ";
+    String[] secondRow = {"CR53959591413","FRIENDS OF SUZY GLOWIAK","2018-09-22","2018-10-01","≤ 10k",
+            targeted,"Not targeted","Illinois, California","100","1000.0",
+            "The reasonable choice", "Ad suzyforsenate.com/about","Suzy Glowiak is the common-sense pick for the 24th.",
+            "Headline Sentiment", "Headline Terms", "Content Sentiment", "Content Terms"};
+    Ad ad2 = AdRowProcessor.convertRowToAd(secondRow);
+    Assert.assertEquals(ad2.getIsTargetingAge(), true);   
+  }
+
 }
