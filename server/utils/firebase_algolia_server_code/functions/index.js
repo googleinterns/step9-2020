@@ -94,4 +94,4 @@ createRecordFromEntity();
 updateRecord();
 deleteRecord();
 
-module.exports = {createRecordFromEntity, updateRecord, deleteRecord};
+module.exports = { createRecordFromEntity, updateRecord, deleteRecord };

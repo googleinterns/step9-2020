@@ -8,19 +8,19 @@
  */
 
 // Import the testing environment configuration
-const {test, assert, sinon} = require('./testConfig');
+const { test, assert, sinon } = require('./testConfig');
 
 // Import the generic cloud functions.
-const {createRecordFromEntity, updateRecord, deleteRecord} = 
+const { createRecordFromEntity, updateRecord, deleteRecord } = 
     require('../index.js');
 
 // Import mock saveObject, mock deleteObject, and helpers.
-const {saveObject, deleteObject} = require('./algoliaMocks');
-const {getExpectedOutputID, getExpectedOutputSnap, getExpectedOutputChange} =
+const { saveObject, deleteObject } = require('./algoliaMocks');
+const { getExpectedOutputID, getExpectedOutputSnap, getExpectedOutputChange } =
     require('./expectedMockOutputHelpers');
 
 describe("test_createRecordFromEntity", () => {
-  it('calls saveObject exactly once', () => {
+  it('should call saveObject exactly once', () => {
     const saveSpy = sinon.spy(saveObject);
     const snap = test.firestore.exampleDocumentSnapshot();
 
@@ -30,7 +30,7 @@ describe("test_createRecordFromEntity", () => {
     assert.isTrue(saveSpy.calledOnce);
   });
 
-  it('calls saveObject with the correct parameter', () => {
+  it('should call saveObject with the correct parameter', () => {
     const snap = test.firestore.exampleDocumentSnapshot();
     const saveSpy = sinon.spy(saveObject);
 
@@ -51,7 +51,7 @@ describe("test_createRecordFromEntity", () => {
 });
 
 describe("test_updateRecord", () => {
-  it('calls saveObject exactly once', () => {
+  it('should call saveObject exactly once', () => {
     const saveSpy = sinon.spy(saveObject);
     const updateWrapper = test.wrap(updateRecord(saveSpy));
 
@@ -61,7 +61,7 @@ describe("test_updateRecord", () => {
     assert.isTrue(saveSpy.calledOnce);
   });
 
-  it('calls saveObject with the correct parameter', () => {
+  it('should call saveObject with the correct parameter', () => {
     const saveSpy = sinon.spy(saveObject);
     const updateWrapper = test.wrap(updateRecord(saveSpy));
 
@@ -82,7 +82,7 @@ describe("test_updateRecord", () => {
 });
 
 describe("test_deleteRecord", () => {
-  it('calls deleteObject exactly once', () => {
+  it('should call deleteObject exactly once', () => {
     const snap = test.firestore.exampleDocumentSnapshot();
     const deleteSpy = sinon.spy(deleteObject);
 
@@ -92,7 +92,7 @@ describe("test_deleteRecord", () => {
     assert.isTrue(deleteSpy.calledOnce);
   });
 
-  it('calls deleteObject with the correct parameters', () => {
+  it('should call deleteObject with the correct parameters', () => {
     const snap = test.firestore.exampleDocumentSnapshot();
     const deleteSpy = sinon.spy(deleteObject);
 

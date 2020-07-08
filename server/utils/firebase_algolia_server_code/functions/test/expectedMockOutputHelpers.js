@@ -9,7 +9,7 @@
  * Date: July 7, 2020
  */
 
-const {addField} = require('./algoliaMocks');
+const { addField } = require('./algoliaMocks');
 
 /**
  * Returns a snap id object as it would be by an algolia delete mock
@@ -39,4 +39,5 @@ function getExpectedOutputChange(change) {
 }
 
 module.exports = 
-    {getExpectedOutputID, getExpectedOutputChange, getExpectedOutputSnap};
+    { getExpectedOutputID, getExpectedOutputChange, getExpectedOutputSnap };
+    

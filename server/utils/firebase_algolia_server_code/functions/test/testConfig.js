@@ -25,4 +25,4 @@ const sinonChai = require("sinon-chai");
 chai.should();
 chai.use(sinonChai);
 
-module.exports = {test, assert, sinon};
+module.exports = { test, assert, sinon };
