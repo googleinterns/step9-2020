@@ -30,7 +30,7 @@ describe("test_createRecordFromEntity", () => {
     assert.isTrue(saveSpy.calledOnce);
   });
 
-  it('should call saveObject with the correct parameter', () => {
+  it('should call saveObject with the correct parameters', () => {
     const snap = test.firestore.exampleDocumentSnapshot();
     const saveSpy = sinon.spy(saveObject);
 
@@ -61,7 +61,7 @@ describe("test_updateRecord", () => {
     assert.isTrue(saveSpy.calledOnce);
   });
 
-  it('should call saveObject with the correct parameter', () => {
+  it('should call saveObject with the correct parameters', () => {
     const saveSpy = sinon.spy(saveObject);
     const updateWrapper = test.wrap(updateRecord(saveSpy));
 
