@@ -1,11 +1,10 @@
 package com.google.sps;
-
 import com.google.sps.utils.Ad;
 import com.google.sps.utils.AdRowProcessor;
-import java.time.format.DateTimeParseException; 
-import java.util.List; 
-import java.util.Arrays; 
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -150,7 +149,38 @@ public final class AdRowProcessorTest {
                     "Content Terms"};  
     Ad ad = AdRowProcessor.convertRowToAd(row);
   }
+  
+  @Test
+  public void Should_SetLinkAsFirstArgument_When_LinkFieldHadOneArgument() {
+    String link = " ad.com ";
+    String expected = "ad.com";
+    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
+                    "Not targeted","Not targeted","0","0","Headline", link,
+                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
+                    "Content Terms"};  
+    Ad ad = AdRowProcessor.convertRowToAd(row);
+    Assert.assertEquals(ad.getLink(), expected); 
+  }
+  
+  @Test
+  public void Should_SetLinkAsSecondArgument_When_LinkFieldHadTwoArguments() {
+    String link = " Ad ad.com ";
+    String expected = "ad.com";
+    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
+                    "Not targeted","Not targeted","0","0","Headline", link,
+                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
+                    "Content Terms"};  
+    Ad ad = AdRowProcessor.convertRowToAd(row);
+    Assert.assertEquals(ad.getLink(), expected); 
+  }
 
-
-
+  @Test(expected = IllegalArgumentException.class)
+  public void Should_ThrowException_When_LinkFieldHadTooManyArguments() {
+    String link = " Ad ad.com ad.com";
+    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
+                    "Not targeted","Not targeted","0","0","Headline", link,
+                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
+                    "Content Terms"};  
+    Ad ad = AdRowProcessor.convertRowToAd(row);
+  }
 }

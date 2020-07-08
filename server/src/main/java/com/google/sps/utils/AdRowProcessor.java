@@ -3,6 +3,8 @@ import com.google.sps.utils.Ad.Builder;
 import com.google.sps.utils.Ad;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,16 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDate; 
-
 /* 
- * Description: Utility class that processes a CSV row and converts between row format and Ad format. 
+ * Description: Utility class that processes CSV rows and converts between row format and Ad format. 
  * Author: Kira Toal
  * Date: June 24, 2020
  */ 
 public final class AdRowProcessor {
 
+  private static final int NUMBER_OF_FIELDS = 17;
   private static final int ID_COLUMN = 0;
   private static final int ADVERTISER_COLUMN = 1; 
   private static final int START_DATE_COLUMN = 2;
@@ -39,7 +39,7 @@ public final class AdRowProcessor {
   private static final int CONTENT_TERMS_COLUMN = 16; 
 
   public static Ad convertRowToAd(String[] row) {
-    if (row.length != 17) {
+    if (row.length != NUMBER_OF_FIELDS) {
       throw new IllegalArgumentException();
     }
     Ad ad = Ad.newBuilder()
@@ -55,7 +55,7 @@ public final class AdRowProcessor {
         .spendMin(convertStringToLong(row[SPEND_MIN_COLUMN]))
         .spendMax(convertStringToLong(row[SPEND_MAX_COLUMN]))
         .headline(row[HEADLINE_COLUMN].trim())
-        .link(row[LINK_COLUMN].substring(3)) // trim "Ad" from "Ad {URL}"
+        .link(getLink(row[LINK_COLUMN]))
         .content(row[CONTENT_COLUMN].trim())
         .headlineSentiment(row[HEADLINE_SENTIMENT_COLUMN].trim())
         .headlineTerms(row[HEADLINE_TERMS_COLUMN].trim())
@@ -77,6 +77,10 @@ public final class AdRowProcessor {
     return date;
   }
 
+  /*
+   * getImpressionsMin tries to parse the minimum number of impressions and throws an error
+   * if the field is not parsable.
+   */ 
   public static long getImpressionsMin(String impressionsField) throws IllegalArgumentException, NumberFormatException {
     String[] impressionsArray = formatImpressionField(impressionsField); 
     
@@ -87,12 +91,17 @@ public final class AdRowProcessor {
     return 0;
   }
 
+  /*
+   * getImpressionsMax tries to parse the maximum number of impressions and throws an error
+   * if the field is not parsable.
+   */ 
   public static long getImpressionsMax(String impressionsField) throws IllegalArgumentException, NumberFormatException {
     String[] impressionsArray = formatImpressionField(impressionsField); 
     return Long.parseLong(impressionsArray[impressionsArray.length - 1]);   
   }
 
   /* 
+   * Helper function for getImpressionsMin and getImpressionsMax.
    * Min and max impression fields contain letters k and M as well as ≤. The 
    * formatImpressionField helper method makes the fields easier to parse later.
    */ 
@@ -102,6 +111,9 @@ public final class AdRowProcessor {
     return impressionsArray; 
   }
 
+  /* 
+   * getAgeTargets determines whether or not the ad is targeting age.
+   */ 
   public static boolean getAgeTargets(String str) {
     if (str.trim().toLowerCase().equals("not targeted")) {
       return false; 
@@ -109,6 +121,10 @@ public final class AdRowProcessor {
     return true; 
   }
 
+  /* 
+   * checkGenderTargets determines if the arguments in the gender target field are valid.
+   * If they are not valid, the function will throw an exception.
+   */
   public static List<String> checkGenderTargets(String str) throws IllegalArgumentException {
     List<String> targets = convertStringToList(str);
     List<String> validGenderTargets = Arrays.asList("not targeted", "female", "male", "unknown gender");
@@ -120,6 +136,10 @@ public final class AdRowProcessor {
     return targets;  
   }
 
+  /* 
+   * checkGeoTargets determines if the arguments in the geo target field are valid.
+   * If they are not valid, the function will throw an exception.
+   */
   public static List<String> checkGeoTargets(String str) throws IllegalArgumentException {
     List<String> targets = convertStringToList(str);
     List<String> validGeoTargets = Arrays.asList("alabama", "alaska", "american samoa", "arizona", 
@@ -144,6 +164,10 @@ public final class AdRowProcessor {
     return targets;  
   }
 
+  /*
+   * Helper function for checkGenderTargets and checkGeoTargets that converts the 
+   * fields from String to list format and removes excess whitespace. 
+   */ 
   public static List<String> convertStringToList(String str) {
     List<String> trimmedList = Arrays.stream(str.split(","))
         .map(String::trim)
@@ -151,7 +175,28 @@ public final class AdRowProcessor {
     return trimmedList;  
   }
 
+  /* 
+   * convertStringToLong attempts to convert a String argument to a long and throws
+   * an exception if the String is not parsable.
+   */ 
   public static long convertStringToLong(String str) throws IllegalArgumentException {
     return (long) Double.parseDouble(str.trim());
+  }
+
+  /* 
+   * getLink determines the format of the link in the ad's link field.
+   * The function parses the link if it is in a valid format, and throws and exception if it is not.
+   */ 
+  public static String getLink(String link) throws IllegalArgumentException {
+    String[] linkArray = link.trim().split(" ");
+    int arrLength = linkArray.length;
+    switch(arrLength) {
+      case 1 :
+        return linkArray[0]; 
+      case 2 :
+        return linkArray[1];
+      default :
+        throw new IllegalArgumentException("Link field contains invalid argument.");
+    }
   }
 }
