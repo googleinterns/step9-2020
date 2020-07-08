@@ -16,7 +16,8 @@ const {createRecordFromEntity, updateRecord, deleteRecord} =
 
 // Import mock saveObject, mock deleteObject, and helpers.
 const {saveObject, deleteObject} = require('./algoliaMocks');
-const {getFormattedSnap, getFormattedChange} = require('./exampleDataHelpers');
+const {getFormattedID, getFormattedSnap, getFormattedChange} = 
+    require('./exampleDataHelpers');
 
 describe("test_createRecordFromEntity", () => {
   it('calls saveObject exactly once', () => {
@@ -83,21 +84,30 @@ describe("test_updateRecord", () => {
 describe("test_deleteRecord", () => {
   it('calls deleteObject exactly once', () => {
     var deleteSpy = sinon.spy(deleteObject);
-    const exampleID = {id: "1"};
+    const snap = test.firestore.exampleDocumentSnapshot();
 
     const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
-    const deletedID = deleteWrapper(exampleID);
+    const deletedID = deleteWrapper(snap);
 
     assert.isTrue(deleteSpy.calledOnce);
   });
 
   it('calls deleteObject with the correct parameters', () => {
     var deleteSpy = sinon.spy(deleteObject);
-    const exampleID = {id: "1"};
+    const snap = test.firestore.exampleDocumentSnapshot();
 
     const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
-    const deletedID = deleteWrapper(exampleID);
-    
-    assert.isTrue(deleteSpy.calledWith(deletedID));    
+    const deletedID = deleteWrapper(snap);
+
+    assert.isTrue(deleteSpy.calledWith(deletedID.objectID));    
   });
+  
+  it('should return input data + "altered" field', () => {
+    const deleteWrapper = test.wrap(deleteRecord(deleteObject));
+    
+    const snap = test.firestore.exampleDocumentSnapshot();
+    const deletedID = deleteWrapper(snap);
+
+    assert.deepEqual(deletedID, getFormattedID(snap));
+  });  
 });

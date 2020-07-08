@@ -11,16 +11,16 @@ function addField(someJson) {
 } 
 
 /**
- * Mock delete, simply returns the input. 
- * @param {Object} objectID json string of the form {id: 'some id'}.
+ * Mock delete, simply returns the input + an altered field 
+ * @param {string} objectID string
  * @return {Object}
  */
 function deleteObject(objectID) {
-  return addField(objectID);
+  return addField({'objectID': objectID});
 }
 
 /**
- * Mock save, simply returns the input. 
+ * Mock save, simply returns the input + an altered field  
  * @param {Object} data json string with arbitrary contents.
  * @param {Object} objectID json string of the form {id: 'id'}. 
  * @return {Object}
