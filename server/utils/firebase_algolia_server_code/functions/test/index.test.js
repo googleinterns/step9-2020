@@ -22,28 +22,28 @@ const {getExpectedOutputID, getExpectedOutputSnap, getExpectedOutputChange} =
 describe("test_createRecordFromEntity", () => {
   it('calls saveObject exactly once', () => {
     const saveSpy = sinon.spy(saveObject);
-    const createRecordWrapper = test.wrap(createRecordFromEntity(saveSpy));
-
     const snap = test.firestore.exampleDocumentSnapshot();
+
+    const createRecordWrapper = test.wrap(createRecordFromEntity(saveSpy));
     const addedSnap = createRecordWrapper(snap);
 
     assert.isTrue(saveSpy.calledOnce);
   });
 
   it('calls saveObject with the correct parameter', () => {
-    const saveSpy = sinon.spy(saveObject);
-    const createRecordWrapper = test.wrap(createRecordFromEntity(saveSpy));
-
     const snap = test.firestore.exampleDocumentSnapshot();
+    const saveSpy = sinon.spy(saveObject);
+
+    const createRecordWrapper = test.wrap(createRecordFromEntity(saveSpy));
     const addedSnap = createRecordWrapper(snap);
 
     assert.isTrue(saveSpy.calledWith(getExpectedOutputSnap(snap)));
   });
   
   it('should return input data + "altered" field', () => {
-    const createRecordWrapper = test.wrap(createRecordFromEntity(saveObject));
-
     const snap = test.firestore.exampleDocumentSnapshot();
+
+    const createRecordWrapper = test.wrap(createRecordFromEntity(saveObject));
     const addedSnap = createRecordWrapper(snap);
 
     assert.deepEqual(addedSnap, getExpectedOutputSnap(snap));
@@ -62,7 +62,7 @@ describe("test_updateRecord", () => {
   });
 
   it('calls saveObject with the correct parameter', () => {
-    var saveSpy = sinon.spy(saveObject);
+    const saveSpy = sinon.spy(saveObject);
     const updateWrapper = test.wrap(updateRecord(saveSpy));
 
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
@@ -83,8 +83,8 @@ describe("test_updateRecord", () => {
 
 describe("test_deleteRecord", () => {
   it('calls deleteObject exactly once', () => {
-    var deleteSpy = sinon.spy(deleteObject);
     const snap = test.firestore.exampleDocumentSnapshot();
+    const deleteSpy = sinon.spy(deleteObject);
 
     const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
     const deletedID = deleteWrapper(snap);
@@ -93,8 +93,8 @@ describe("test_deleteRecord", () => {
   });
 
   it('calls deleteObject with the correct parameters', () => {
-    var deleteSpy = sinon.spy(deleteObject);
     const snap = test.firestore.exampleDocumentSnapshot();
+    const deleteSpy = sinon.spy(deleteObject);
 
     const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
     const deletedID = deleteWrapper(snap);
@@ -103,9 +103,9 @@ describe("test_deleteRecord", () => {
   });
 
   it('should return input data + "altered" field', () => {
-    const deleteWrapper = test.wrap(deleteRecord(deleteObject));
-    
     const snap = test.firestore.exampleDocumentSnapshot();
+    
+    const deleteWrapper = test.wrap(deleteRecord(deleteObject));
     const deletedID = deleteWrapper(snap);
 
     assert.deepEqual(deletedID, getExpectedOutputID(snap));
