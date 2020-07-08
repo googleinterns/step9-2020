@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate; 
+
 /* 
  * Description: Utility class that processes a CSV row and converts between row format and Ad format. 
  * Author: Kira Toal
@@ -36,11 +39,14 @@ public final class AdRowProcessor {
   private static final int CONTENT_TERMS_COLUMN = 16; 
 
   public static Ad convertRowToAd(String[] row) {
+    if (row.length != 17) {
+      throw new IllegalArgumentException();
+    }
     Ad ad = Ad.newBuilder()
         .id(row[ID_COLUMN])
         .advertiser(row[ADVERTISER_COLUMN])
-        .startDate(row[START_DATE_COLUMN]) 
-        .endDate(row[END_DATE_COLUMN])
+        .startDate(checkDateFormat(row[START_DATE_COLUMN])) 
+        .endDate(checkDateFormat(row[END_DATE_COLUMN]))
         .impressionsMin(getImpressionsMin(row[IMPRESSIONS_COLUMN]))
         .impressionsMax(getImpressionsMax(row[IMPRESSIONS_COLUMN]))
         .isTargetingAge(getAgeTargets(row[IS_TARGETING_AGE_COLUMN]))
@@ -57,6 +63,18 @@ public final class AdRowProcessor {
         .contentTerms(row[CONTENT_TERMS_COLUMN].trim())
         .build();
     return ad; 
+  }
+
+  /*
+   * Helper function tries to convert date strings to LocalDates to ensure they are 
+   * in isostring format.
+   * checkDateFormat does *not* return the parsed LocalDate because Firebase does not
+   * support that datatype. Dates are converted after retrieval from Firebase.
+   */
+  public static String checkDateFormat(String date) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    LocalDate localDate = LocalDate.parse(date, formatter);
+    return date;
   }
 
   /* 
