@@ -100,14 +100,4 @@ describe("test_deleteRecord", () => {
     
     assert.isTrue(deleteSpy.calledWith(deletedID));    
   });
-
-  it('should return input data + "altered" field', () => {
-    const deleteSpy = sinon.spy(deleteObject);
-    const exampleID = {id: "1"};
-
-    const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
-    const deletedID = deleteWrapper(exampleID);
-
-    deleteSpy.should.have.been.calledWith(deletedID);
-  });
 });
