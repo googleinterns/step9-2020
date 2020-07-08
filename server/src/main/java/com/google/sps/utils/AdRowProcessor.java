@@ -152,6 +152,6 @@ public final class AdRowProcessor {
   }
 
   public static long convertStringToLong(String str) throws IllegalArgumentException {
-    return (long) Double.parseDouble(str);
+    return (long) Double.parseDouble(str.trim());
   }
 }

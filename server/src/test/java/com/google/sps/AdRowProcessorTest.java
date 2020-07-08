@@ -131,5 +131,26 @@ public final class AdRowProcessorTest {
     Ad ad = AdRowProcessor.convertRowToAd(row);
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void Should_ThrowException_When_SpendMinNotParsable() {
+    String invalidInput = " one thousand ";
+    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
+                    "Not targeted","Not targeted",invalidInput,"0","Headline", "Ad Link",
+                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
+                    "Content Terms"};  
+    Ad ad = AdRowProcessor.convertRowToAd(row);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void Should_ThrowException_When_SpendMaxNotParsable() {
+    String invalidInput = " two million ";
+    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
+                    "Not targeted","Not targeted","0",invalidInput,"Headline", "Ad Link",
+                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
+                    "Content Terms"};  
+    Ad ad = AdRowProcessor.convertRowToAd(row);
+  }
+
+
 
 }
