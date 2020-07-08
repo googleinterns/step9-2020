@@ -50,8 +50,8 @@ public final class AdRowProcessor {
         .impressionsMin(getImpressionsMin(row[IMPRESSIONS_COLUMN]))
         .impressionsMax(getImpressionsMax(row[IMPRESSIONS_COLUMN]))
         .isTargetingAge(getAgeTargets(row[IS_TARGETING_AGE_COLUMN]))
-        .genderTargets(convertStringToList(row[GENDER_TARGETS_COLUMN]))
-        .geoTargets(convertStringToList(row[GEO_TARGETS_COLUMN]))
+        .genderTargets(checkGenderTargets(row[GENDER_TARGETS_COLUMN]))
+        .geoTargets(checkGeoTargets(row[GEO_TARGETS_COLUMN]))
         .spendMin(convertStringToLong(row[SPEND_MIN_COLUMN]))
         .spendMax(convertStringToLong(row[SPEND_MAX_COLUMN]))
         .headline(row[HEADLINE_COLUMN].trim())
@@ -77,16 +77,6 @@ public final class AdRowProcessor {
     return date;
   }
 
-  /* 
-   * Min and max impression fields contain letters k and M as well as ≤. The 
-   * formatImpressionField helper method makes the fields easier to parse later.
-   */ 
-  public static String[] formatImpressionField(String str) {
-    String impressionsString = str.replace("k", "000").replace("M", "000000").replace(" ","").replace("≤", "");
-    String[] impressionsArray = impressionsString.split("-");
-    return impressionsArray; 
-  }
-
   public static long getImpressionsMin(String impressionsField) throws IllegalArgumentException, NumberFormatException {
     String[] impressionsArray = formatImpressionField(impressionsField); 
     
@@ -102,11 +92,56 @@ public final class AdRowProcessor {
     return Long.parseLong(impressionsArray[impressionsArray.length - 1]);   
   }
 
+  /* 
+   * Min and max impression fields contain letters k and M as well as ≤. The 
+   * formatImpressionField helper method makes the fields easier to parse later.
+   */ 
+  public static String[] formatImpressionField(String str) {
+    String impressionsString = str.replace("k", "000").replace("M", "000000").replace(" ","").replace("≤", "");
+    String[] impressionsArray = impressionsString.split("-");
+    return impressionsArray; 
+  }
+
   public static boolean getAgeTargets(String str) {
     if (str.trim().toLowerCase().equals("not targeted")) {
       return false; 
     }
     return true; 
+  }
+
+  public static List<String> checkGenderTargets(String str) throws IllegalArgumentException {
+    List<String> targets = convertStringToList(str);
+    List<String> validGenderTargets = Arrays.asList("not targeted", "female", "male", "unknown gender");
+    for (String target : targets) {
+      if (!validGenderTargets.contains(target.trim().toLowerCase())) {
+          throw new IllegalArgumentException("Gender target field contains invalid target.");
+      }
+    }
+    return targets;  
+  }
+
+  public static List<String> checkGeoTargets(String str) throws IllegalArgumentException {
+    List<String> targets = convertStringToList(str);
+    List<String> validGeoTargets = Arrays.asList("alabama", "alaska", "american samoa", "arizona", 
+                                                "arkansas", "california", "colorado", "connecticut", 
+                                                "delaware", "district of columbia", "florida", "georgia", 
+                                                "guam", "hawaii", "idaho", "illinois", "indiana", "iowa", 
+                                                "kansas", "kentucky", "louisiana", "maine", "maryland", 
+                                                "massachusetts", "michigan", "minnesota", "minor outlying islands", 
+                                                "mississippi", "missouri", "montana", "nebraska", "nevada", 
+                                                "new hampshire", "new jersey", "new mexico", "new york", 
+                                                "north carolina", "north dakota", "northern mariana islands", 
+                                                "ohio", "oklahoma", "oregon", "pennsylvania", "puerto rico", 
+                                                "rhode island", "south carolina", "south dakota", "tennessee", 
+                                                "texas", "u.s. virgin islands", "utah", "vermont", "virginia", 
+                                                "washington", "west virginia", "wisconsin", "wyoming", 
+                                                "united states", "the united states","not targeted");
+    for (String target : targets) {
+      if (!validGeoTargets.contains(target.trim().toLowerCase())) {
+          throw new IllegalArgumentException("Geo target field contains invalid target.");
+      }
+    }
+    return targets;  
   }
 
   public static List<String> convertStringToList(String str) {
