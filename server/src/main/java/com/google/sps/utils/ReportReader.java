@@ -50,6 +50,7 @@ public class ReportReader {
           FirebaseAdWriter.writeAd(ad, COLLECTION, PATH_TO_SERVICE_ACCOUNT, DATABASE_URL); 
         } catch(Exception e) {
           System.out.println("Exception at line: " + currentRowIndex);
+          e.printStackTrace();
         }
       }
       currentRowIndex++;

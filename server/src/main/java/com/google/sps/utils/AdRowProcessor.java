@@ -8,8 +8,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /* 
@@ -88,7 +90,7 @@ public final class AdRowProcessor {
     if (impressionsArray.length > 1) {
       return Long.parseLong(impressionsArray[0]);
     }
-    return 0;
+    return (long) 0;
   }
 
   /*
@@ -127,7 +129,7 @@ public final class AdRowProcessor {
    */
   public static List<String> checkGenderTarget(String str) throws IllegalArgumentException {
     List<String> targets = convertStringToList(str);
-    List<String> validGenderTargets = Arrays.asList("not targeted", "female", "male", "unknown gender");
+    Set<String> validGenderTargets = new HashSet<>(Arrays.asList("not targeted", "female", "male", "unknown gender"));
     for (String target : targets) {
       if (!validGenderTargets.contains(target.trim().toLowerCase())) {
           throw new IllegalArgumentException("Gender target field contains invalid target.");
@@ -142,7 +144,7 @@ public final class AdRowProcessor {
    */
   public static List<String> checkGeoTarget(String str) throws IllegalArgumentException {
     List<String> targets = convertStringToList(str);
-    List<String> validGeoTargets = Arrays.asList("alabama", "alaska", "american samoa", "arizona", 
+    Set<String> validGeoTargets = new HashSet<>(Arrays.asList("alabama", "alaska", "american samoa", "arizona", 
                                                 "arkansas", "california", "colorado", "connecticut", 
                                                 "delaware", "district of columbia", "florida", "georgia", 
                                                 "guam", "hawaii", "idaho", "illinois", "indiana", "iowa", 
@@ -155,7 +157,7 @@ public final class AdRowProcessor {
                                                 "rhode island", "south carolina", "south dakota", "tennessee", 
                                                 "texas", "u.s. virgin islands", "utah", "vermont", "virginia", 
                                                 "washington", "west virginia", "wisconsin", "wyoming", 
-                                                "united states", "the united states","not targeted");
+                                                "united states", "the united states","not targeted"));
     for (String target : targets) {
       if (!validGeoTargets.contains(target.trim().toLowerCase())) {
           throw new IllegalArgumentException("Geo target field contains invalid target.");
@@ -196,7 +198,7 @@ public final class AdRowProcessor {
       case 2 :
         return linkArray[1];
       default :
-        throw new IllegalArgumentException("Link field contains invalid argument.");
+        throw new IllegalArgumentException("Link field contains invalid argument. Link: " + link);
     }
   }
 }
