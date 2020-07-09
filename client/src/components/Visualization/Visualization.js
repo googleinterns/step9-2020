@@ -15,35 +15,21 @@ const Visualization = () => {
     'Vertical Bar': <BarChart />,
   };
 
+  const table = [['Zoomable Line'], ['Interpolation', 'Vertical Bar']];
+
   return (
     <div className="search-header center">
       <img src={tardigrade} className="logo" alt="logo" />
       <Container>
-        <Row>
-          <Col sm={3}>
-            <div className="card">{chartMap['Vertical Bar']}</div>
-          </Col>
-          <Col>
-            <div className="card">{chartMap['Zoomable Line']}</div>
-          </Col>
-          <Col sm={3}>
-            <div className="card">{chartMap['Vertical Bar']}</div>
-          </Col>
-        </Row>
-        <Row>
-          <Col sm={3}>
-            <div className="card">{chartMap['Vertical Bar']}</div>
-          </Col>
-          <Col sm={3}>
-            <div className="card">{chartMap['Vertical Bar']}</div>
-          </Col>
-          <Col sm={3}>
-            <div className="card">{chartMap['Vertical Bar']}</div>
-          </Col>
-          <Col sm={3}>
-            <div className="card">{chartMap['Vertical Bar']}</div>
-          </Col>
-        </Row>
+        {table.map((row, rowIndex) => (
+          <Row key={rowIndex}>
+            {row.map((col, colIndex) => (
+              <Col key={colIndex}>
+                <div className="card">{chartMap[col]}</div>
+              </Col>
+            ))}
+          </Row>
+        ))}
       </Container>
     </div>
   );

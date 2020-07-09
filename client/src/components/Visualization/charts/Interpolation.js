@@ -76,7 +76,7 @@ const Interpolation = () => {
           polar
         </label>
       </div>
-      <VictoryChart polar={polar} height={500}>
+      <VictoryChart polar={polar}>
         <VictoryLine
           interpolation={interpolation}
           data={MOCK_DATA}

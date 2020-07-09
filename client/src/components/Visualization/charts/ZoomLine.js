@@ -29,8 +29,6 @@ const ZoomLine = () => {
   return (
     <div className="chart search-body center">
       <VictoryChart
-        width={500}
-        height={500}
         scale={{ x: 'time' }}
         containerComponent={
           <VictoryZoomContainer
@@ -51,8 +49,6 @@ const ZoomLine = () => {
       </VictoryChart>
       <VictoryChart
         padding={{ top: 0, left: 50, right: 50, bottom: 30 }}
-        width={600}
-        height={100}
         scale={{ x: 'time' }}
         containerComponent={
           <VictoryBrushContainer

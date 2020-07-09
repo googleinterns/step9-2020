@@ -12,12 +12,7 @@ const MOCK_DATA = [
 
 const BarChart = () => (
   <div className="chart">
-    <VictoryChart
-      height={500}
-      width={500}
-      domainPadding={{ x: 50, y: [0, 20] }}
-      scale={{ x: 'time' }}
-    >
+    <VictoryChart domainPadding={{ x: 50, y: [0, 20] }} scale={{ x: 'time' }}>
       <VictoryBar
         dataComponent={<Bar />}
         style={{ data: { fill: generateRandomHexColor() } }}
