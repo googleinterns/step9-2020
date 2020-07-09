@@ -21,6 +21,17 @@ import java.util.stream.Collectors;
  */ 
 public final class AdRowProcessor {
 
+  private static final Set<String> VALID_GENDER_TARGETS = new HashSet<>(Arrays.asList
+      ("not targeted", "female", "male", "unknown gender"));
+  private static final Set<String> VALID_GEO_TARGETS = new HashSet<>(Arrays.asList("alabama", "alaska", 
+      "american samoa", "arizona", "arkansas", "california", "colorado", "connecticut", "delaware", 
+      "district of columbia", "florida", "georgia", "guam", "hawaii", "idaho", "illinois", "indiana", "iowa", 
+      "kansas", "kentucky", "louisiana", "maine", "maryland", "massachusetts", "michigan", "minnesota", 
+      "minor outlying islands", "mississippi", "missouri", "montana", "nebraska", "nevada", "new hampshire", 
+      "new jersey", "new mexico", "new york", "north carolina", "north dakota", "northern mariana islands", 
+      "ohio", "oklahoma", "oregon", "pennsylvania", "puerto rico", "rhode island", "south carolina", "south dakota", 
+      "tennessee", "texas", "u.s. virgin islands", "utah", "vermont", "virginia", "washington", "west virginia", 
+      "wisconsin", "wyoming", "united states", "the united states","not targeted"));
   private static final int NUMBER_OF_FIELDS = 17;
   private static final int ID_COLUMN = 0;
   private static final int ADVERTISER_COLUMN = 1; 
@@ -49,8 +60,8 @@ public final class AdRowProcessor {
         .advertiser(row[ADVERTISER_COLUMN])
         .startDate(checkDateFormat(row[START_DATE_COLUMN])) 
         .endDate(checkDateFormat(row[END_DATE_COLUMN]))
-        .impressionsMin(getImpressionsMin(row[IMPRESSIONS_COLUMN]))
-        .impressionsMax(getImpressionsMax(row[IMPRESSIONS_COLUMN]))
+        .impressionsMin(getImpressions(row[IMPRESSIONS_COLUMN], "min"))
+        .impressionsMax(getImpressions(row[IMPRESSIONS_COLUMN], "max"))
         .isTargetingAge(isTargetingAge(row[IS_TARGETING_AGE_COLUMN]))
         .genderTarget(checkGenderTarget(row[GENDER_TARGET_COLUMN]))
         .geoTarget(checkGeoTarget(row[GEO_TARGET_COLUMN]))
@@ -68,10 +79,17 @@ public final class AdRowProcessor {
   }
 
   /*
+   * Helper function for cleaning up strings.
+   */
+  public static String trimAndLower(String str) { 
+    return str.trim().toLowerCase(); 
+  }
+
+  /*
    * Helper function tries to convert date strings to LocalDates to ensure they are 
    * in isostring format.
-   * checkDateFormat does *not* return the parsed LocalDate because Firebase does not
-   * support that datatype. Dates are converted after retrieval from Firebase.
+   * checkDateFormat does *not* return the parsed LocalDate because Firestore does not
+   * support that datatype. Dates are converted after retrieval from Firestore.
    */
   public static String checkDateFormat(String date) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -79,27 +97,24 @@ public final class AdRowProcessor {
     return date;
   }
 
-  /*
-   * getImpressionsMin tries to parse the minimum number of impressions and throws an error
-   * if the field is not parsable.
+  /* 
+   * getImpressions attempts to parse the impressions field for min and max impressions.
+   * Impression field stores impressions in one of the following formats, where n and m are numbers:
+   *      (a) <= n
+   *      (b) n-m
+   * In the case of a, min impressions = 0 and max impressions = n.
+   * In the case of b, min impressions = n and max impressions = m.
    */ 
-  public static long getImpressionsMin(String impressionsField) throws IllegalArgumentException, NumberFormatException {
+  public static long getImpressions(String impressionsField, String impressionType) throws IllegalArgumentException, NumberFormatException { 
     String[] impressionsArray = formatImpressionField(impressionsField); 
-    
-    // If csv field uses "<=", arr has length 1 and min number of impressions is 0.
-    if (impressionsArray.length > 1) {
-      return Long.parseLong(impressionsArray[0]);
+    if (impressionType.equals("min")) { // Get minimum number of impressions.
+      if (impressionsArray.length > 1) {
+        return Long.parseLong(impressionsArray[0]);
+      }
+      return (long) 0; // If csv field uses "<=", the min number of impressions is 0.
+    } else { // Get maximum number of impressions.
+      return Long.parseLong(impressionsArray[impressionsArray.length - 1]);   
     }
-    return (long) 0;
-  }
-
-  /*
-   * getImpressionsMax tries to parse the maximum number of impressions and throws an error
-   * if the field is not parsable.
-   */ 
-  public static long getImpressionsMax(String impressionsField) throws IllegalArgumentException, NumberFormatException {
-    String[] impressionsArray = formatImpressionField(impressionsField); 
-    return Long.parseLong(impressionsArray[impressionsArray.length - 1]);   
   }
 
   /* 
@@ -117,10 +132,7 @@ public final class AdRowProcessor {
    * isTargetingAge determines whether or not the ad is targeting age.
    */ 
   public static boolean isTargetingAge(String str) {
-    if (str.trim().toLowerCase().equals("not targeted")) {
-      return false; 
-    }
-    return true; 
+    return !trimAndLower(str).equals("not targeted");
   }
 
   /* 
@@ -129,9 +141,8 @@ public final class AdRowProcessor {
    */
   public static List<String> checkGenderTarget(String str) throws IllegalArgumentException {
     List<String> targets = convertStringToList(str);
-    Set<String> validGenderTargets = new HashSet<>(Arrays.asList("not targeted", "female", "male", "unknown gender"));
     for (String target : targets) {
-      if (!validGenderTargets.contains(target.trim().toLowerCase())) {
+      if (!VALID_GENDER_TARGETS.contains(trimAndLower(target))) {
           throw new IllegalArgumentException("Gender target field contains invalid target.");
       }
     }
@@ -144,22 +155,8 @@ public final class AdRowProcessor {
    */
   public static List<String> checkGeoTarget(String str) throws IllegalArgumentException {
     List<String> targets = convertStringToList(str);
-    Set<String> validGeoTargets = new HashSet<>(Arrays.asList("alabama", "alaska", "american samoa", "arizona", 
-                                                "arkansas", "california", "colorado", "connecticut", 
-                                                "delaware", "district of columbia", "florida", "georgia", 
-                                                "guam", "hawaii", "idaho", "illinois", "indiana", "iowa", 
-                                                "kansas", "kentucky", "louisiana", "maine", "maryland", 
-                                                "massachusetts", "michigan", "minnesota", "minor outlying islands", 
-                                                "mississippi", "missouri", "montana", "nebraska", "nevada", 
-                                                "new hampshire", "new jersey", "new mexico", "new york", 
-                                                "north carolina", "north dakota", "northern mariana islands", 
-                                                "ohio", "oklahoma", "oregon", "pennsylvania", "puerto rico", 
-                                                "rhode island", "south carolina", "south dakota", "tennessee", 
-                                                "texas", "u.s. virgin islands", "utah", "vermont", "virginia", 
-                                                "washington", "west virginia", "wisconsin", "wyoming", 
-                                                "united states", "the united states","not targeted"));
     for (String target : targets) {
-      if (!validGeoTargets.contains(target.trim().toLowerCase())) {
+      if (!VALID_GEO_TARGETS.contains(trimAndLower(target))) {
           throw new IllegalArgumentException("Geo target field contains invalid target.");
       }
     }
