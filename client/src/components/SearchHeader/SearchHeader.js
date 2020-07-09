@@ -9,10 +9,10 @@ const SEARCHBOX_CONFIG = {
 };
 
 const SearchHeader = () => (
-  <header className="search-header center">
+  <div className="search-header center">
     <img src={tardigrade} className="logo" alt="logo" />
     <SearchBox className="searchbox" translations={SEARCHBOX_CONFIG} />
-  </header>
+  </div>
 );
 
 export default SearchHeader;

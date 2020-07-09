@@ -24,3 +24,14 @@ label {
 .margin-right {
   margin-right: 50px;
 }
+
+.card {
+  background-color: #fff;
+  padding: 5px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.interpolation-label {
+  color: rgb(114, 114, 114);
+}

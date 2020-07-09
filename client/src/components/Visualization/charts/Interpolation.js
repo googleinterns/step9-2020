@@ -55,7 +55,7 @@ const Interpolation = () => {
   const randomColor = generateRandomHexColor();
 
   return (
-    <div className="chart center">
+    <div className="chart">
       <div>
         <InterpolationSelect
           currentValue={interpolation}
@@ -72,7 +72,9 @@ const Interpolation = () => {
           }}
           style={{ marginLeft: 25, marginRight: 5 }}
         />
-        <label htmlFor="polar">polar</label>
+        <label className="interpolation-label" htmlFor="polar">
+          polar
+        </label>
       </div>
       <VictoryChart polar={polar} height={500}>
         <VictoryLine
