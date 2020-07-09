@@ -27,10 +27,7 @@ function createRecordFromEntity(algoliaOperation, snapshot) {
  * @return {!Promise}
  */
 function updateRecord(algoliaOperation, change) {
-  const data = change.after.data();
-  const objectID = change.after.id; 
-
-  return algoliaOperation({data, objectID});
+  return createRecordFromEntity(algoliaOperation, change.after);
 }
 
 /**

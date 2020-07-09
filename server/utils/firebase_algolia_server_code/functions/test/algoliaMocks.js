@@ -26,7 +26,7 @@ function deleteObject(objectID) {
  * @return {Object}
  */
 function saveObject({data, objectID}) {
-  return {data: addField(data), objectID: addField(objectID)};
+  return {data: addField(data), objectID: objectID};
 }
 
 module.exports = { deleteObject, saveObject, addField };

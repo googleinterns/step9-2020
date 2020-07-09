@@ -16,8 +16,7 @@ const { createRecordFromEntity, updateRecord, deleteRecord } =
 
 // Import mock saveObject, mock deleteObject, and helpers.
 const { saveObject, deleteObject } = require('./algoliaMocks');
-const { getExpectedOutputID, getExpectedOutputSnap, getExpectedOutputChange } =
-    require('./expectedMockOutputHelpers');
+
 
 describe("test_createRecordFromEntity", () => {
   it('should call saveObject exactly once', () => {
@@ -35,18 +34,22 @@ describe("test_createRecordFromEntity", () => {
     const saveSpy = sinon.spy(saveObject);
 
     const createRecordWrapper = test.wrap(createRecordFromEntity(saveSpy));
-    const addedSnap = createRecordWrapper(snap);
+    createRecordWrapper(snap);
 
-    assert.isTrue(saveSpy.calledWith(getExpectedOutputSnap(snap)));
+    const expectedInput = {data: (snap.data()), objectID: (snap.id)};
+    assert.isTrue(saveSpy.calledWithMatch(expectedInput));
   });
   
-  it('should return input data + "altered" field', () => {
+  it('should return saveObject output', () => {
     const snap = test.firestore.exampleDocumentSnapshot();
 
     const createRecordWrapper = test.wrap(createRecordFromEntity(saveObject));
     const addedSnap = createRecordWrapper(snap);
 
-    assert.deepEqual(addedSnap, getExpectedOutputSnap(snap));
+    const expectedOutput = {data: snap.data(), 
+                            objectID: snap.id};
+    expectedOutput.data.alteredByMockAlgolia = true;
+    assert.deepEqual(addedSnap, expectedOutput);
   });
 });
 
@@ -56,7 +59,7 @@ describe("test_updateRecord", () => {
     const updateWrapper = test.wrap(updateRecord(saveSpy));
 
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
-    const updatedChange = updateWrapper(randomChange);
+    updateWrapper(randomChange);
     
     assert.isTrue(saveSpy.calledOnce);
   });
@@ -66,18 +69,23 @@ describe("test_updateRecord", () => {
     const updateWrapper = test.wrap(updateRecord(saveSpy));
 
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
-    const updatedChange = updateWrapper(randomChange);
+    updateWrapper(randomChange);
 
-    assert.isTrue(saveSpy.calledWith(getExpectedOutputChange(randomChange)));    
+    const expectedInput = {data: (randomChange.after.data()), 
+                           objectID: (randomChange.after.id)};
+    assert.isTrue(saveSpy.calledWithMatch(expectedInput));    
   });
 
-  it('should return input data + "altered" field', () => {
-    const updateWrapper = test.wrap(updateRecord(saveObject));
-    
+  it('should return saveObject output', () => {
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
+
+    const updateWrapper = test.wrap(updateRecord(saveObject));    
     const updatedChange = updateWrapper(randomChange);
 
-    assert.deepEqual(updatedChange, getExpectedOutputChange(randomChange));
+    const expectedOutput = {data: randomChange.after.data(), 
+                            objectID: randomChange.after.id};
+    expectedOutput.data.alteredByMockAlgolia = true;
+    assert.deepEqual(updatedChange, expectedOutput);
   });
 });
 
@@ -87,7 +95,7 @@ describe("test_deleteRecord", () => {
     const deleteSpy = sinon.spy(deleteObject);
 
     const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
-    const deletedID = deleteWrapper(snap);
+    deleteWrapper(snap);
 
     assert.isTrue(deleteSpy.calledOnce);
   });
@@ -99,7 +107,7 @@ describe("test_deleteRecord", () => {
     const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
     const deletedID = deleteWrapper(snap);
 
-    assert.isTrue(deleteSpy.calledWith(deletedID.objectID));    
+    assert.isTrue(deleteSpy.calledWithMatch(deletedID.objectID));    
   });
 
   it('should return input data + "altered" field', () => {
@@ -108,6 +116,7 @@ describe("test_deleteRecord", () => {
     const deleteWrapper = test.wrap(deleteRecord(deleteObject));
     const deletedID = deleteWrapper(snap);
 
-    assert.deepEqual(deletedID, getExpectedOutputID(snap));
+    const expectedOutput = {'objectID': snap.id, 'alteredByMockAlgolia': true};
+    assert.deepEqual(deletedID, expectedOutput);
   });  
 });
