@@ -24,7 +24,7 @@ describe("test_createRecordFromEntity", () => {
     const snap = test.firestore.exampleDocumentSnapshot();
 
     const createRecordWrapper = test.wrap(createRecordFromEntity(saveSpy));
-    const addedSnap = createRecordWrapper(snap);
+    createRecordWrapper(snap);
 
     assert.isTrue(saveSpy.calledOnce);
   });
