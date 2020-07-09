@@ -30,8 +30,8 @@ describe("test_createRecordFromEntity", () => {
   });
 
   it('should call saveObject with the correct parameters', () => {
-    const snap = test.firestore.exampleDocumentSnapshot();
     const saveSpy = sinon.spy(saveObject);
+    const snap = test.firestore.exampleDocumentSnapshot();
 
     const createRecordWrapper = test.wrap(createRecordFromEntity(saveSpy));
     createRecordWrapper(snap);
@@ -46,8 +46,7 @@ describe("test_createRecordFromEntity", () => {
     const createRecordWrapper = test.wrap(createRecordFromEntity(saveObject));
     const addedSnap = createRecordWrapper(snap);
 
-    const expectedOutput = {data: snap.data(), 
-                            objectID: snap.id};
+    const expectedOutput = {data: snap.data(), objectID: snap.id};
     expectedOutput.data.alteredByMockAlgolia = true;
     assert.deepEqual(addedSnap, expectedOutput);
   });
@@ -56,9 +55,9 @@ describe("test_createRecordFromEntity", () => {
 describe("test_updateRecord", () => {
   it('should call saveObject exactly once', () => {
     const saveSpy = sinon.spy(saveObject);
-    const updateWrapper = test.wrap(updateRecord(saveSpy));
-
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
+
+    const updateWrapper = test.wrap(updateRecord(saveSpy));
     updateWrapper(randomChange);
     
     assert.isTrue(saveSpy.calledOnce);
@@ -66,9 +65,9 @@ describe("test_updateRecord", () => {
 
   it('should call saveObject with the correct parameters', () => {
     const saveSpy = sinon.spy(saveObject);
-    const updateWrapper = test.wrap(updateRecord(saveSpy));
-
     const randomChange = test.firestore.exampleDocumentSnapshotChange();
+
+    const updateWrapper = test.wrap(updateRecord(saveSpy));
     updateWrapper(randomChange);
 
     const expectedInput = {data: (randomChange.after.data()), 
@@ -91,8 +90,8 @@ describe("test_updateRecord", () => {
 
 describe("test_deleteRecord", () => {
   it('should call deleteObject exactly once', () => {
-    const snap = test.firestore.exampleDocumentSnapshot();
     const deleteSpy = sinon.spy(deleteObject);
+    const snap = test.firestore.exampleDocumentSnapshot();
 
     const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
     deleteWrapper(snap);
@@ -101,8 +100,8 @@ describe("test_deleteRecord", () => {
   });
 
   it('should call deleteObject with the correct parameters', () => {
-    const snap = test.firestore.exampleDocumentSnapshot();
     const deleteSpy = sinon.spy(deleteObject);
+    const snap = test.firestore.exampleDocumentSnapshot();
 
     const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
     const deletedID = deleteWrapper(snap);
@@ -110,7 +109,7 @@ describe("test_deleteRecord", () => {
     assert.isTrue(deleteSpy.calledWithMatch(deletedID.objectID));    
   });
 
-  it('should return input data + "altered" field', () => {
+  it('should return deleteObject output', () => {
     const snap = test.firestore.exampleDocumentSnapshot();
     
     const deleteWrapper = test.wrap(deleteRecord(deleteObject));

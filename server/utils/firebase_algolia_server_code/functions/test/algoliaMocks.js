@@ -29,4 +29,4 @@ function saveObject({data, objectID}) {
   return {data: addField(data), objectID: objectID};
 }
 
-module.exports = { deleteObject, saveObject, addField };
+module.exports = { deleteObject, saveObject };
