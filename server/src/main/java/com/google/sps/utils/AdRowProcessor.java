@@ -26,8 +26,8 @@ public final class AdRowProcessor {
   private static final int END_DATE_COLUMN = 3;
   private static final int IMPRESSIONS_COLUMN = 4;
   private static final int IS_TARGETING_AGE_COLUMN = 5; 
-  private static final int GENDER_TARGETS_COLUMN = 6; 
-  private static final int GEO_TARGETS_COLUMN = 7;
+  private static final int GENDER_TARGET_COLUMN = 6; 
+  private static final int GEO_TARGET_COLUMN = 7;
   private static final int SPEND_MIN_COLUMN = 8;
   private static final int SPEND_MAX_COLUMN = 9; 
   private static final int HEADLINE_COLUMN = 10; 
@@ -49,9 +49,9 @@ public final class AdRowProcessor {
         .endDate(checkDateFormat(row[END_DATE_COLUMN]))
         .impressionsMin(getImpressionsMin(row[IMPRESSIONS_COLUMN]))
         .impressionsMax(getImpressionsMax(row[IMPRESSIONS_COLUMN]))
-        .isTargetingAge(getAgeTargets(row[IS_TARGETING_AGE_COLUMN]))
-        .genderTargets(checkGenderTargets(row[GENDER_TARGETS_COLUMN]))
-        .geoTargets(checkGeoTargets(row[GEO_TARGETS_COLUMN]))
+        .isTargetingAge(isTargetingAge(row[IS_TARGETING_AGE_COLUMN]))
+        .genderTarget(checkGenderTarget(row[GENDER_TARGET_COLUMN]))
+        .geoTarget(checkGeoTarget(row[GEO_TARGET_COLUMN]))
         .spendMin(convertStringToLong(row[SPEND_MIN_COLUMN]))
         .spendMax(convertStringToLong(row[SPEND_MAX_COLUMN]))
         .headline(row[HEADLINE_COLUMN].trim())
@@ -112,9 +112,9 @@ public final class AdRowProcessor {
   }
 
   /* 
-   * getAgeTargets determines whether or not the ad is targeting age.
+   * isTargetingAge determines whether or not the ad is targeting age.
    */ 
-  public static boolean getAgeTargets(String str) {
+  public static boolean isTargetingAge(String str) {
     if (str.trim().toLowerCase().equals("not targeted")) {
       return false; 
     }
@@ -122,10 +122,10 @@ public final class AdRowProcessor {
   }
 
   /* 
-   * checkGenderTargets determines if the arguments in the gender target field are valid.
+   * checkGenderTarget determines if the arguments in the gender target field are valid.
    * If they are not valid, the function will throw an exception.
    */
-  public static List<String> checkGenderTargets(String str) throws IllegalArgumentException {
+  public static List<String> checkGenderTarget(String str) throws IllegalArgumentException {
     List<String> targets = convertStringToList(str);
     List<String> validGenderTargets = Arrays.asList("not targeted", "female", "male", "unknown gender");
     for (String target : targets) {
@@ -140,7 +140,7 @@ public final class AdRowProcessor {
    * checkGeoTargets determines if the arguments in the geo target field are valid.
    * If they are not valid, the function will throw an exception.
    */
-  public static List<String> checkGeoTargets(String str) throws IllegalArgumentException {
+  public static List<String> checkGeoTarget(String str) throws IllegalArgumentException {
     List<String> targets = convertStringToList(str);
     List<String> validGeoTargets = Arrays.asList("alabama", "alaska", "american samoa", "arizona", 
                                                 "arkansas", "california", "colorado", "connecticut", 

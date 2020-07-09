@@ -26,7 +26,7 @@ public class ReportReader {
   private static final int NUMBER_CSV_HEADER_ROWS = 2; 
   private static final String COLLECTION = "testing"; 
   private static final int START_ROW_INDEX = 1;  // First row sent to processor (inclusive).
-  private static final int END_ROW_INDEX = 3; // Last row sent to processor (inclusive).
+  private static final int END_ROW_INDEX = 200; // Last row sent to processor (inclusive).
   private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
 
@@ -43,8 +43,14 @@ public class ReportReader {
         for (int i = 0; i < currentRowSize; i++) {
           currentRow[i] = csvRecords[currentRowIndex].get(i); 
         }
-        Ad ad = AdRowProcessor.convertRowToAd(currentRow);
-        FirebaseAdWriter.writeAd(ad, COLLECTION, PATH_TO_SERVICE_ACCOUNT, DATABASE_URL); 
+        
+        // Try to process the ad. If the add throws an exception, skip the row.
+        try {
+          Ad ad = AdRowProcessor.convertRowToAd(currentRow);
+          FirebaseAdWriter.writeAd(ad, COLLECTION, PATH_TO_SERVICE_ACCOUNT, DATABASE_URL); 
+        } catch(Exception e) {
+          System.out.println("Exception at line: " + currentRowIndex);
+        }
       }
       currentRowIndex++;
     }

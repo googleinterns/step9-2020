@@ -13,13 +13,31 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class AdRowProcessorTest {
+  private static final int ID_INDEX = 0;
+  private static final int ADVERTISER_INDEX = 1; 
+  private static final int START_DATE_INDEX = 2;
+  private static final int END_DATE_INDEX = 3;
+  private static final int IMPRESSIONS_INDEX = 4;
+  private static final int IS_TARGETING_AGE_INDEX = 5; 
+  private static final int GENDER_TARGET_INDEX = 6; 
+  private static final int GEO_TARGET_INDEX = 7;
+  private static final int SPEND_MIN_INDEX = 8;
+  private static final int SPEND_MAX_INDEX = 9; 
+  private static final int HEADLINE_INDEX = 10; 
+  private static final int LINK_INDEX = 11;
+  private static final int CONTENT_INDEX = 12;
+  private static final int HEADLINE_SENTIMENT_INDEX = 13;
+  private static final int HEADLINE_TERMS_INDEX = 14;
+  private static final int CONTENT_SENTIMENT_INDEX = 15;
+  private static final int CONTENT_TERMS_INDEX = 16;
+  String[] standardRow = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k",
+      "Not targeted","Not targeted","Not targeted","0","0",
+      "Headline", "Ad Link","Content", "Headline Sentiment", "Headline Terms", 
+      "Content Sentiment", "Content Terms"};
+
   @Test
-  public void Should_ParseInputWithoutError_When_InputFormatExpected() {
-    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k",
-            "Not targeted","Not targeted","Not targeted","0","0",
-            "Headline", "Ad Link","Content", "Headline Sentiment", "Headline Terms", 
-            "Content Sentiment", "Content Terms"};
-    Ad ad = AdRowProcessor.convertRowToAd(row);
+  public void convertRowToAd_inputFormatExpected_parseWithoutError() {
+    Ad ad = AdRowProcessor.convertRowToAd(standardRow);
     
     Assert.assertEquals(ad.getId(), "Id");
     Assert.assertEquals(ad.getAdvertiser(), "Advertiser");
@@ -28,8 +46,8 @@ public final class AdRowProcessorTest {
     Assert.assertEquals(ad.getImpressionsMin(), 0);
     Assert.assertEquals(ad.getImpressionsMax(), 10000);
     Assert.assertEquals(ad.getIsTargetingAge(), false);
-    Assert.assertEquals(ad.getGenderTargets(), Arrays.asList("Not targeted"));
-    Assert.assertEquals(ad.getGeoTargets(), Arrays.asList("Not targeted"));
+    Assert.assertEquals(ad.getGenderTarget(), Arrays.asList("Not targeted"));
+    Assert.assertEquals(ad.getGeoTarget(), Arrays.asList("Not targeted"));
     Assert.assertEquals(ad.getSpendMin(), 0);
     Assert.assertEquals(ad.getSpendMax(), 0);
     Assert.assertEquals(ad.getHeadline(), "Headline");
@@ -42,145 +60,83 @@ public final class AdRowProcessorTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void Should_ThrowException_When_IncorrectNumberOfArguments() {
+  public void convertRowToAd_wrongNumberOfArgs_throwException() {
     String[] row = {"Id","Advertiser"};
     Ad ad = AdRowProcessor.convertRowToAd(row);
   }
 
   @Test(expected = DateTimeParseException.class)
-  public void Should_ThrowException_When_StartDateNotIsostringFormat() {
+  public void checkDateFormat_nonisostringFormat_throwException() {
     String badStartDate = "2018-22-06";
-    String[] row = {"Id","Advertiser",badStartDate,"2000-01-01","≤ 10k",
-            "Not targeted","Not targeted","Not targeted","0","0",
-            "Headline", "Ad Link","Content", "Headline Sentiment", "Headline Terms", 
-            "Content Sentiment", "Content Terms"};
-    Ad ad = AdRowProcessor.convertRowToAd(row);
-  }
-
-  @Test(expected = DateTimeParseException.class)
-  public void Should_ThrowException_When_EndDateNotIsostringFormat() {
-    String badEndDate = "2018.11.06";
-    String[] row = {"Id","Advertiser","2000-01-01",badEndDate,"≤ 10k",
-            "Not targeted","Not targeted","Not targeted","0","0",
-            "Headline", "Ad Link","Content", "Headline Sentiment", "Headline Terms", 
-            "Content Sentiment", "Content Terms"};
-    Ad ad = AdRowProcessor.convertRowToAd(row);
+    convertRowToAd(badStartDate, START_DATE_INDEX);
   }
 
   @Test
-  public void Should_ProcessAgeTargetWithoutError_When_TargetHasWhitespace() {
+  public void checkAgeTarget_extraWhitespace_parseWithoutError() {
     String untargeted = "    Not Targeted  ";
-    String[] row1 = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k",untargeted,
-                    "Not targeted","Not targeted","0","0","Headline", "Ad Link",
-                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
-                    "Content Terms"}; 
-    Ad ad1 = AdRowProcessor.convertRowToAd(row1);
-    Assert.assertEquals(ad1.getIsTargetingAge(), false); 
+    Assert.assertEquals(convertRowToAd(untargeted, IS_TARGETING_AGE_INDEX).getIsTargetingAge(), false); 
 
-    String targeted = " 18-48 ";
-    String[] row2 = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k",targeted,
-                    "Not targeted","Not targeted","0","0","Headline", "Ad Link",
-                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
-                    "Content Terms"}; 
-    Ad ad2 = AdRowProcessor.convertRowToAd(row2);
-    Assert.assertEquals(ad2.getIsTargetingAge(), true);   
-  }
-
-  @Test
-  public void Should_AcceptTarget_When_GenderTargetValid() {
-    String validInput = " Female, Unknown gender ";
-    List<String> expected = Arrays.asList("Female","Unknown gender");
-    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
-                    validInput,"Not targeted","0","0","Headline", "Ad Link",
-                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
-                    "Content Terms"}; 
-    Ad ad = AdRowProcessor.convertRowToAd(row);
-    Assert.assertEquals(ad.getGenderTargets(), expected); 
+    String targeted = " 18-48, 65+, Unknown age  ";
+    Assert.assertEquals(convertRowToAd(targeted, IS_TARGETING_AGE_INDEX).getIsTargetingAge(), true);   
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void Should_ThrowException_When_GenderTargetInvalid() {
-    String invalidInput = " apples ";
-    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
-                    invalidInput,"Not targeted","0","0","Headline", "Ad Link",
-                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
-                    "Content Terms"}; 
-    Ad ad = AdRowProcessor.convertRowToAd(row);
+  public void checkGenderTarget_invalidString_throwException() {
+    convertRowToAd("apples, Male, Unknown gender", GENDER_TARGET_INDEX);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void checkGenderTarget_emptyString_throwException() {
+    convertRowToAd("", GENDER_TARGET_INDEX);
   }
 
   @Test
-  public void Should_AcceptTarget_When_GeoTargetValid() {
-    String validInput = " California,    Alaska ";
+  public void checkGeoTarget_extraWhitespace_parseWithoutError() {
     List<String> expected = Arrays.asList("California","Alaska");
-    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
-                    "Not targeted",validInput,"0","0","Headline", "Ad Link",
-                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
-                    "Content Terms"}; 
-    Ad ad = AdRowProcessor.convertRowToAd(row);
-    Assert.assertEquals(ad.getGeoTargets(), expected); 
+    Assert.assertEquals(convertRowToAd(" California,    Alaska ", GEO_TARGET_INDEX).getGeoTarget(), expected); 
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void Should_ThrowException_When_GeoTargetInvalid() {
-    String invalidInput = " apples ";
-    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
-                    "Not targeted",invalidInput,"0","0","Headline", "Ad Link",
-                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
-                    "Content Terms"};  
-    Ad ad = AdRowProcessor.convertRowToAd(row);
+  public void checkGeoTarget_invalidString_throwException() {
+    convertRowToAd("_Kentucky", GEO_TARGET_INDEX);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void Should_ThrowException_When_SpendMinNotParsable() {
-    String invalidInput = " one thousand ";
-    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
-                    "Not targeted","Not targeted",invalidInput,"0","Headline", "Ad Link",
-                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
-                    "Content Terms"};  
-    Ad ad = AdRowProcessor.convertRowToAd(row);
+  public void checkGeoTarget_emptyString_throwException() {
+    convertRowToAd("", GEO_TARGET_INDEX);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void Should_ThrowException_When_SpendMaxNotParsable() {
-    String invalidInput = " two million ";
-    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
-                    "Not targeted","Not targeted","0",invalidInput,"Headline", "Ad Link",
-                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
-                    "Content Terms"};  
-    Ad ad = AdRowProcessor.convertRowToAd(row);
+  public void convertStringToLong_invalidInput_throwException() {
+    convertRowToAd(" one thousand ", SPEND_MIN_INDEX);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void convertStringToLong_emptyInput_throwException() {
+    convertRowToAd("", SPEND_MIN_INDEX);
   }
   
   @Test
-  public void Should_SetLinkAsFirstArgument_When_LinkFieldHadOneArgument() {
-    String link = " ad.com ";
+  public void getLink_oneArgLinkField_returnFirstArg() {
     String expected = "ad.com";
-    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
-                    "Not targeted","Not targeted","0","0","Headline", link,
-                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
-                    "Content Terms"};  
-    Ad ad = AdRowProcessor.convertRowToAd(row);
-    Assert.assertEquals(ad.getLink(), expected); 
+    Assert.assertEquals(convertRowToAd(" ad.com ", LINK_INDEX).getLink(), expected); 
   }
   
   @Test
-  public void Should_SetLinkAsSecondArgument_When_LinkFieldHadTwoArguments() {
-    String link = " Ad ad.com ";
-    String expected = "ad.com";
-    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
-                    "Not targeted","Not targeted","0","0","Headline", link,
-                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
-                    "Content Terms"};  
-    Ad ad = AdRowProcessor.convertRowToAd(row);
-    Assert.assertEquals(ad.getLink(), expected); 
+  public void getLink_twoArgLinkField_returnSecondArg() {
+    String expected = "ad.com";  
+    Assert.assertEquals(convertRowToAd(" Ad ad.com ", LINK_INDEX).getLink(), expected); 
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void Should_ThrowException_When_LinkFieldHadTooManyArguments() {
-    String link = " Ad ad.com ad.com";
-    String[] row = {"Id","Advertiser","2000-01-01","2000-01-01","≤ 10k","Not targeted",
-                    "Not targeted","Not targeted","0","0","Headline", link,
-                    "Content", "Headline Sentiment", "Headline Terms", "Content Sentiment",
-                    "Content Terms"};  
-    Ad ad = AdRowProcessor.convertRowToAd(row);
+  public void getLink_moreThanTwoArgs_throwException() {
+    convertRowToAd(" Ad ad.com ad.com", LINK_INDEX);
+  }
+
+  public Ad convertRowToAd(String input, int rowIndex) {
+    String[] row = standardRow;
+    row[rowIndex] = input; 
+    Ad ad = AdRowProcessor.convertRowToAd(row);  
+    return ad;  
   }
 }
