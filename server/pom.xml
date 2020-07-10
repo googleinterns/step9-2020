@@ -56,6 +56,16 @@
       <artifactId>commons-io</artifactId>
       <version>2.6</version>
     </dependency>
+    <dependency>
+      <groupId>com.algolia</groupId>
+      <artifactId>algoliasearch-core</artifactId>
+      <version>3.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.algolia</groupId>
+      <artifactId>algoliasearch-apache</artifactId>
+      <version>3.6.1</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client -->
     <dependency>
       <groupId>com.google.oauth-client</groupId>
