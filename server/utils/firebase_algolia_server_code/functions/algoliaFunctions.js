@@ -1,5 +1,5 @@
 /**
- * Description: code that actually connects to aloglia. 
+ * Description: code that actually connects to algolia. 
  *              `algoliaOperation` parameter is used to enable 
  *              easy dependency/mock injection.   
  * Author: Robert Marcus

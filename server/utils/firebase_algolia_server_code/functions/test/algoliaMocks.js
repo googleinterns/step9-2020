@@ -1,11 +1,11 @@
 /**
  * Add an altered field to the json data passed into the mock functions. 
- * Use this field to validate that the data returned by the cloud functions
+ * Use this field to mark that the data returned by the cloud functions
  * Corresponds to the data returned by the algoliaOperation input. 
  * @param {Object} someJson an arbitrary json input
  * @return {Object}
  */
-function addField(someJson) {
+function markModified(someJson) {
   someJson.alteredByMockAlgolia = true;  
   return someJson;
 } 
@@ -16,7 +16,7 @@ function addField(someJson) {
  * @return {Object}
  */
 function deleteObject(objectID) {
-  return addField({'objectID': objectID});
+  return markModified({'objectID': objectID});
 }
 
 /**
@@ -26,7 +26,7 @@ function deleteObject(objectID) {
  * @return {Object}
  */
 function saveObject({data, objectID}) {
-  return {data: addField(data), objectID: objectID};
+  return {data: markModified(data), objectID: objectID};
 }
 
 module.exports = { deleteObject, saveObject };
