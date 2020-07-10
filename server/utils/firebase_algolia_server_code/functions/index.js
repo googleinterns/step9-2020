@@ -7,7 +7,10 @@
  * Date: July 7, 2020
  */
 
-const { algoliaFunctions, INDEX, DOCS } = require('./indexConfig');
+const { functions, algoliaFunctions, INDEX, DOCS } = require('./indexConfig');
+
+const admin = require('firebase-admin');
+admin.initializeApp();
 
 /**
  * Cloud functions below
@@ -27,6 +30,7 @@ const { algoliaFunctions, INDEX, DOCS } = require('./indexConfig');
  * @param {function(string): !Promise=} algoliaOperation a save function
  * @return {function} 
  */
+/*
 function createRecordFromEntity(algoliaOperation = INDEX.saveObject) {
   exports.create = 
       DOCS.onCreate(snapshot => {
@@ -35,7 +39,7 @@ function createRecordFromEntity(algoliaOperation = INDEX.saveObject) {
       });
 
   return exports.create;
-}
+}*/
 
 /**
  * Updates an algolia record from a firebase change type. 
@@ -44,6 +48,7 @@ function createRecordFromEntity(algoliaOperation = INDEX.saveObject) {
  * @param {function(string): !Promise=} algoliaOperation a save function
  * @return {function} 
  */
+/*
 function updateRecord(algoliaOperation = INDEX.saveObject) {
   exports.update = 
       DOCS.onUpdate(change => {
@@ -51,7 +56,7 @@ function updateRecord(algoliaOperation = INDEX.saveObject) {
       });
 
   return exports.update;
-}
+}*/
 
 /**
  * Delete's an algolia record from an entity snapshot. 
@@ -59,13 +64,27 @@ function updateRecord(algoliaOperation = INDEX.saveObject) {
  * @param {function(string): !Promise=} algoliaOperation a delete function
  * @return {function} 
  */
+/*
 function deleteRecord(algoliaOperation = INDEX.deleteObject) {
-  exports.delete = 
-      DOCS.onDelete(snapshot => {
+  return DOCS.onDelete(snapshot => {
         return algoliaFunctions.deleteRecord(algoliaOperation, snapshot);
-      }); 
-      
-  return exports.delete;
+      });
 }
+*/
 
-module.exports = { createRecordFromEntity, updateRecord, deleteRecord };
+exports.createRecord = 
+    DOCS.onCreate(snapshot => {
+      return algoliaFunctions
+                .createRecordFromEntity(INDEX.saveObject, snapshot);
+    });
+
+exports.updateRecord = 
+    DOCS.onUpdate(change => {
+      return algoliaFunctions.updateRecord(INDEX.saveObject, change);
+    });
+
+exports.deleteRecord = DOCS.onDelete(snapshot => {
+        return algoliaFunctions.deleteRecord(INDEX.deleteObject, snapshot);
+      });
+
+//module.exports = { INDEX };

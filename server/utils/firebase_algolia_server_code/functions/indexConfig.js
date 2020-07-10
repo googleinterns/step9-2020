@@ -30,4 +30,4 @@ const INDEX = CLIENT.initIndex(INDEX_NAME);
 const DOC_NAME = 'ads/{adId}';
 const DOCS = functions.firestore.document(DOC_NAME);
 
-module.exports = { algoliaFunctions, INDEX, DOCS };
+module.exports = { functions, algoliaFunctions, INDEX, DOCS };
