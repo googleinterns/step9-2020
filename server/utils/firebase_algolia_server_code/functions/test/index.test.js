@@ -1,8 +1,8 @@
 /**
  * Description: Unit tests for index.js
- *              Uses dependency injection to mock algolia save/delete functions
- *              Uses sinon/chai to spy on calls and validate behavior
- *              compile with `npm run test`
+ *              Uses dependency injection to mock algolia save/delete.
+ *              Uses sinon/chai to spy on calls and validate behavior.
+ *              compile with `npm run test`.
  * Author: Robert Marcus
  * Date: July 7, 2020
  */
@@ -17,105 +17,58 @@ const { createRecordFromEntity, updateRecord, deleteRecord } =
 // Import mock saveObject, mock deleteObject, and helpers.
 const { saveObject, deleteObject } = require('./algoliaMocks');
 
+// `test` refers to the firestore test functions sdk.
+const firestoreMock = test.firestore;   
+const firestoreWrap = test.wrap;
 
 describe("test_createRecordFromEntity", () => {
-  it('should call saveObject exactly once', () => {
+  it('should call saveObject with correct values, return its output', () => {
     const saveSpy = sinon.spy(saveObject);
-    const snap = test.firestore.exampleDocumentSnapshot();
+    const snap = firestoreMock.exampleDocumentSnapshot();
 
-    const createRecordWrapper = test.wrap(createRecordFromEntity(saveSpy));
-    createRecordWrapper(snap);
-
-    assert.isTrue(saveSpy.calledOnce);
-  });
-
-  it('should call saveObject with the correct parameters', () => {
-    const saveSpy = sinon.spy(saveObject);
-    const snap = test.firestore.exampleDocumentSnapshot();
-
-    const createRecordWrapper = test.wrap(createRecordFromEntity(saveSpy));
-    createRecordWrapper(snap);
-
-    const expectedInput = {data: (snap.data()), objectID: (snap.id)};
-    assert.isTrue(saveSpy.calledWithMatch(expectedInput));
-  });
-  
-  it('should return saveObject output', () => {
-    const snap = test.firestore.exampleDocumentSnapshot();
-
-    const createRecordWrapper = test.wrap(createRecordFromEntity(saveObject));
+    const createRecordWrapper = firestoreWrap(createRecordFromEntity(saveSpy));
     const addedSnap = createRecordWrapper(snap);
 
-    const expectedOutput = {data: snap.data(), objectID: snap.id};
+    const expectedInput = {data: snap.data(), objectID: snap.id};
+    const expectedOutput = expectedInput;
     expectedOutput.data.alteredByMockAlgolia = true;
+
     assert.deepEqual(addedSnap, expectedOutput);
+    assert.isTrue(saveSpy.calledWithMatch(expectedInput));
+    assert.isTrue(saveSpy.calledOnce);
   });
 });
 
 describe("test_updateRecord", () => {
-  it('should call saveObject exactly once', () => {
+  it('should call saveObject with correct values, return its output', () => {
     const saveSpy = sinon.spy(saveObject);
-    const randomChange = test.firestore.exampleDocumentSnapshotChange();
+    const randomChange = firestoreMock.exampleDocumentSnapshotChange();
 
-    const updateWrapper = test.wrap(updateRecord(saveSpy));
-    updateWrapper(randomChange);
-    
-    assert.isTrue(saveSpy.calledOnce);
-  });
-
-  it('should call saveObject with the correct parameters', () => {
-    const saveSpy = sinon.spy(saveObject);
-    const randomChange = test.firestore.exampleDocumentSnapshotChange();
-
-    const updateWrapper = test.wrap(updateRecord(saveSpy));
-    updateWrapper(randomChange);
-
-    const expectedInput = {data: (randomChange.after.data()), 
-                           objectID: (randomChange.after.id)};
-    assert.isTrue(saveSpy.calledWithMatch(expectedInput));    
-  });
-
-  it('should return saveObject output', () => {
-    const randomChange = test.firestore.exampleDocumentSnapshotChange();
-
-    const updateWrapper = test.wrap(updateRecord(saveObject));    
+    const updateWrapper = firestoreWrap(updateRecord(saveSpy));
     const updatedChange = updateWrapper(randomChange);
 
-    const expectedOutput = {data: randomChange.after.data(), 
-                            objectID: randomChange.after.id};
+    const expectedInput = {data: randomChange.after.data(), 
+                          objectID: randomChange.after.id};
+    const expectedOutput = expectedInput;
     expectedOutput.data.alteredByMockAlgolia = true;
+
     assert.deepEqual(updatedChange, expectedOutput);
+    assert.isTrue(saveSpy.calledWithMatch(expectedInput));
+    assert.isTrue(saveSpy.calledOnce);
   });
 });
 
 describe("test_deleteRecord", () => {
-  it('should call deleteObject exactly once', () => {
+  it('should call deleteObject with correct values, return its output', () => {
     const deleteSpy = sinon.spy(deleteObject);
-    const snap = test.firestore.exampleDocumentSnapshot();
+    const snap = firestoreMock.exampleDocumentSnapshot();
 
-    const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
-    deleteWrapper(snap);
-
-    assert.isTrue(deleteSpy.calledOnce);
-  });
-
-  it('should call deleteObject with the correct parameters', () => {
-    const deleteSpy = sinon.spy(deleteObject);
-    const snap = test.firestore.exampleDocumentSnapshot();
-
-    const deleteWrapper = test.wrap(deleteRecord(deleteSpy));
-    const deletedID = deleteWrapper(snap);
-
-    assert.isTrue(deleteSpy.calledWithMatch(deletedID.objectID));    
-  });
-
-  it('should return deleteObject output', () => {
-    const snap = test.firestore.exampleDocumentSnapshot();
-    
-    const deleteWrapper = test.wrap(deleteRecord(deleteObject));
+    const deleteWrapper = firestoreWrap(deleteRecord(deleteSpy));
     const deletedID = deleteWrapper(snap);
 
     const expectedOutput = {'objectID': snap.id, 'alteredByMockAlgolia': true};
     assert.deepEqual(deletedID, expectedOutput);
+    assert.isTrue(deleteSpy.calledWithMatch(deletedID.objectID));
+    assert.isTrue(deleteSpy.calledOnce);
   });  
 });
