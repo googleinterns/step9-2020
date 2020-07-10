@@ -1,3 +1,7 @@
+/**
+ * generate a random hex color
+ * @returns {string} hex color string
+ */
 const generateRandomHexColor = () => {
   const letters = '0123456789ABCDEF';
   let color = '#';

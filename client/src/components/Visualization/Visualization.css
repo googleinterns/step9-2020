@@ -6,26 +6,11 @@
   margin-bottom: 50px;
 }
 
-select {
-  border-radius: 5px;
-  color: #727272;
-  font-size: 16px;
-  margin-bottom: 2em;
-  outline: none;
-  padding: 7px 5px;
-  width: 200px;
-}
-
-label {
-  font-size: 18px;
-  margin-bottom: 15px;
-}
-
 .margin-right {
   margin-right: 50px;
 }
 
-.card {
+.chart-container {
   background-color: #fff;
   border-radius: 10px;
   margin-bottom: 20px;
