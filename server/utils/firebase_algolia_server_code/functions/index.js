@@ -28,13 +28,13 @@ const { algoliaFunctions, INDEX, DOCS } = require('./indexConfig');
  * @return {function} 
  */
 function createRecordFromEntity(algoliaOperation = INDEX.saveObject) {
-  exports.createRecordFromEntity = 
+  exports.create = 
       DOCS.onCreate(snapshot => {
         return algoliaFunctions
                   .createRecordFromEntity(algoliaOperation, snapshot);
       });
 
-  return exports.createRecordFromEntity;
+  return exports.create;
 }
 
 /**
@@ -45,12 +45,12 @@ function createRecordFromEntity(algoliaOperation = INDEX.saveObject) {
  * @return {function} 
  */
 function updateRecord(algoliaOperation = INDEX.saveObject) {
-  exports.updateRecord = 
+  exports.update = 
       DOCS.onUpdate(change => {
         return algoliaFunctions.updateRecord(algoliaOperation, change);
       });
 
-  return exports.updateRecord;
+  return exports.update;
 }
 
 /**
@@ -60,17 +60,12 @@ function updateRecord(algoliaOperation = INDEX.saveObject) {
  * @return {function} 
  */
 function deleteRecord(algoliaOperation = INDEX.deleteObject) {
-  exports.deleteRecord = 
+  exports.delete = 
       DOCS.onDelete(snapshot => {
-        return algoliaFunctions
-                  .deleteRecord(algoliaOperation, snapshot);
+        return algoliaFunctions.deleteRecord(algoliaOperation, snapshot);
       }); 
       
-  return exports.deleteRecord;
+  return exports.delete;
 }
-
-createRecordFromEntity();
-updateRecord();
-deleteRecord();
 
 module.exports = { createRecordFromEntity, updateRecord, deleteRecord };
