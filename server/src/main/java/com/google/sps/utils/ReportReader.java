@@ -49,7 +49,7 @@ public class ReportReader {
           Ad ad = AdRowProcessor.convertRowToAd(currentRow);
           FirebaseAdWriter.writeAd(ad, COLLECTION, PATH_TO_SERVICE_ACCOUNT, DATABASE_URL);
         } catch(Exception e) {
-          System.out.println("Exception at line: " + currentRowIndex);
+          System.out.println("Exception at line: " + currentRowIndex + "\nRow: " + currentRow);
           e.printStackTrace();
         }
       }

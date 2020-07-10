@@ -31,7 +31,7 @@ public final class AdRowProcessor {
       "new jersey", "new mexico", "new york", "north carolina", "north dakota", "northern mariana islands", 
       "ohio", "oklahoma", "oregon", "pennsylvania", "puerto rico", "rhode island", "south carolina", "south dakota", 
       "tennessee", "texas", "u.s. virgin islands", "utah", "vermont", "virginia", "washington", "west virginia", 
-      "wisconsin", "wyoming", "united states", "the united states","not targeted"));
+      "wisconsin", "wyoming", "united states", "the united states", "not targeted"));
   private static final int NUMBER_OF_FIELDS = 17;
   private static final int ID_COLUMN = 0;
   private static final int ADVERTISER_COLUMN = 1; 
@@ -51,17 +51,22 @@ public final class AdRowProcessor {
   private static final int CONTENT_SENTIMENT_COLUMN = 15;
   private static final int CONTENT_TERMS_COLUMN = 16; 
 
+  public enum ImpressionType { 
+    MIN, MAX 
+  }
+
   public static Ad convertRowToAd(String[] row) {
     if (row.length != NUMBER_OF_FIELDS) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("Incorrect number of fields for Ad object. Row length:" 
+          + row.length + "\nRow: " + row);
     }
     Ad ad = Ad.newBuilder()
         .id(row[ID_COLUMN])
         .advertiser(row[ADVERTISER_COLUMN])
         .startDate(checkDateFormat(row[START_DATE_COLUMN])) 
         .endDate(checkDateFormat(row[END_DATE_COLUMN]))
-        .impressionsMin(getImpressions(row[IMPRESSIONS_COLUMN], "min"))
-        .impressionsMax(getImpressions(row[IMPRESSIONS_COLUMN], "max"))
+        .impressionsMin(getImpressions(row[IMPRESSIONS_COLUMN], ImpressionType.MIN))
+        .impressionsMax(getImpressions(row[IMPRESSIONS_COLUMN], ImpressionType.MAX))
         .isTargetingAge(isTargetingAge(row[IS_TARGETING_AGE_COLUMN]))
         .genderTarget(checkGenderTarget(row[GENDER_TARGET_COLUMN]))
         .geoTarget(checkGeoTarget(row[GEO_TARGET_COLUMN]))
@@ -105,15 +110,17 @@ public final class AdRowProcessor {
    * In the case of a, min impressions = 0 and max impressions = n.
    * In the case of b, min impressions = n and max impressions = m.
    */ 
-  public static long getImpressions(String impressionsField, String impressionType) throws IllegalArgumentException, NumberFormatException { 
+  public static long getImpressions(String impressionsField, ImpressionType impressionType) throws IllegalArgumentException, NumberFormatException { 
     String[] impressionsArray = formatImpressionField(impressionsField); 
-    if (impressionType.equals("min")) { // Get minimum number of impressions.
+    if (impressionType.equals(ImpressionType.MIN)) { // Get minimum number of impressions.
       if (impressionsArray.length > 1) {
         return Long.parseLong(impressionsArray[0]);
       }
-      return (long) 0; // If csv field uses "<=", the min number of impressions is 0.
-    } else { // Get maximum number of impressions.
+      return 0L; // If csv field uses "<=", the min number of impressions is 0.
+    } else if (impressionType.equals(ImpressionType.MAX)) { // Get maximum number of impressions.
       return Long.parseLong(impressionsArray[impressionsArray.length - 1]);   
+    } else {
+      throw new IllegalArgumentException(impressionType + " is not a valid impression type.");
     }
   }
 

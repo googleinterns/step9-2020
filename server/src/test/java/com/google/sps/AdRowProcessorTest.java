@@ -13,6 +13,7 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class AdRowProcessorTest {
+
   private static final int ID_INDEX = 0;
   private static final int ADVERTISER_INDEX = 1; 
   private static final int START_DATE_INDEX = 2;
