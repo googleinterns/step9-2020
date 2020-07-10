@@ -49,6 +49,10 @@ InterpolationSelect.propTypes = {
   onChange: PropTypes.func,
 };
 
+/*
+ * Visualization & Doc:
+ * https://formidable.com/open-source/victory/gallery/interpolation
+ */
 const Interpolation = () => {
   const [polar, setPolar] = useState(false);
   const [interpolation, setInterpolation] = useState('linear');

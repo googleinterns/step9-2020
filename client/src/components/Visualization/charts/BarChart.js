@@ -10,6 +10,10 @@ const MOCK_DATA = [
   { x: new Date(2016, 1, 1), y: 4 },
 ];
 
+/*
+ * Visualization & Doc:
+ * https://formidable.com/open-source/victory/gallery/alternative-events
+ */
 const BarChart = () => (
   <div className="chart">
     <VictoryChart domainPadding={{ x: 50, y: [0, 20] }} scale={{ x: 'time' }}>

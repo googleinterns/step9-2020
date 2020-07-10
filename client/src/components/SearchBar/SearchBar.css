@@ -1,12 +1,14 @@
+@import url("../../styles/colors.css");
+
 .search-header {
-  background-color: #0077b5;
+  align-items: center;
+  background-color: var(--primary-color);
+  color: #fff;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  margin-bottom: 16px;
   min-height: 50px;
-  padding: 0.5rem 1rem;
-  color: #fff;
-  margin-bottom: 1rem;
+  padding: 8px 16px;
 }
 
 .logo {

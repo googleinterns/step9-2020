@@ -20,6 +20,10 @@ const MOCK_DATA = [
   { a: new Date(2015, 1, 1), b: 470 },
 ];
 
+/*
+ * Visualization & Doc:
+ * https://formidable.com/open-source/victory/gallery/brush-and-zoom
+ */
 const ZoomLine = () => {
   const [zoomDomain, setZoomDomain] = useState({
     x: [new Date(1990, 1, 1), new Date(2009, 1, 1)],

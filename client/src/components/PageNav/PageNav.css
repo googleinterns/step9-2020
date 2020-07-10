@@ -18,16 +18,16 @@
 
 .selected-header {
   background-color: rgb(218, 238, 255);
-  border-left: #0077b5 solid 2px;
+  border-left: var(--primary-color) solid 2px;
 }
 
 .header p:hover {
-  color: #0077b5;
+  color: var(--primary-color);
   text-decoration: underline;
 }
 
 .logo-text {
-  color: #0077b5;
+  color: var(--primary-color);
   margin-left: 20px;
   user-select: none;
   cursor: pointer;

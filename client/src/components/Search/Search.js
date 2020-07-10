@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import FilterList from '../FilterList/FilterList';
 import { InstantSearch } from 'react-instantsearch-dom';
 import ResultList from '../ResultList/ResultList';
-import SearchHeader from '../SearchHeader/SearchHeader';
+import SearchBar from '../SearchBar/SearchBar';
 import { searchClient } from '../../constants/algolia_config';
 
 const Search = () => {
@@ -22,7 +22,7 @@ const Search = () => {
           <h3 className="filter-header" onClick={handleFilterToggle}>
             {`(${showFilter ? '-' : '+'}) FILTERS`}
           </h3>
-          <SearchHeader />
+          <SearchBar />
           <div className="search-body">
             {showFilter && <FilterList />}
             <ResultList />

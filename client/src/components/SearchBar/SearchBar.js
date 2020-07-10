@@ -1,4 +1,4 @@
-import './SearchHeader.css';
+import './SearchBar.css';
 
 import React from 'react';
 import { SearchBox } from 'react-instantsearch-dom';
@@ -8,11 +8,11 @@ const SEARCHBOX_CONFIG = {
   placeholder: 'Search Ads...',
 };
 
-const SearchHeader = () => (
+const SearchBar = () => (
   <div className="search-header center">
     <img src={tardigrade} className="logo" alt="logo" />
     <SearchBox className="searchbox" translations={SEARCHBOX_CONFIG} />
   </div>
 );
 
-export default SearchHeader;
+export default SearchBar;

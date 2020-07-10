@@ -1,10 +1,10 @@
-import './Header.css';
+import './PageNav.css';
 
 import { HEADERS } from '../../constants/header_constant';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const Header = props => {
+const PageNav = props => {
   const { currentPage, setCurrentPage } = props;
 
   return (
@@ -27,9 +27,9 @@ const Header = props => {
   );
 };
 
-Header.propTypes = {
+PageNav.propTypes = {
   currentPage: PropTypes.string,
   setCurrentPage: PropTypes.func,
 };
 
-export default Header;
+export default PageNav;

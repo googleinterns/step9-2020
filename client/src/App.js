@@ -2,7 +2,7 @@ import './App.css';
 
 import React, { useState } from 'react';
 
-import Header from './components/Header/Header';
+import PageNav from './components/PageNav/PageNav';
 import Search from './components/Search/Search';
 import Visualization from './components/Visualization/Visualization';
 
@@ -16,7 +16,7 @@ const App = () => {
 
   return (
     <div>
-      <Header currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      <PageNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
       {pageMap[currentPage]}
     </div>
   );
