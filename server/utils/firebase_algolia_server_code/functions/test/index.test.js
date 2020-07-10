@@ -32,7 +32,6 @@ describe("test_createRecordFromEntity", () => {
     const expectedInput = {data: snap.data(), objectID: snap.id};
     const expectedOutput = expectedInput;
     expectedOutput.data.alteredByMockAlgolia = true;
-
     assert.deepEqual(addedSnap, expectedOutput);
     assert.isTrue(saveSpy.calledWithMatch(expectedInput));
     assert.isTrue(saveSpy.calledOnce);
@@ -48,10 +47,9 @@ describe("test_updateRecord", () => {
     const updatedChange = updateWrapper(randomChange);
 
     const expectedInput = {data: randomChange.after.data(), 
-                          objectID: randomChange.after.id};
+                           objectID: randomChange.after.id};
     const expectedOutput = expectedInput;
     expectedOutput.data.alteredByMockAlgolia = true;
-
     assert.deepEqual(updatedChange, expectedOutput);
     assert.isTrue(saveSpy.calledWithMatch(expectedInput));
     assert.isTrue(saveSpy.calledOnce);
