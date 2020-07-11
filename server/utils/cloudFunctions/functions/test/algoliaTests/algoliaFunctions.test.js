@@ -1,19 +1,18 @@
 /**
- * Description: Unit tests for index.js
- *              Uses dependency injection to mock algolia save/delete.
+ * Description: Unit tests for algoliaFunctions.js
+ *              Uses stubbing to mock algolia save/delete.
  *              Uses sinon/chai to spy on calls and validate behavior.
  *              compile with `npm run test`.
  * Author: Robert Marcus
- * Date: July 7, 2020
+ * Date: July 11, 2020
  */
 
 // Import the testing environment configuration
-const { test, assert, sinon } = require('./testConfig');
-const { functions } = require('../firebaseConfig');
+const { test, assert, sinon } = require('../testConfig');
 
 // Import the generic cloud functions.
-const algoliaFunctions = require('../algoliaCloudFunctions/algoliaFunctions');
-const { DEV_ADS_INDEX } = require('../algoliaCloudFunctions/algoliaConfig');
+const algoliaFunctions = require('../../algoliaCloudFunctions/algoliaFunctions');
+const { DEV_ADS_INDEX } = require('../../algoliaCloudFunctions/algoliaConfig');
 
 // Import mock saveObject, mock deleteObject, and helpers.
 const { mockDeleteObject, mockSaveObject } = require('./algoliaMocks');

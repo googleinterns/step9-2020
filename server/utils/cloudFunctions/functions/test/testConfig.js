@@ -40,6 +40,8 @@ const test = require('firebase-functions-test')({
  * - Three assertion interfaces: expect, assert, should. 
  * Sinon is: 
  * - A utility to spy on external methods being used by systems under test.
+ * - Primarily used for stubbing external api calls
+ *   (Test stubs are functions (spies) with pre-programmed behavior.)
  * - Very handy, can do more but this is the primary purpose in these tests. 
  */
 const assert = require('chai').assert;
