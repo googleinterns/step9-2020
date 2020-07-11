@@ -15,7 +15,7 @@ function markModified(someJson) {
  * @param {string} objectID string
  * @return {Object}
  */
-function deleteObject(objectID) {
+function mockDeleteObject(objectID) {
   return markModified({'objectID': objectID});
 }
 
@@ -25,8 +25,8 @@ function deleteObject(objectID) {
  * @param {Object} objectID json string of the form {id: 'id'}. 
  * @return {Object}
  */
-function saveObject({data, objectID}) {
+function mockSaveObject({data, objectID}) {
   return {data: markModified(data), objectID: objectID};
 }
 
-module.exports = { deleteObject, saveObject };
+module.exports = { mockDeleteObject, mockSaveObject };

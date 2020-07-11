@@ -1,14 +1,12 @@
 /**
- * Description: Initialize the index environment
+ * Description: Initialize the algolia environment. 
  *              Basically prepare firestore and algolia
  * Author: Robert Marcus
  * Date: July 7, 2020
  */
-
 const algoliasearch = require('algoliasearch');
 const algoliaFunctions = require('./algoliaFunctions');
-const functions = require('firebase-functions');
-
+const { functions } = require('../firebaseConfig');
 /**
  * Keys required to run this locally. 
  * How to get the keys: 
@@ -23,11 +21,16 @@ const ADMIN_KEY = functions.config().algolia.key;
 
 // Initialize algoliasearch API
 const CLIENT = algoliasearch(APP_ID, ADMIN_KEY);
-const INDEX_NAME = 'dev_ADS';
-const INDEX = CLIENT.initIndex(INDEX_NAME);
 
-// Access an individual document in our `ads` documents collection
-const DOC_NAME = 'ads/{adId}';
-const DOCS = functions.firestore.document(DOC_NAME);
+const DEV_ADS_INDEX_NAME = 'dev_ADS';
+const PROD_ADS_INDEX_NAME = 'prod_ADS';
+const DEV_ADS_INDEX = CLIENT.initIndex(DEV_ADS_INDEX_NAME);
+const PROD_ADS_INDEX = CLIENT.initIndex(DEV_ADS_INDEX_NAME);
 
-module.exports = { functions, algoliaFunctions, INDEX, DOCS };
+const DEV_SAVE = DEV_ADS_INDEX.saveObject; 
+const DEV_DELETE = DEV_ADS_INDEX.deleteObject;
+
+const PROD_SAVE = PROD_ADS_INDEX.saveObject;
+const PROD_DELETE = PROD_ADS_INDEX.deleteObject;
+
+module.exports = { DEV_ADS_INDEX, PROD_ADS_INDEX };

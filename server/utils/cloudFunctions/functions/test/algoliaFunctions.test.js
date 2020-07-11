@@ -9,51 +9,47 @@
 
 // Import the testing environment configuration
 const { test, assert, sinon } = require('./testConfig');
-const { functions } = require('../indexConfig');
+const { functions } = require('../firebaseConfig');
 
 // Import the generic cloud functions.
-const {  INDEX } = 
-    require('../indexConfig.js');
-
-const myFunctions = require('../index.js');
+const algoliaFunctions = require('../algoliaCloudFunctions/algoliaFunctions');
+const { DEV_ADS_INDEX } = require('../algoliaCloudFunctions/algoliaConfig');
 
 // Import mock saveObject, mock deleteObject, and helpers.
-const { saveObject, deleteObject } = require('./algoliaMocks');
+const { mockDeleteObject, mockSaveObject } = require('./algoliaMocks');
 
 // `test` refers to the firestore test functions sdk.
 const firestoreMock = test.firestore;   
 const firestoreWrap = test.wrap;
 
-const admin = require('firebase-admin');
+// Restore the stubs after each test. 
+afterEach(() => {
+  sinon.restore();
+});
 
-
-describe("test_createRecordFromEntity", () => {
+describe("test_devCreateRecord", () => {
   it('should call saveObject with correct values, return its output', () => {
-    //const saveSpy = sinon.spy(saveObject);
-    const stub = sinon.stub(INDEX, "saveObject").callsFake(saveObject);
+    const saveStub = sinon.stub(DEV_ADS_INDEX, "saveObject").callsFake(mockSaveObject);
     const snap = firestoreMock.exampleDocumentSnapshot();
 
-    const createRecordWrapper = firestoreWrap(myFunctions.createRecord);
+    const createRecordWrapper = firestoreWrap(algoliaFunctions.devCreateRecord);
     const addedSnap = createRecordWrapper(snap);
 
     const expectedInput = {data: snap.data(), objectID: snap.id};
     const expectedOutput = expectedInput;
     expectedOutput.data.alteredByMockAlgolia = true;
     assert.deepEqual(addedSnap, expectedOutput);
-    assert.isTrue(stub.calledOnce);
-    assert.isTrue(stub.calledWithMatch(expectedInput));
-
-    stub.restore();
+    assert.isTrue(saveStub.calledOnce);
+    assert.isTrue(saveStub.calledWithMatch(expectedInput));
   });
 });
 
-describe("test_updateRecord", () => {
+describe("test_devUpdateRecord", () => {
   it('should call saveObject with correct values, return its output', () => {
-    //const saveSpy = sinon.spy(saveObject);
-    const stub = sinon.stub(INDEX, "saveObject").callsFake(saveObject);
+    const saveStub = sinon.stub(DEV_ADS_INDEX, "saveObject").callsFake(mockSaveObject);
     const randomChange = firestoreMock.exampleDocumentSnapshotChange();
 
-    const updateWrapper = firestoreWrap(myFunctions.updateRecord);
+    const updateWrapper = firestoreWrap(algoliaFunctions.devUpdateRecord);
     const updatedChange = updateWrapper(randomChange);
 
     const expectedInput = {data: randomChange.after.data(), 
@@ -61,25 +57,22 @@ describe("test_updateRecord", () => {
     const expectedOutput = expectedInput;
     expectedOutput.data.alteredByMockAlgolia = true;
     assert.deepEqual(updatedChange, expectedOutput);
-    assert.isTrue(stub.calledOnce);
-    assert.isTrue(stub.calledWithMatch(expectedInput));
-    stub.restore();
+    assert.isTrue(saveStub.calledOnce);
+    assert.isTrue(saveStub.calledWithMatch(expectedInput));
   });
 });
 
-describe("test_deleteRecord", () => {
+describe("test_devDeleteRecord", () => {
   it('should call deleteObject with correct values, return its output', () => {
-    //const deleteSpy = sinon.spy(deleteObject);
-    const stub = sinon.stub(INDEX, "deleteObject").callsFake(deleteObject);
+    const deleteStub = sinon.stub(DEV_ADS_INDEX, "deleteObject").callsFake(mockDeleteObject);
     const snap = firestoreMock.exampleDocumentSnapshot();
 
-    const deleteWrapper = firestoreWrap(myFunctions.deleteRecord);
+    const deleteWrapper = firestoreWrap(algoliaFunctions.devDeleteRecord);
     const deletedID = deleteWrapper(snap);
 
     const expectedOutput = {'objectID': snap.id, 'alteredByMockAlgolia': true};
     assert.deepEqual(deletedID, expectedOutput);
-    assert.isTrue(stub.calledWithMatch(deletedID.objectID));
-    assert.isTrue(stub.calledOnce);
-    stub.restore();
+    assert.isTrue(deleteStub.calledWithMatch(deletedID.objectID));
+    assert.isTrue(deleteStub.calledOnce);
   });  
 });

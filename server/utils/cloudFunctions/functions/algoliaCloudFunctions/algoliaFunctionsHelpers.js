@@ -1,10 +1,11 @@
 /**
- * Description: code that actually connects to algolia. 
- *              `algoliaOperation` parameter is used to enable 
- *              easy dependency/mock injection.   
- * Author: Robert Marcus
- * Date: July 7, 2020
- */
+  * Description: code that actually connects to algolia. 
+  *              `algoliaOperation` parameter is used to reduce DRY
+  *              as these functions are used in different contexts 
+  *              by cloud functions depending on if dev/prod focus. 
+  * Author: Robert Marcus
+  * Date: July 7, 2020
+  */
 
 /**
  * Creates an algolia record from a firebase entity snapshot.
@@ -12,11 +13,11 @@
  * @param {Object} snapshot a json string
  * @return {!Promise}
  */
-function createRecordFromEntity(algoliaOperation, snapshot) {
+function createRecord(algoliaIndex, snapshot) {
   const data = snapshot.data();
   const objectID = snapshot.id;
 
-  return algoliaOperation({data, objectID});
+  return algoliaIndex.saveObject({data, objectID});
 }
 
 /**
@@ -26,8 +27,8 @@ function createRecordFromEntity(algoliaOperation, snapshot) {
  * @param {Object} change a json string
  * @return {!Promise}
  */
-function updateRecord(algoliaOperation, change) {
-  return createRecordFromEntity(algoliaOperation, change.after);
+function updateRecord(algoliaIndex, change) {
+  return createRecord(algoliaIndex, change.after);
 }
 
 /**
@@ -35,8 +36,8 @@ function updateRecord(algoliaOperation, change) {
  * @param {function(string): !Promise=} algoliaOperation a delete function
  * @return {!Promise} 
  */
-function deleteRecord(algoliaOperation, snapshot) {
-  return algoliaOperation(snapshot.id);
+function deleteRecord(algoliaIndex, snapshot) {
+  return algoliaIndex.deleteObject(snapshot.id);
 }
 
-module.exports = { createRecordFromEntity, updateRecord, deleteRecord };
+module.exports = { createRecord, updateRecord, deleteRecord };
