@@ -1,10 +1,11 @@
 /**
  * Description: Initialize the algolia environment. 
- *              Basically prepare firestore and algolia
+ *              Basically prepare the algolia api client.
  * Author: Robert Marcus
  * Date: July 7, 2020
  */
 
+// Import algoliasearch api, firebase functions for access to env vars.
 const algoliasearch = require('algoliasearch');
 const { functions } = require('../firebaseConfig');
 
@@ -20,7 +21,7 @@ const { functions } = require('../firebaseConfig');
 const APP_ID = functions.config().algolia.app;
 const ADMIN_KEY = functions.config().algolia.key;
 
-// Initialize algoliasearch API
+// Initialize algoliasearch API.
 const CLIENT = algoliasearch(APP_ID, ADMIN_KEY);
 
 // Index names that will be used. 
@@ -29,6 +30,6 @@ const PROD_ADS_INDEX_NAME = 'prod_ADS';
 
 // Initialize the specific index the `CLIENT` instance will operate on. 
 const DEV_ADS_INDEX = CLIENT.initIndex(DEV_ADS_INDEX_NAME);
-const PROD_ADS_INDEX = CLIENT.initIndex(DEV_ADS_INDEX_NAME);
+const PROD_ADS_INDEX = CLIENT.initIndex(PROD_ADS_INDEX_NAME);
 
 module.exports = { DEV_ADS_INDEX, PROD_ADS_INDEX };

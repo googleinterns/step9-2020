@@ -4,10 +4,11 @@
  * Author: Robert Marcus
  * Date: July 7, 2020
  */
+
 // Initialize the firebase functions sdk. 
 const functions = require('firebase-functions');
 
-// Access an individual document in our `ads` documents collection
+// Access an individual document in our `ads` documents collection.
 const DEV_ADS_DOC_NAME = 'dev_ads/{adId}';
 const PROD_ADS_DOC_NAME = 'ads/{adId}';
 

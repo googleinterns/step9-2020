@@ -1,6 +1,6 @@
 /**
   * Description: code that actually connects to algolia. 
-  *              `algoliaOperation` parameter is used to reduce DRY
+  *              `algoliaIndex` parameter is used to reduce DRY
   *              as these functions are used in different contexts 
   *              by cloud functions depending on if dev/prod focus. 
   * Author: Robert Marcus

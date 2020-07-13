@@ -9,6 +9,7 @@
 
 /**
  * Cloud functions below. Notes: 
+ * - If contributing additional functions, read the `readme.md`. 
  * - Read more about how to organize/export cloud functions here:
  *   https://firebase.google.com/docs/functions/organize-functions
  * - These are background events, basically event listeners

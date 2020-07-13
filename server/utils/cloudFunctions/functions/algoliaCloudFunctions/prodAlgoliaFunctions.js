@@ -10,13 +10,12 @@
  */
 
 // Import algolia save/delete functions linked to prod index.
-const { PROD_ADS_INDEX } = 
-    require('./algoliaConfig');
+const { PROD_ADS_INDEX } = require('./algoliaConfig');
 
-// Import links to firebase prod databases 
+// Import links to firebase prod databases.
 const { PROD_ADS_DOCS } = require('../firebaseConfig');
 
-// Import algolia helper functions 
+// Import algolia helper functions.
 const { createRecord, updateRecord, deleteRecord } = 
     require('./algoliaFunctionsHelpers');
 
