@@ -6,15 +6,17 @@ import BarChart from './charts/BarChart';
 import Interpolation from './charts/Interpolation';
 import React from 'react';
 import ZoomLine from './charts/ZoomLine';
+import Geochart from './charts/Geochart';
 import tardigrade from '../../images/tardigrade.png';
 
-const CHARTS_TABLE = [['Zoomable Line'], ['Interpolation', 'Vertical Bar']];
+const CHARTS_TABLE = [['Zoomable Line'], ['Interpolation', 'Vertical Bar'], ['Geochart']];
 
 const Visualization = () => {
   const chartMap = {
     'Zoomable Line': <ZoomLine />,
     'Interpolation': <Interpolation />,
     'Vertical Bar': <BarChart />,
+    'Geochart': <Geochart />,
   };
 
   return (
