@@ -1,0 +1,21 @@
+.visualization-container {
+  width: 100%;
+}
+
+.chart {
+  margin-bottom: 50px;
+}
+
+.margin-right {
+  margin-right: 50px;
+}
+
+.chart-container {
+  background-color: #fff;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.interpolation-label {
+  color: rgb(114, 114, 114);
+}
