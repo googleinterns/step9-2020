@@ -34,7 +34,7 @@
   - You can deploy all your cloud functions with `exports.foo = require(./fooCloudFunctions/fooFunctions)`.
    - This will deploy each function in `fooFunctions` as `foo-fooFunction1, foo-fooFunction2, ...`. 
   - If you are deploying `foo` for the first time, you will need to 
-    run something like `firebase deploy --only functions:foo-bar1,functions:foo-bar2,...`
+    run something like `firebase deploy --only functions:foo-fooFunction1,functions:foo-fooFunction2,...`
   - If redeploying you only need to run `firebase deploy --only functions:foo`. 
 - Testing: 
   - For unit tests mocha (a test framework), chai (an assertion lib.), and 
