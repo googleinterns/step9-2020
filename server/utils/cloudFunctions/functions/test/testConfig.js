@@ -28,7 +28,7 @@ const test = require('firebase-functions-test')({
 }, 'step9-2020-capstone.json');
 
 /**
- * Initialize mocha, chai, and sinon. 
+ * Initialize chai, and sinon. Mocha should be downloaded with npm.  
  * Mocha is:  
  * - feature rich node js test framework.
  * - encapsulates test suites (describe-block), and test-cases (it-block).

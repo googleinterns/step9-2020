@@ -1,6 +1,7 @@
 /**
- * Description: Initialize the algolia environment. 
- *              Basically prepare the algolia api client.
+ * Description: Initialize the algolia environment by
+ *              initializing the algolia api client 
+ *              to access the dev/prod ads indices.
  * Author: Robert Marcus
  * Date: July 7, 2020
  */
@@ -24,7 +25,7 @@ const ADMIN_KEY = functions.config().algolia.key;
 // Initialize algoliasearch API.
 const CLIENT = algoliasearch(APP_ID, ADMIN_KEY);
 
-// Index names that will be used. 
+// Names of the algolia development and production ads index.  
 const DEV_ADS_INDEX_NAME = 'dev_ADS';
 const PROD_ADS_INDEX_NAME = 'prod_ADS';
 

@@ -5,19 +5,19 @@
   - For easy deployment with the CLI, each function should be statically defined
     as `exports.bar = ...`.  If you are referencing a 3rd party api, use stubbing 
     for dependency injection with sinon instead of manual injection.
-  - It may seem like this ignores DRY, and it basically does. This is a downside
+  - It may seem like this ignores DRY, and it does. This is a downside
     to the firebase CLI, and generally isn't a problem for most queries or 
     functions. 
     - You can try using [environment variables](https://cloud.google.com/functions/docs/env-var)
       to a certain extent to deploy across a dev and staging environment, but
       I've had trouble getting it to work easily. 
-    - Basically you have to declare environment variables in a `.env.yaml` file,
+    - One approach is you declare environment variables in a `.env.yaml` file,
       write your dev functions referencing the dev variables, and then at 
       deployment overwrite them with `gcloud functions deploy FUNCTION_NAME --set-env-vars FOO=bar ...`
       - This is *not* a `firebase` deployment. It is a `gcloud` deployment, 
         and it's a lot more difficult. 
       - It doesn't seem like firebase really supports this, but it can possibly 
-        be hacked it seems like. Read more in [this](https://stackoverflow.com/questions/49744470/creating-a-development-and-staging-environments-for-google-cloud-functions)
+        be hacked by deploying with `gcloud` instead. Read more in [this](https://stackoverflow.com/questions/49744470/creating-a-development-and-staging-environments-for-google-cloud-functions)
         stack exchange post.  
       - I have not gotten it to work yet, so this section is still a work in 
         progress. 

@@ -11,7 +11,7 @@ function markModified(someJson) {
 } 
 
 /**
- * Mock delete, simply returns the input + an altered field 
+ * Mock delete, returns the input + an altered field 
  * @param {string} objectID string
  * @return {Object}
  */
@@ -20,7 +20,7 @@ function mockDeleteObject(objectID) {
 }
 
 /**
- * Mock save, simply returns the input + an altered field  
+ * Mock save, returns the input + an altered field  
  * @param {Object} data json string with arbitrary contents.
  * @param {Object} objectID json string of the form {id: 'id'}. 
  * @return {Object}

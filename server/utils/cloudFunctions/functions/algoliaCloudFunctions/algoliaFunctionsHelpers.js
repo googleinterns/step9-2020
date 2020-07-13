@@ -8,7 +8,7 @@
   */
 
 /**
- * Creates an algolia record from a firebase entity snapshot.
+ * Creates an algolia record from a firebase document snapshot.
  * @param {Object} algoliaIndex an algolia client class
  * @param {function(Object): !Promise} algoliaIndex.saveObject algolia api call
  * @param {Object} snapshot a json string
@@ -32,7 +32,7 @@ function updateRecord(algoliaIndex, change) {
 }
 
 /**
- * Deletes an algolia record from an entity snapshot. 
+ * Deletes an algolia record from an document snapshot. 
  * @param {Object} algoliaIndex an algolia client class
  * @param {function(Object): !Promise} algoliaIndex.deleteObject algolia api call 
  * @return {!Promise} 

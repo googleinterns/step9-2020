@@ -1,6 +1,6 @@
 /**
- * Description: Initialize the index environment
- *              Basically prepare firestore and algolia
+ * Description: Initialize the index environment by 
+ *              initializng the firebase api to access the dev/prod ads db
  * Author: Robert Marcus
  * Date: July 7, 2020
  */

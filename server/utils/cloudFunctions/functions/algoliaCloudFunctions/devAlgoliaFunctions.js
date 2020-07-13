@@ -4,7 +4,7 @@
  *              hence not everything can be DRY. 
  *              Three basic operations supported: create, update, delete.
  *              Vocab: a firestore collection = algolia index
- *                     an ad entity = algolia record
+ *                     an ad document = algolia record
  * Author: Robert Marcus
  * Date: July 7, 2020
  */
@@ -20,7 +20,7 @@ const { createRecord, updateRecord, deleteRecord } =
     require('./algoliaFunctionsHelpers');
 
 /**
- * Creates an algolia record from a firebase entity snapshot in dev env.
+ * Creates an algolia record from a firebase document snapshot in dev env.
  * @return {!Promise} 
  */
 exports.devCreateRecord = 
@@ -39,7 +39,7 @@ exports.devUpdateRecord =
     });
 
 /**
- * Delete's an algolia record from an entity snapshot in dev env. 
+ * Delete's an algolia record from a document snapshot in dev env. 
  * Use default value unless mocking an algoliaOperation.
  * @return {!Promise} 
  */
@@ -47,6 +47,3 @@ exports.devDeleteRecord =
     DEV_ADS_DOCS.onDelete(snapshot => {
       return deleteRecord(DEV_ADS_INDEX, snapshot);
     });
-
-
-
