@@ -8,7 +8,11 @@ import React from 'react';
 import ZoomLine from './charts/ZoomLine';
 import tardigrade from '../../images/tardigrade.png';
 
-const CHARTS_TABLE = [['Zoomable Line'], ['Interpolation', 'Vertical Bar']];
+// Charts are presented as a grid, with each row containing one or many charts
+const CHARTS_TABLE = [
+  ['Zoomable Line'], // first row, 1 column
+  ['Interpolation', 'Vertical Bar'], // second row, 2 columns
+];
 
 const Visualization = () => {
   const chartMap = {
