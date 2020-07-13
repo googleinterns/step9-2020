@@ -9,11 +9,11 @@
  * Date: July 7, 2020
  */
 
-// Import algolia save/delete functions linked to specific indices.
+// Import algolia save/delete functions linked to prod index.
 const { PROD_ADS_INDEX } = 
     require('./algoliaConfig');
 
-// Import links to firebase dev and prod databases 
+// Import links to firebase prod databases 
 const { PROD_ADS_DOCS } = require('../firebaseConfig');
 
 // Import algolia helper functions 

@@ -19,7 +19,5 @@
  *   https://cloud.google.com/functions/docs/bestpractices/retries
  */
 
-
-exports.algolia = require('./algoliaCloudFunctions/devAlgoliaFunctions');
-
-
+// Export dev code for firebase -> algolia code. 
+exports.devAlgolia = require('./algoliaCloudFunctions/devAlgoliaFunctions');

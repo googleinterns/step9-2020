@@ -24,9 +24,11 @@ const ADMIN_KEY = functions.config().algolia.key;
 // Initialize algoliasearch API
 const CLIENT = algoliasearch(APP_ID, ADMIN_KEY);
 
+// Index names that will be used. 
 const DEV_ADS_INDEX_NAME = 'dev_ADS';
 const PROD_ADS_INDEX_NAME = 'prod_ADS';
 
+// Initialize the specific index the `CLIENT` instance will operate on. 
 const DEV_ADS_INDEX = CLIENT.initIndex(DEV_ADS_INDEX_NAME);
 const PROD_ADS_INDEX = CLIENT.initIndex(DEV_ADS_INDEX_NAME);
 
