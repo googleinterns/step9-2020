@@ -54,7 +54,3 @@
   - You can set environment variables in shell with the following pattern:
     `firebase functions:config:set foo.key=ADMIN_API_KEY`, and can then be accessed
     with `functions.config().foo.key`.   
-
-
-
- 
