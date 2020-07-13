@@ -6,7 +6,6 @@
  */
 
 const algoliasearch = require('algoliasearch');
-const algoliaFunctions = require('./devAlgoliaFunctions');
 const { functions } = require('../firebaseConfig');
 
 /**

@@ -9,7 +9,8 @@
 
 /**
  * Creates an algolia record from a firebase entity snapshot.
- * @param {function(string): !Promise} algoliaOperation a save function
+ * @param {Object} algoliaIndex an algolia client class
+ * @param {function(Object): !Promise} algoliaIndex.saveObject algolia api call
  * @param {Object} snapshot a json string
  * @return {!Promise}
  */
@@ -23,8 +24,7 @@ function createRecord(algoliaIndex, snapshot) {
 /**
  * Updates an algolia record from a firebase change type. 
  * If the record does not exist in algolia, it will be created.
- * @param {function(string): !Promise} algoliaOperation a save function
- * @param {Object} change a json string
+ * @param {Object} algoliaIndex an algolia client class
  * @return {!Promise}
  */
 function updateRecord(algoliaIndex, change) {
@@ -33,7 +33,8 @@ function updateRecord(algoliaIndex, change) {
 
 /**
  * Deletes an algolia record from an entity snapshot. 
- * @param {function(string): !Promise=} algoliaOperation a delete function
+ * @param {Object} algoliaIndex an algolia client class
+ * @param {function(Object): !Promise} algoliaIndex.deleteObject algolia api call 
  * @return {!Promise} 
  */
 function deleteRecord(algoliaIndex, snapshot) {

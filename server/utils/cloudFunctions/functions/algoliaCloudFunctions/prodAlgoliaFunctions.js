@@ -1,5 +1,5 @@
 /**
- * Description: Cloud functions for firebase->algolia features. 
+ * Description: Cloud functions for PROD firebase->algolia features. 
  *              Cloud functions must be created as static JS objects
  *              hence not everything can be DRY. 
  *              Three basic operations supported: create, update, delete.
