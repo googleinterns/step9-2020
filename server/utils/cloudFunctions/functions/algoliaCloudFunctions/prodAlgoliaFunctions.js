@@ -22,8 +22,7 @@ const { createRecord, updateRecord, deleteRecord } =
 
 /**
  * Creates an algolia record from a firebase entity snapshot in prod env.
- * @param {function(string): !Promise=} algoliaOperation a save function
- * @return {function} 
+ * @return {!Promise} 
  */
 exports.prodCreateRecord = 
     PROD_ADS_DOCS.onCreate(snapshot => {
@@ -33,8 +32,7 @@ exports.prodCreateRecord =
 /**
  * Updates an algolia record from a firebase change type in prod env.
  * If the record does not exist in algolia, it will be created.
- * @param {function(string): !Promise=} algoliaOperation a save function
- * @return {function} 
+ * @return {!Promise} 
  */
 exports.prodUpdateRecord = 
     PROD_ADS_DOCS.onUpdate(change => {
@@ -44,8 +42,7 @@ exports.prodUpdateRecord =
 /**
  * Delete's an algolia record from an entity snapshot in prod env. 
  * Use default value unless mocking an algoliaOperation.
- * @param {function(string): !Promise=} algoliaOperation a delete function
- * @return {function} 
+ * @return {!Promise} 
  */
 exports.prodDeleteRecord = 
     PROD_ADS_DOCS.onDelete(snapshot => {
