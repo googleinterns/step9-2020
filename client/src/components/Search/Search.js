@@ -3,13 +3,13 @@ import './Search.css';
 import React, { useState } from 'react';
 
 import FilterList from '../FilterList/FilterList';
-import Header from '../Header/Header';
 import { InstantSearch } from 'react-instantsearch-dom';
 import ResultList from '../ResultList/ResultList';
+import SearchBar from '../SearchBar/SearchBar';
 import { searchClient } from '../../constants/algolia_config';
 
 const Search = () => {
-  const [showFilter, setShowFilter] = useState(false);
+  const [showFilter, setShowFilter] = useState(true);
 
   const handleFilterToggle = () => {
     setShowFilter(!showFilter);
@@ -22,7 +22,7 @@ const Search = () => {
           <h3 className="filter-header" onClick={handleFilterToggle}>
             {`(${showFilter ? '-' : '+'}) FILTERS`}
           </h3>
-          <Header />
+          <SearchBar />
           <div className="search-body">
             {showFilter && <FilterList />}
             <ResultList />
