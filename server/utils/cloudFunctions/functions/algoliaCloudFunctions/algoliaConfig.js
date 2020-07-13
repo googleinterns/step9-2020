@@ -4,9 +4,11 @@
  * Author: Robert Marcus
  * Date: July 7, 2020
  */
+
 const algoliasearch = require('algoliasearch');
-const algoliaFunctions = require('./algoliaFunctions');
+const algoliaFunctions = require('./devAlgoliaFunctions');
 const { functions } = require('../firebaseConfig');
+
 /**
  * Keys required to run this locally. 
  * How to get the keys: 
@@ -24,13 +26,8 @@ const CLIENT = algoliasearch(APP_ID, ADMIN_KEY);
 
 const DEV_ADS_INDEX_NAME = 'dev_ADS';
 const PROD_ADS_INDEX_NAME = 'prod_ADS';
+
 const DEV_ADS_INDEX = CLIENT.initIndex(DEV_ADS_INDEX_NAME);
 const PROD_ADS_INDEX = CLIENT.initIndex(DEV_ADS_INDEX_NAME);
-
-const DEV_SAVE = DEV_ADS_INDEX.saveObject; 
-const DEV_DELETE = DEV_ADS_INDEX.deleteObject;
-
-const PROD_SAVE = PROD_ADS_INDEX.saveObject;
-const PROD_DELETE = PROD_ADS_INDEX.deleteObject;
 
 module.exports = { DEV_ADS_INDEX, PROD_ADS_INDEX };
