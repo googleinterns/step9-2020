@@ -16,7 +16,7 @@ let ads = [];
  *         opposed to one large object.
  * Custom Ad objects are necessary for .withConverter.
  */
-class Ad {
+class GeochartAd {
   constructor(id, impressionsMin) {
   /**
    * @param {string} id
@@ -40,7 +40,7 @@ const adConverter = {
   },
   fromFirestore: function(snapshot, options){
     const data = snapshot.data(options);
-    return new Ad(data.id, data.impressionsMin)
+    return new GeochartAd(data.id, data.impressionsMin)
   }
 }
 

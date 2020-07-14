@@ -12,7 +12,7 @@ import { states } from './StateDataParser';
 
 const Geochart = () => {
   /*
-   * Currently, getData assigns a random number to each state.
+   * Currently, getData assigns a meaningless random number to each state.
    * In the future, once the states dictionary contains ad information, getData will
    *    retrieve information such as minimum ad impressions and maximum ad spend.
    */ 
@@ -35,7 +35,7 @@ const Geochart = () => {
   return (
     <div className="search-header center">
       <p>Impressions Geochart</p>
-      <Chart chartType="GeoChart" width="100%" height="400px" data={getData()} options={options} />
+      <Chart chartType="GeoChart" width="700px" height="400px" data={getData()} options={options} />
     </div>
   );
 };
