@@ -12,45 +12,15 @@ const { DEV_ADS_DOCS } = require('../firebaseConfig');
 const { DEV_AGGREGATES_COLLECTION, FieldValue } = require('./countAdvertisersConfig');
 
 // Import helper functions
-const { updateAdvertiserCount } = require('./countAdvertisersHelpers');
+const { incrementAdvertiserAggregate, decrementAdvertiserAggregate } = 
+    require('./countAdvertisersHelpers');
 
-exports.devNewAd = 
+exports.devUpdateAggregateOnCreate = 
   DEV_ADS_DOCS.onCreate(snapshot => {
-      const data = snapshot.data();
-      const advertiser = data.advertiser;
-      const startDate = data.startDate;
-      const startYear = startDate.slice(0, 4);
-
-      const aggregateRef = 
-          DEV_AGGREGATES_COLLECTION.doc(startYear)
-                                   .collection("advertisers")
-                                   .doc(advertiser);
-      
-      aggregateRef.get().then(function(doc) {
-        if (doc.exists) {
-          return aggregateRef.update({numberOfAds: FieldValue.increment(1)});
-        } else {
-          return aggregateRef.set({numberOfAds: 1});
-        }
-      }).catch(err => console.log(err));
+      return incrementAdvertiserAggregate(snapshot, DEV_AGGREGATES_COLLECTION);
     });
 
-exports.devDeleteAd = 
+exports.devUpdateAggregateOnDelete = 
     DEV_ADS_DOCS.onDelete(snapshot => {
-      const data = snapshot.data();
-      const advertiser = data.advertiser;
-      const startDate = data.startDate;
-      const startYear = startDate.slice(0, 4);
-
-      const aggregateRef =          
-          DEV_AGGREGATES_COLLECTION.doc(startYear)
-                                   .collection("advertisers")
-                                   .doc(advertiser);
-
-      aggregateRef.get().then(function(doc) {
-        if (doc.exists) {
-          return aggregateRef.update({numberOfAds: FieldValue.increment(-1)});
-        }
-        return;
-      }).catch(err => console.log(err));
+      return decrementAdvertiserAggregate(snapshot, DEV_AGGREGATES_COLLECTION);
     });
