@@ -1,14 +1,14 @@
-import { ads } from '../../../firebase/FirestoreDocumentReader';
-import { Chart } from "react-google-charts";
-import firebase from '../../../firebase/firebase';
-import React from 'react';
-import {states } from './StateDataParser';
-
-/* 
+/** 
  * Description: Geochart implements a Google geochart component.
  * Author: Kira Toal
  * Date: 2020/07/13
  */
+
+import { ads } from '../../../firebase/FirestoreDocumentReader';
+import { Chart } from "react-google-charts";
+import firebase from '../../../firebase/firebase';
+import React from 'react';
+import { states } from './StateDataParser';
 
 const Geochart = () => {
   /*

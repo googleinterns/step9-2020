@@ -1,4 +1,4 @@
-/* 
+/**
  * Description: StateDataParser will sort through ad documents and compile a 
  *               dictionary with the following properties for each state:
  *                  (1) Average minimum impressions 
@@ -72,4 +72,4 @@ const states = {
   'Wyoming': 0
 };
 
-export { states }
+export { states };
