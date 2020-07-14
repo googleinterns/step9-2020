@@ -9,7 +9,13 @@ import ZoomLine from './charts/ZoomLine';
 import Geochart from './charts/Geochart';
 import tardigrade from '../../images/tardigrade.png';
 
-const CHARTS_TABLE = [['Zoomable Line'], ['Interpolation', 'Vertical Bar'], ['Geochart']];
+
+// Charts are presented as a grid, with each row containing one or many charts
+const CHARTS_TABLE = [
+  ['Zoomable Line'], // first row, 1 column
+  ['Interpolation', 'Vertical Bar'], // second row, 2 columns
+  ['Geochart'],
+];
 
 const Visualization = () => {
   const chartMap = {

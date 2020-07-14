@@ -3,7 +3,7 @@
 .search-header {
   align-items: center;
   background-color: var(--primary-color);
-  color: #fff;
+  color: var(--background-color);
   display: flex;
   flex-direction: column;
   margin-bottom: 16px;

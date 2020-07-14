@@ -1,3 +1,5 @@
+@import url("../../styles/colors.css");
+
 .visualization-container {
   width: 100%;
 }
@@ -11,11 +13,11 @@
 }
 
 .chart-container {
-  background-color: #fff;
+  background-color: var(--background-color);
   border-radius: 10px;
   margin-bottom: 20px;
 }
 
 .interpolation-label {
-  color: rgb(114, 114, 114);
+  color: var(--label-color);
 }

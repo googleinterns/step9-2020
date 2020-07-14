@@ -8,7 +8,7 @@
 }
 
 .header p {
-  color: #6e6e6e;
+  color: var(--label-color);
   padding: 10px 10px;
   margin-right: 20px;
   user-select: none;
@@ -17,7 +17,7 @@
 }
 
 .selected-header {
-  background-color: rgb(218, 238, 255);
+  background-color: var(--secondary-color);
   border-left: var(--primary-color) solid 2px;
 }
 
