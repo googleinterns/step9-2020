@@ -20,18 +20,18 @@ const { updateAdvertiserCount } = require('./countAdvertisersHelpers');
  */
 exports.devCountAdvertisers = 
   DEV_ADS_DOCS.onWrite((change, context) => {
-    
-    if (!change.before.exists) {
-      // New document created: increment field value by one
-      updateAdvertiserCount(change, /* isIncrement= */ true);
-    } else if (change.before.exists && change.after.exists) {
-      // Updating existing document: do nothing
+      if (!change.before.exists) {
+        // New document created: increment field value by one
 
-    } else if (!change.after.exists) {
-      // Deleting document: decrement field value by one
+        updateAdvertiserCount(change, /* isIncrement= */ true);
+      } else if (change.before.exists && change.after.exists) {
+        // Updating existing document: do nothing
 
-      updateAdvertiserCount(change, /* isIncrement= */ false);
-    }
+      } else if (!change.after.exists) {
+        // Deleting document: decrement field value by one
 
-    }
-  });
+        updateAdvertiserCount(change, /* isIncrement= */ false);
+      }
+    });
+
+

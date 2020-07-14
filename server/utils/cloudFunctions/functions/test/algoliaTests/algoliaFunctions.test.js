@@ -8,7 +8,8 @@
  */
 
 // Import the testing environment configuration
-const { test, assert, sinon } = require('../testConfig');
+const { test, assert, sinon, firestoreMock, firestoreWrap } = 
+    require('../testConfig');
 
 // Import the generic cloud functions.
 const devAlgoliaFunctions = 
@@ -20,10 +21,6 @@ const { DEV_ADS_INDEX, PROD_ADS_INDEX } =
 
 // Import mock saveObject, mock deleteObject, and helpers.
 const { mockDeleteObject, mockSaveObject } = require('./algoliaMocks');
-
-// `test` refers to the firestore test functions sdk.
-const firestoreMock = test.firestore;   
-const firestoreWrap = test.wrap;
 
 // Restore the stubs after each test. 
 afterEach(() => {
