@@ -14,7 +14,7 @@ const { assert, sinon, firestoreWrap, firestoreMock } =
 // Import the generic cloud functions.
 const devAlgoliaFunctions = 
     require('../../algoliaCloudFunctions/devAlgoliaFunctions');
-const { DEV_ADS_INDEX, PROD_ADS_INDEX } = 
+const { DEV_ADS_INDEX } = 
     require('../../algoliaCloudFunctions/algoliaConfig');
 
 // Import mock saveObject, mock deleteObject, and helpers.
