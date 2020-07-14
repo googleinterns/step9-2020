@@ -9,8 +9,7 @@ const { DEV_ADS_DOCS } = require('../firebaseConfig');
 
 // Import links to firebase dev advertisers collections
 // These are used to write directly to a collection
-const { DEV_ADVERTISERS_2018, DEV_ADVERTISERS_2019, DEV_ADVERTISERS_2020 } = 
-    require('./countAdvertisersConfig');
+const { DEV_AGGREGATES_COLLECTION } = require('./countAdvertisersConfig');
 
 // Import helper functions
 const { updateAdvertiserCount } = require('./countAdvertisersHelpers');
@@ -23,14 +22,14 @@ exports.devCountAdvertisers =
       if (!change.before.exists) {
         // New document created: increment field value by one
 
-        updateAdvertiserCount(change, /* isIncrement= */ true);
+        updateAdvertiserCount(change, DEV_AGGREGATES_COLLECTION, /* isIncrement= */ true);
       } else if (change.before.exists && change.after.exists) {
         // Updating existing document: do nothing
 
       } else if (!change.after.exists) {
         // Deleting document: decrement field value by one
 
-        updateAdvertiserCount(change, /* isIncrement= */ false);
+        updateAdvertiserCount(change, DEV_AGGREGATES_COLLECTION, /* isIncrement= */ false);
       }
     });
 

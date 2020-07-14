@@ -27,7 +27,7 @@ afterEach(() => {
   sinon.restore();
 });
 
-describe("test_devCreateRecord", () => {
+describe("test_CreateRecord", () => {
   it('should call saveObject with correct values, return its output', () => {
     const saveStub = 
         sinon.stub(DEV_ADS_INDEX, "saveObject").callsFake(mockSaveObject);
@@ -46,26 +46,7 @@ describe("test_devCreateRecord", () => {
   });
 });
 
-describe("test_prodCreateRecord", () => {
-  it('should call saveObject with correct values, return its output', () => {
-    const saveStub = 
-        sinon.stub(PROD_ADS_INDEX, "saveObject").callsFake(mockSaveObject);
-    const snap = firestoreMock.exampleDocumentSnapshot();
-
-    const createRecordWrapper = 
-        firestoreWrap(prodAlgoliaFunctions.prodCreateRecord);
-    const addedSnap = createRecordWrapper(snap);
-
-    const expectedInput = {data: snap.data(), objectID: snap.id};
-    const expectedOutput = expectedInput;
-    expectedOutput.data.alteredByMockAlgolia = true;
-    assert.deepEqual(addedSnap, expectedOutput);
-    assert.isTrue(saveStub.calledOnce);
-    assert.isTrue(saveStub.calledWithMatch(expectedInput));
-  });
-});
-
-describe("test_devUpdateRecord", () => {
+describe("test_UpdateRecord", () => {
   it('should call saveObject with correct values, return its output', () => {
     const saveStub = 
         sinon.stub(DEV_ADS_INDEX, "saveObject").callsFake(mockSaveObject);
@@ -85,27 +66,7 @@ describe("test_devUpdateRecord", () => {
   });
 });
 
-describe("test_prodUpdateRecord", () => {
-  it('should call saveObject with correct values, return its output', () => {
-    const saveStub = 
-        sinon.stub(PROD_ADS_INDEX, "saveObject").callsFake(mockSaveObject);
-    const randomChange = firestoreMock.exampleDocumentSnapshotChange();
-
-    const updateWrapper = 
-        firestoreWrap(prodAlgoliaFunctions.prodUpdateRecord);
-    const updatedChange = updateWrapper(randomChange);
-
-    const expectedInput = {data: randomChange.after.data(), 
-                           objectID: randomChange.after.id};
-    const expectedOutput = expectedInput;
-    expectedOutput.data.alteredByMockAlgolia = true;
-    assert.deepEqual(updatedChange, expectedOutput);
-    assert.isTrue(saveStub.calledOnce);
-    assert.isTrue(saveStub.calledWithMatch(expectedInput));
-  });
-});
-
-describe("test_devDeleteRecord", () => {
+describe("test_DeleteRecord", () => {
   it('should call deleteObject with correct values, return its output', () => {
     const deleteStub = 
         sinon.stub(DEV_ADS_INDEX, "deleteObject").callsFake(mockDeleteObject);
@@ -113,23 +74,6 @@ describe("test_devDeleteRecord", () => {
 
     const deleteWrapper = 
         firestoreWrap(devAlgoliaFunctions.devDeleteRecord);
-    const deletedID = deleteWrapper(snap);
-
-    const expectedOutput = {'objectID': snap.id, 'alteredByMockAlgolia': true};
-    assert.deepEqual(deletedID, expectedOutput);
-    assert.isTrue(deleteStub.calledWithMatch(deletedID.objectID));
-    assert.isTrue(deleteStub.calledOnce);
-  });  
-});
-
-describe("test_prodDeleteRecord", () => {
-  it('should call deleteObject with correct values, return its output', () => {
-    const deleteStub = 
-        sinon.stub(PROD_ADS_INDEX, "deleteObject").callsFake(mockDeleteObject);
-    const snap = firestoreMock.exampleDocumentSnapshot();
-
-    const deleteWrapper =
-        firestoreWrap(prodAlgoliaFunctions.prodDeleteRecord);
     const deletedID = deleteWrapper(snap);
 
     const expectedOutput = {'objectID': snap.id, 'alteredByMockAlgolia': true};

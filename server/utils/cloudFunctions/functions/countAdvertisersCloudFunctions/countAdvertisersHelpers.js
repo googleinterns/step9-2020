@@ -30,7 +30,7 @@ function incrementAdvertiserCount(advertiserDoc) {
 }
 
 function decrementAdvertiserCount(advertiserDoc) {
-  return advertiserDoc.update({numberOfAds: FieldValue.increment(1)});
+  return advertiserDoc.update({numberOfAds: FieldValue.increment(-1)});
 }
 
 /**
@@ -39,26 +39,21 @@ function decrementAdvertiserCount(advertiserDoc) {
  * If it does, increment the `numberOfAds` field value atomically. 
  * If it doesn't, create the document with `numberOfAds: 1`. 
  * @param {Object} change a firebase change object.
+ * @param {Object} srcCollection class linked to a dev or prod aggregate  
+ *     collection.
  * @param {bool} isIncrement if true, increment count, else, decrement.
  * @return !Promise
  */
-function updateAdvertiserCount(change, isIncrement) {
+function updateAdvertiserCount(change, srcCollection, isIncrement) {
   const data = change.after.data();
   const advertiser = data.advertiser;
   const startDate = data.startDate;
   const startYear = startDate.slice(0, 4);
-  const collection;
+  const destCollection = 
+      srcCollection.doc(startYear).collection("advertisers");
 
-  if(startYear === "2018") {
-    collection = DEV_ADVERTISERS_2018;
-  } else if (startYear === "2019") {
-    collection = DEV_ADVERTISERS_2019;
-  } else {
-    collection = DEV_ADVERTISERS_2020;
-  }
-
-  const advertiserRef = collection.doc(advertiser);
-  const advertiserDoc = await advertiserRef.get();
+  const advertiserRef = destCollection.doc(advertiser);
+  const advertiserDoc = advertiserRef.get();
 
   if (advertiserDoc.exists) {
     if (isIncrement) {
@@ -68,6 +63,7 @@ function updateAdvertiserCount(change, isIncrement) {
     }
   } else {
     // The doc hasn't been made yet, so create the doc with numberOfAds: 1.
+    
     if (isIncrement) {
       return createAdvertiserDocument(collection, advertiser);
     }
