@@ -25,7 +25,7 @@ afterEach(() => {
   sinon.restore();
 });
 
-describe("test_devCreateRecord", () => {
+describe("test_createRecord", () => {
   it('should call saveObject with correct values, return its output', () => {
     const saveStub = 
         sinon.stub(DEV_ADS_INDEX, "saveObject").callsFake(mockSaveObject);
@@ -44,7 +44,7 @@ describe("test_devCreateRecord", () => {
   });
 });
 
-describe("test_devUpdateRecord", () => {
+describe("test_updateRecord", () => {
   it('should call saveObject with correct values, return its output', () => {
     const saveStub = 
         sinon.stub(DEV_ADS_INDEX, "saveObject").callsFake(mockSaveObject);
@@ -64,7 +64,7 @@ describe("test_devUpdateRecord", () => {
   });
 });
 
-describe("test_devDeleteRecord", () => {
+describe("test_deleteRecord", () => {
   it('should call deleteObject with correct values, return its output', () => {
     const deleteStub = 
         sinon.stub(DEV_ADS_INDEX, "deleteObject").callsFake(mockDeleteObject);
