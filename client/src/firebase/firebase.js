@@ -1,5 +1,8 @@
-import firebase from 'firebase';
+import 'firebase/analytics';
+import 'firebase/firestore';
+import * as firebase from 'firebase/app';
 
+// Configure Firebase. 
 const config = {
   apiKey: "AIzaSyCR9KXK2iDuaZ3n6WNzZnBORbtpgWE7dvI",
   authDomain: "step9-2020-capstone.firebaseapp.com",
@@ -12,10 +15,8 @@ const config = {
 };
 
 // Initialize Firebase.
-firebase.initializeApp(config);
+const app = firebase.initializeApp(config);
+const database = firebase.firestore();
+firebase.analytics();
 
-export default firebase;
-
-// const sampleDoc = streamAds();
-
-// export { states, sampleDoc };
+export { app, database };

@@ -1,15 +1,9 @@
+import { ads, states } from '../../../firebase/GetFirestoreDocuments';
 import { Chart } from "react-google-charts";
+import firebase from '../../../firebase/firebase';
 import React from 'react';
 
-import firebase from '../../../utils/firebase';
-import { ads, states } from '../../../utils/MakeQuery';
-
-
 const Geochart = () => {
-
-  // ads.then(x => {
-  //   console.log(x);
-  // })
 
   function getData() {
     let data = [["State", "Random Number"]];
@@ -21,10 +15,10 @@ const Geochart = () => {
 
   const options = {
     enableRegionInteractivity: true,
-    legend: 'none',     
+    legend: {textStyle: {color: 'black', fontSize: 10}},     
     resolution: 'provinces',
     region:'US',
-    tooltip: {trigger:'focus'}
+    tooltip: {trigger:'focus'} // Trigger info box on mouse hover over state.
   };
 
   return (
