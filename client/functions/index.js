@@ -1,0 +1,1 @@
+const firebaseFunctions = require('firebase-functions');

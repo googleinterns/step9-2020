@@ -6,12 +6,15 @@ import BarChart from './charts/BarChart';
 import Interpolation from './charts/Interpolation';
 import React from 'react';
 import ZoomLine from './charts/ZoomLine';
+import Geochart from './charts/Geochart';
 import tardigrade from '../../images/tardigrade.png';
+
 
 // Charts are presented as a grid, with each row containing one or many charts
 const CHARTS_TABLE = [
   ['Zoomable Line'], // first row, 1 column
   ['Interpolation', 'Vertical Bar'], // second row, 2 columns
+  ['Geochart'],
 ];
 
 const Visualization = () => {
@@ -19,6 +22,7 @@ const Visualization = () => {
     'Zoomable Line': <ZoomLine />,
     'Interpolation': <Interpolation />,
     'Vertical Bar': <BarChart />,
+    'Geochart': <Geochart />,
   };
 
   return (
