@@ -9,28 +9,48 @@ const { DEV_ADS_DOCS } = require('../firebaseConfig');
 
 // Import links to firebase dev advertisers collections
 // These are used to write directly to a collection
-const { DEV_AGGREGATES_COLLECTION } = require('./countAdvertisersConfig');
+const { DEV_AGGREGATES_COLLECTION, FieldValue } = require('./countAdvertisersConfig');
 
 // Import helper functions
 const { updateAdvertiserCount } = require('./countAdvertisersHelpers');
 
-/**
- * 
- */
-exports.devCountAdvertisers = 
-  DEV_ADS_DOCS.onWrite((change, context) => {
-      if (!change.before.exists) {
-        // New document created: increment field value by one
+exports.devNewAd = 
+  DEV_ADS_DOCS.onCreate(snapshot => {
+      const data = snapshot.data();
+      const advertiser = data.advertiser;
+      const startDate = data.startDate;
+      const startYear = startDate.slice(0, 4);
 
-        updateAdvertiserCount(change, DEV_AGGREGATES_COLLECTION, /* isIncrement= */ true);
-      } else if (change.before.exists && change.after.exists) {
-        // Updating existing document: do nothing
-
-      } else if (!change.after.exists) {
-        // Deleting document: decrement field value by one
-
-        updateAdvertiserCount(change, DEV_AGGREGATES_COLLECTION, /* isIncrement= */ false);
-      }
+      const aggregateRef = 
+          DEV_AGGREGATES_COLLECTION.doc(startYear)
+                                   .collection("advertisers")
+                                   .doc(advertiser);
+      
+      aggregateRef.get().then(function(doc) {
+        if (doc.exists) {
+          return aggregateRef.update({numberOfAds: FieldValue.increment(1)});
+        } else {
+          return aggregateRef.set({numberOfAds: 1});
+        }
+      }).catch(err => console.log(err));
     });
 
+exports.devDeleteAd = 
+    DEV_ADS_DOCS.onDelete(snapshot => {
+      const data = snapshot.data();
+      const advertiser = data.advertiser;
+      const startDate = data.startDate;
+      const startYear = startDate.slice(0, 4);
 
+      const aggregateRef =          
+          DEV_AGGREGATES_COLLECTION.doc(startYear)
+                                   .collection("advertisers")
+                                   .doc(advertiser);
+
+      aggregateRef.get().then(function(doc) {
+        if (doc.exists) {
+          return aggregateRef.update({numberOfAds: FieldValue.increment(-1)});
+        }
+        return;
+      }).catch(err => console.log(err));
+    });

@@ -13,7 +13,7 @@ const { DEV_ADVERTISERS_2018, DEV_ADVERTISERS_2019, DEV_ADVERTISERS_2020 } =
  * @return {!Promise}
  */
 function createAdvertiserDocument(advertiser, collection) {
-  return collection.doc(advertiser).set({numberOfAds: 1});
+  return collection.set({numberOfAds: 1});
 }
 
 /**
@@ -46,6 +46,7 @@ function decrementAdvertiserCount(advertiserDoc) {
  */
 function updateAdvertiserCount(change, srcCollection, isIncrement) {
   const data = change.after.data();
+  console.log(data);
   const advertiser = data.advertiser;
   const startDate = data.startDate;
   const startYear = startDate.slice(0, 4);
@@ -65,7 +66,7 @@ function updateAdvertiserCount(change, srcCollection, isIncrement) {
     // The doc hasn't been made yet, so create the doc with numberOfAds: 1.
     
     if (isIncrement) {
-      return createAdvertiserDocument(collection, advertiser);
+      return advertiserRef.set({numberOfAds: 1});
     }
   }
 }

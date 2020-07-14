@@ -20,9 +20,11 @@ ADMIN.initializeApp(CONFIG);
 
 const DB = ADMIN.firestore();
 
-const DEV_AGGREGATES_COLLECTION_NAME = "dev_aggegates";
+const DEV_AGGREGATES_COLLECTION_NAME = "dev_aggregates";
 const DEV_AGGREGATES_COLLECTION = 
     DB.collection(DEV_AGGREGATES_COLLECTION_NAME);
 
+
+const FieldValue = ADMIN.firestore.FieldValue;
 module.exports = 
-    { DEV_AGGREGATES_COLLECTION }
+    { DEV_AGGREGATES_COLLECTION, FieldValue }
