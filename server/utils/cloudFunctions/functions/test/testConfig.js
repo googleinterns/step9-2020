@@ -27,8 +27,12 @@ const test = require('firebase-functions-test')({
   projectId: 'step9-2020-capstone',
 }, 'step9-2020-capstone.json');
 
+// `test` refers to the firestore test functions sdk.
+const firestoreMock = test.firestore;   
+const firestoreWrap = test.wrap;
+
 /**
- * Initialize mocha, chai, and sinon. 
+ * Initialize chai, and sinon. Mocha should be downloaded with npm.  
  * Mocha is:  
  * - feature rich node js test framework.
  * - encapsulates test suites (describe-block), and test-cases (it-block).
@@ -40,6 +44,8 @@ const test = require('firebase-functions-test')({
  * - Three assertion interfaces: expect, assert, should. 
  * Sinon is: 
  * - A utility to spy on external methods being used by systems under test.
+ * - Primarily used for stubbing external api calls
+ *   (Test stubs are functions (spies) with pre-programmed behavior.)
  * - Very handy, can do more but this is the primary purpose in these tests. 
  */
 const assert = require('chai').assert;
@@ -49,4 +55,4 @@ const sinonChai = require("sinon-chai");
 chai.should();
 chai.use(sinonChai);
 
-module.exports = { test, assert, sinon };
+module.exports = { assert, sinon, firestoreMock, firestoreWrap };

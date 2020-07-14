@@ -11,22 +11,22 @@ function markModified(someJson) {
 } 
 
 /**
- * Mock delete, simply returns the input + an altered field 
+ * Mock delete, returns the input + an altered field 
  * @param {string} objectID string
  * @return {Object}
  */
-function deleteObject(objectID) {
+function mockDeleteObject(objectID) {
   return markModified({'objectID': objectID});
 }
 
 /**
- * Mock save, simply returns the input + an altered field  
+ * Mock save, returns the input + an altered field  
  * @param {Object} data json string with arbitrary contents.
  * @param {Object} objectID json string of the form {id: 'id'}. 
  * @return {Object}
  */
-function saveObject({data, objectID}) {
+function mockSaveObject({data, objectID}) {
   return {data: markModified(data), objectID: objectID};
 }
 
-module.exports = { deleteObject, saveObject };
+module.exports = { mockDeleteObject, mockSaveObject };
