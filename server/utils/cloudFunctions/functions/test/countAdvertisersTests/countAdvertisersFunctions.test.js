@@ -68,30 +68,30 @@ describe('Aggregate cloud functions', () => {
 
       const wrapped = firestoreWrap(devUpdateAggregateOnCreate);
       wrapped(snap_2018).then(() => {
-        DEV_AGGREGATES_COLLECTION
-            .doc("2018")
-            .collection("advertisers")
-            .doc(advertiser).get().then(function(doc) {
-              assert.equal(doc.data().numberOfAds, 1);
+        wrapped(snap_2019).then(() => {
+          wrapped(snap_2020).then(() => {
+            DEV_AGGREGATES_COLLECTION
+                .doc("2018")
+                .collection("advertisers")
+                .doc(advertiser).get().then(function(doc) {
+                  assert.equal(doc.data().numberOfAds, 1);
+                });
+            
+            DEV_AGGREGATES_COLLECTION
+                .doc("2019")
+                .collection("advertisers")
+                .doc(advertiser).get().then(function(doc) {
+                  assert.equal(doc.data().numberOfAds, 1);
             });
-      });
-
-      wrapped(snap_2019).then(() => {
-        DEV_AGGREGATES_COLLECTION
-            .doc("2019")
-            .collection("advertisers")
-            .doc(advertiser).get().then(function(doc) {
-              assert.equal(doc.data().numberOfAds, 1);
-            });
-      });
-
-      wrapped(snap_2020).then(() => {
-        DEV_AGGREGATES_COLLECTION
-            .doc("2020")
-            .collection("advertisers")
-            .doc(advertiser).get().then(function(doc) {
-              assert.equal(doc.data().numberOfAds, 1);
-            });
+            
+            DEV_AGGREGATES_COLLECTION
+                .doc("2020")
+                .collection("advertisers")
+                .doc(advertiser).get().then(function(doc) {
+                  assert.equal(doc.data().numberOfAds, 1);
+                });
+          });
+        });
       });
     });
     
@@ -103,7 +103,6 @@ describe('Aggregate cloud functions', () => {
 
       const wrapped = firestoreWrap(devUpdateAggregateOnCreate);
       
-      wrapped(snap_one); // Write one ad to the collection, count = 1
       return wrapped(snap_one).then(() => {
         return wrapped(snap_two).then(() => {
           return DEV_AGGREGATES_COLLECTION
@@ -123,7 +122,6 @@ describe('Aggregate cloud functions', () => {
 
       const wrapped = firestoreWrap(devUpdateAggregateOnCreate);
       
-      wrapped(snap_one); // Write one ad to the collection, count = 1
       return wrapped(snap_one).then(() => {
         return wrapped(snap_two).then(() => {
           return DEV_AGGREGATES_COLLECTION
@@ -143,7 +141,6 @@ describe('Aggregate cloud functions', () => {
 
       const wrapped = firestoreWrap(devUpdateAggregateOnCreate);
       
-      wrapped(snap_one); // Write one ad to the collection, count = 1
       return wrapped(snap_one).then(() => {
         return wrapped(snap_two).then(() => {
           DEV_AGGREGATES_COLLECTION
@@ -152,6 +149,7 @@ describe('Aggregate cloud functions', () => {
               .doc(advertiser).get().then(function(doc) {
                 assert.equal(doc.data().numberOfAds, 1);
               });
+          
           DEV_AGGREGATES_COLLECTION
               .doc("2020")
               .collection("advertisers")
@@ -160,7 +158,32 @@ describe('Aggregate cloud functions', () => {
               });
         });
       }); 
-    });    
+    });   
+
+    it(SHOULD_INCREMENT + 'only for an advertisers ads', () => {
+      const snap_one = snapFromJson({advertiser: "adv_f", startDate: "2019-10-15"}, "dev_ads");
+      const snap_two = snapFromJson({advertiser: "adv_g", startDate: "2020-10-15"}, "dev_ads");
+
+      const wrapped = firestoreWrap(devUpdateAggregateOnCreate);
+      
+      return wrapped(snap_one).then(() => {
+        return wrapped(snap_two).then(() => {
+          DEV_AGGREGATES_COLLECTION
+              .doc("2019")
+              .collection("advertisers")
+              .doc("adv_e").get().then(function(doc) {
+                assert.equal(doc.data().numberOfAds, 1);
+              });
+          
+          DEV_AGGREGATES_COLLECTION
+              .doc("2019")
+              .collection("advertisers")
+              .doc("adv_f").get().then(function(doc) {
+                assert.equal(doc.data().numberOfAds, 1);
+              });
+        });
+      }); 
+    });  
   });
 });
 
