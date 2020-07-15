@@ -15,9 +15,9 @@ import com.google.sps.utils.AdRowProcessor;
 import com.google.sps.utils.FirebaseAdReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.List;
-
 import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 /* 
  * Description: Utility class that reads ad objects from Firestore. 
@@ -27,8 +27,9 @@ import java.util.concurrent.TimeUnit;
 public class FirebaseAdReader {
 
   private static final String COLLECTION = "testing";
-  private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
+  private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
+  private static final int TIMEOUT_ALLOWANCE = 30; // Time in seconds before future.get() times out.
 
   public static void main(String[] args) throws Exception {
     FileInputStream serviceAccount = new FileInputStream(PATH_TO_SERVICE_ACCOUNT);
@@ -43,21 +44,12 @@ public class FirebaseAdReader {
     }
     Firestore db = FirestoreClient.getFirestore();
 
-    // Retrieve all documents from the testing collection.
+    // Retrieve all documents from the collection.
     ApiFuture<QuerySnapshot> future = db.collection(COLLECTION).get();
-    System.out.println(future);
-    // while(!future.isDone()) {
-      // System.out.println("Calculating...");
-      // Thread.sleep(300);
-    // }
-
-    List<QueryDocumentSnapshot> documents = future.get(10, TimeUnit.SECONDS).getDocuments(); // future.get() blocks on response.    
-    
-    System.out.println(documents);
-
+    List<QueryDocumentSnapshot> documents = future.get(TIMEOUT_ALLOWANCE, TimeUnit.SECONDS).getDocuments();
+    List<Ad> ads = new ArrayList<Ad>(); 
     for (QueryDocumentSnapshot document : documents) {
-      System.out.println(document.getId() + " => " + document.toObject(Ad.class));
+      ads.add(document.toObject(Ad.class));
     }
   }
-  
 }
