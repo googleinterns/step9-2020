@@ -2,6 +2,19 @@
  * Description: Unit tests for countAdvertisers.js
  *              Uses sinon/chai to spy on calls and validate behavior.
  *              compile with `npm run test`.
+ * Note: Tests are structured in the following format: 
+ * - Setup snapshot data.
+ * - Initialize wrapper(s).
+ * - Combine wrapper(s) with snapshot, creating a promise.
+ *   - Promises must return something or catch an error.
+ *     - Default pattern with these tests is return undefined at the end 
+ *       of a nest, and to catch all possible errors when `getting` a doc 
+ *       from the db. 
+ *   - This is generally done by nesting promises. 
+ *   - There is a debate about nesting vs chaining promises. In this case, 
+ *     nesting is advantageous because it easily keeps everything in scope
+ *     without much fuss. Thus, nesting is fine to use. 
+ *   - Also this is how the official docs do it. 
  * Author: Robert Marcus
  * Date: July 13, 2020
  */
@@ -24,13 +37,13 @@ const { DEV_AGGREGATES_COLLECTION } =
     require('../../countAdvertisersCloudFunctions/countAdvertisersConfig');
 
 // Import the cloud functions.
-const { devUpdateAdvertiserCountOnCreate, devUpdateAdvertiserCountOnDelete } = 
+const { devCountAdvertisersOnCreate, devCountAdvertisersOnDelete } = 
     require('../../countAdvertisersCloudFunctions/devCountAdvertisersFunctions');
 
 // Save some space for test explanation in the test description
 const SHOULD_INCREMENT = "should increment advertisers ad count "; 
 
-describe('Aggregate cloud functions', () => {
+describe('Count advertisers cloud functions', () => {
 
   // After every 'describe' block, reset the test environments. 
   // Since these are live dev db's, this process can be very flaky.
@@ -43,12 +56,12 @@ describe('Aggregate cloud functions', () => {
     deleteCollection(DB, 'dev_aggregates/2020/advertisers');
   });
 
-  describe("test_updateAggregateOnCreate", () => {
+  describe("test_countAdvertisersOnCreate", () => {
     it(SHOULD_INCREMENT + 'in the correct year', () => {
       const snap = snapFromJson({advertiser: "adv_a", startDate: "2019-10-15"}, 
                                 DEV_ADS_PATH);
 
-      const wrapper = firestoreWrap(devUpdateAdvertiserCountOnCreate);
+      const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
       
       return wrapper(snap).then(() => {
         DEV_AGGREGATES_COLLECTION
@@ -71,7 +84,7 @@ describe('Aggregate cloud functions', () => {
       const snapThree = 
           snapFromJson({advertiser, startDate: "2020-10-15"}, DEV_ADS_PATH);
 
-      const wrapper = firestoreWrap(devUpdateAdvertiserCountOnCreate);
+      const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
 
       return wrapper(snapOne).then(() => {
         return wrapper(snapTwo).then(() => {
@@ -103,7 +116,6 @@ describe('Aggregate cloud functions', () => {
       });
     });
     
-    
     it(SHOULD_INCREMENT +  'for every ad', () => {
       const advertiser = "adv_c"; 
       const snapOne = 
@@ -111,7 +123,7 @@ describe('Aggregate cloud functions', () => {
       const snapTwo = 
           snapFromJson({advertiser, startDate: "2019-10-16"}, DEV_ADS_PATH);
 
-      const wrapper = firestoreWrap(devUpdateAdvertiserCountOnCreate);
+      const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
       
       return wrapper(snapOne).then(() => {
         return wrapper(snapTwo).then(() => {
@@ -134,7 +146,7 @@ describe('Aggregate cloud functions', () => {
       const snapTwo = 
           snapFromJson({advertiser, startDate: "2019-10-15"}, DEV_ADS_PATH);
 
-      const wrapper = firestoreWrap(devUpdateAdvertiserCountOnCreate);
+      const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
       
       return wrapper(snapOne).then(() => {
         return wrapper(snapTwo).then(() => {
@@ -157,7 +169,7 @@ describe('Aggregate cloud functions', () => {
       const snapTwo = 
           snapFromJson({advertiser, startDate: "2020-10-15"}, DEV_ADS_PATH);
 
-      const wrapper = firestoreWrap(devUpdateAdvertiserCountOnCreate);
+      const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
       
       return wrapper(snapOne).then(() => {
         return wrapper(snapTwo).then(() => {
@@ -186,7 +198,7 @@ describe('Aggregate cloud functions', () => {
       const snapTwo = snapFromJson({advertiser: "adv_g", startDate: "2020-10-15"}, 
                                     DEV_ADS_PATH);
 
-      const wrapper = firestoreWrap(devUpdateAdvertiserCountOnCreate);
+      const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
       
       return wrapper(snapOne).then(() => {
         return wrapper(snapTwo).then(() => {
@@ -210,18 +222,18 @@ describe('Aggregate cloud functions', () => {
     });  
   });
   
-  describe("test_updateAggregateOnDelete", () => {
+  describe("test_countAdvertisersOnDelete", () => {
     it("should decrement ad count when deleting an advertisers ad", () => {
 
       // The 'after' should cleanup the DB of "adv_a" references and values
-      // in time, but it can be flaky from personal experimentation. 
+      // in time, but it can be flaky. 
       // Easy way to avoid this problem is just to switch to adv_A, adv_B, 
       // and so on. 
       const snap = snapFromJson({advertiser: "adv_A", startDate: "2018-10-15"}, 
                                 DEV_ADS_PATH);
 
-      const createWrapper = firestoreWrap(devUpdateAdvertiserCountOnCreate);
-      const deleteWrapper = firestoreWrap(devUpdateAdvertiserCountOnDelete);
+      const createWrapper = firestoreWrap(devCountAdvertisersOnCreate);
+      const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
       return createWrapper(snap).then(() => {
         DEV_AGGREGATES_COLLECTION
@@ -247,7 +259,7 @@ describe('Aggregate cloud functions', () => {
       const snap = snapFromJson({advertiser: "adv_A", 
                                  startDate: "2018-10-15"}, DEV_ADS_PATH);
 
-      const deleteWrapper = firestoreWrap(devUpdateAdvertiserCountOnDelete);
+      const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
       
       return deleteWrapper(snap).then(() => {
         return DEV_AGGREGATES_COLLECTION
@@ -263,7 +275,7 @@ describe('Aggregate cloud functions', () => {
       const snap = snapFromJson({advertiser: "new_adv", 
                                  startDate: "2018-10-15"}, DEV_ADS_PATH);
 
-      const deleteWrapper = firestoreWrap(devUpdateAdvertiserCountOnDelete);
+      const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
       // Because 'new_adv' has never been added to any collection, 
       // It won't have a document/counter associated with it in `dev_aggregates/2018/advertisers`
@@ -279,8 +291,8 @@ describe('Aggregate cloud functions', () => {
       const snapTwo = snapFromJson({advertiser: "adv_C", 
                                     startDate: "2018-10-16"}, DEV_ADS_PATH);
 
-      const createWrapper = firestoreWrap(devUpdateAdvertiserCountOnCreate);
-      const deleteWrapper = firestoreWrap(devUpdateAdvertiserCountOnDelete);
+      const createWrapper = firestoreWrap(devCountAdvertisersOnCreate);
+      const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
       return createWrapper(snapOne).then(() => {
         return createWrapper(snapTwo).then(() => {
@@ -311,8 +323,8 @@ describe('Aggregate cloud functions', () => {
       const snapTwo = snapFromJson({advertiser: "adv_D", 
                                     startDate: "2019-10-15"}, DEV_ADS_PATH);
 
-      const createWrapper = firestoreWrap(devUpdateAdvertiserCountOnCreate);
-      const deleteWrapper = firestoreWrap(devUpdateAdvertiserCountOnDelete);
+      const createWrapper = firestoreWrap(devCountAdvertisersOnCreate);
+      const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
       return createWrapper(snapOne).then(() => {
         return createWrapper(snapTwo).then(() => {

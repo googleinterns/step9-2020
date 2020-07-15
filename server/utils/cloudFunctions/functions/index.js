@@ -24,6 +24,5 @@
 exports.devAlgolia = require('./algoliaCloudFunctions/devAlgoliaFunctions');
 exports.prodAlgolia = require('./algoliaCloudFunctions/prodAlgoliaFunctions');
 
-
 exports.devAggregates = 
     require('./countAdvertisersCloudFunctions/devCountAdvertisersFunctions');

@@ -1,9 +1,16 @@
+/**
+ * Description: Helper functions for count advertisers cloud functions.
+ * Author: Robert Marcus
+ * Date: July 14, 2020
+ */
+
+
 const { FieldValue } = require('./countAdvertisersConfig');
 
 /**
- * Returns a location reference to a document containing the numberOfAds 
- * released by an advertiser in a given year based off the particular year
- * an advertiser released the advertisment contained by snapshot. 
+ * Returns a filepath reference to a doc containing the numberOfAds an 
+ * advertiser released in a particular year. Will link to whatever year 
+ * the ad in the `snapshot` is from.     
  * @param {Object} snapshot a json string
  * @param {Object} collection reference to a particular firestore collection
  * @returns {Object} 
@@ -15,12 +22,12 @@ function getAdvertiserCountReference(snapshot, collection) {
   const startDate = data.startDate;
   const startYear = startDate.slice(0, 4);
 
-  const aggregateReference = 
+  const advertiserCountReference = 
       collection.doc(startYear)
                 .collection("advertisers")
                 .doc(advertiser);
 
-  return aggregateReference;
+  return advertiserCountReference;
 }
 
 /**
@@ -34,15 +41,17 @@ function getAdvertiserCountReference(snapshot, collection) {
  * @returns {!Promise} 
  */
 function decrementAdvertiserCount(snapshot, collection) {
-  const aggregateReference = getAdvertiserCountReference(snapshot, collection);
+  const advertiserCountReference = 
+      getAdvertiserCountReference(snapshot, collection);
 
-  return aggregateReference.get().then(function(doc) {
+  return advertiserCountReference.get().then(function(doc) {
     if (doc.exists) {
 
       // Only decrement if the numberOfAds is positive.
       const change = doc.data().numberOfAds > 0 ? -1 : 0;
 
-      return aggregateReference.update({numberOfAds: FieldValue.increment(change)});
+      return advertiserCountReference
+                .update({numberOfAds: FieldValue.increment(change)});
     } else {
       
       // If the document doesn't exist throw an error.
@@ -50,7 +59,6 @@ function decrementAdvertiserCount(snapshot, collection) {
                              message: snapshot.data().advertiser + 
                                       snapshot.data().startDate +
                                       "aggregate doc not found"};
-
       throw errorMessage;
     }
   }).catch(err => console.log(err));
@@ -67,13 +75,18 @@ function decrementAdvertiserCount(snapshot, collection) {
  * @returns {!Promise} 
  */
 function incrementAdvertiserCount(snapshot, collection) {
-  const aggregateReference = getAdvertiserCountReference(snapshot, collection);
+  const advertiserCountReference = 
+      getAdvertiserCountReference(snapshot, collection);
 
-  return aggregateReference.get().then(function(doc) {
+  return advertiserCountReference.get().then(function(doc) {
     if (doc.exists) {
-      return aggregateReference.update({numberOfAds: FieldValue.increment(1)});
+      return advertiserCountReference
+                  .update({numberOfAds: FieldValue.increment(1)});
     } else {
-      return aggregateReference.set({numberOfAds: 1});
+
+      // If the doc doesn't exist, create a doc with the advertiser name 
+      // as the primary key, and with the field `numberOfAds` set to 1.  
+      return advertiserCountReference.set({numberOfAds: 1});
     }
   }).catch(err => console.log(err));
 }
