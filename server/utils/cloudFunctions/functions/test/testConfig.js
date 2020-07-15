@@ -30,8 +30,10 @@ const test = require('firebase-functions-test')({
 // `test` refers to the firestore test functions sdk.
 const firestoreMock = test.firestore;   
 const firestoreWrap = test.wrap;
-//const firestoreCleanup = test.cleanup();
 const snapFromJson = test.firestore.makeDocumentSnapshot;
+
+// Path to `dev_ads` collection. 
+const DEV_ADS_PATH = "dev_ads";
 
 /**
  * Initialize chai, and sinon. Mocha should be downloaded with npm.  
@@ -64,5 +66,5 @@ module.exports = { test,
                    chai,
                    firestoreMock, 
                    firestoreWrap, 
-                   snapFromJson/*, 
-                   firestoreCleanup*/ };
+                   snapFromJson,
+                   DEV_ADS_PATH };
