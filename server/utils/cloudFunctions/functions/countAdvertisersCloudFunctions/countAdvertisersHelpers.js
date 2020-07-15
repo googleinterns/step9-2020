@@ -4,7 +4,6 @@
  * Date: July 14, 2020
  */
 
-
 const { FieldValue } = require('./countAdvertisersConfig');
 
 /**
@@ -58,7 +57,7 @@ function decrementAdvertiserCount(snapshot, collection) {
       const errorMessage = { code: 500, 
                              message: snapshot.data().advertiser + 
                                       snapshot.data().startDate +
-                                      "aggregate doc not found"};
+                                      "advertiser numberOfAds doc not found"};
       throw errorMessage;
     }
   }).catch(err => console.log(err));

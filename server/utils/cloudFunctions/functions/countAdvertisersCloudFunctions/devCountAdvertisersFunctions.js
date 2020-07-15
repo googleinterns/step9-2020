@@ -1,6 +1,5 @@
 /**
- * Description: Cloud functions for DEV count advertisers.
- *               
+ * Description: Cloud functions for DEV count advertisers.git s      
  * Author: Robert Marcus
  * Date: July 14, 2020
  */
