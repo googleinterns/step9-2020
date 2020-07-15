@@ -47,7 +47,7 @@ function decrementAdvertiserAggregate(snapshot, collection) {
       
       // If the document doesn't exist throw an error.
       const errorMessage = { code: 500, 
-                            message: snapshot.data().advertiser + 
+                             message: snapshot.data().advertiser + 
                                       snapshot.data().startDate +
                                       "aggregate doc not found"};
       throw errorMessage;
