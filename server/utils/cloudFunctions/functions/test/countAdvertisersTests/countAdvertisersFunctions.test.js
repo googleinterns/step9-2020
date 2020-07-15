@@ -7,18 +7,43 @@
  */
 
 // Import the testing environment configuration
-const { test, assert, sinon, firestoreMock, firestoreWrap } = 
-    require('../testConfig');
+const { test, 
+        assert, 
+        sinon, 
+        firestoreMock, 
+        firestoreWrap, 
+        snapFromJson/*, 
+        firestoreCleanup*/ } = require('../testConfig');
+const { deleteCollection } = require('../deleteCollection');
+
+const { ADMIN, DB } = require('../../firebaseConfig');
 
 // Import the cloud functions.
-const devCountAdvertisers = 
+const { devUpdateAggregateOnCreate, devUpdateAggregateOnDelete } = 
     require('../../countAdvertisersCloudFunctions/devCountAdvertisersFunctions');
 
-// Restore the stubs after each test. 
-afterEach(() => {
-  sinon.restore();
+// Sample snapshot data.
+// Call with snapFromJson(AD_DOC_X, "dev_ads") to get a snapshot. 
+const AD_DOC_A = {advertiser: 'advertiser_a', startDate: '2019-10-15'};
+const AD_DOC_B = {advertiser: 'adverister_b', startDate: '2019-10-15'};
+const AD_DOC_C = {advertiser: 'advertiser_c', startDate: '2020-10-15'};
+const AD_DOC_D = {advertiser: 'advertiser_d', startDate: '2018-10-15'};
+
+after(() => {
+  sinon.restore(); // Restore the stubs after each test. 
+
+  deleteCollection(DB, 'dev_ads');
+  deleteCollection(DB, 'dev_aggregates/2018/advertisers');
+  deleteCollection(DB, 'dev_aggregates/2019/advertisers');
+  deleteCollection(DB, 'dev_aggregates/2020/advertisers');
 });
 
-describe("test_devCreateRecord", () => {
+describe("test_updateAggregateOnCreate", () => {
+  it('should call saveObject with correct values, return its output', () => {
 
+  });
 });
+
+
+// Un-stub adminInitStub. 
+sinon.restore();
