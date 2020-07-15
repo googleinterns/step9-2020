@@ -8,7 +8,7 @@
 
 // Import algoliasearch api, firebase functions for access to env vars.
 const algoliasearch = require('algoliasearch');
-const { functions } = require('../firebaseConfig');
+const { firebaseFunctions } = require('../firebaseConfig');
 
 /**
  * Keys required to run this locally. 
@@ -19,8 +19,8 @@ const { functions } = require('../firebaseConfig');
  * Now you can compile.
  * Please *don't* expose the API_KEY to the public.
  */
-const APP_ID = functions.config().algolia.app;
-const ADMIN_KEY = functions.config().algolia.key;
+const APP_ID = firebaseFunctions.config().algolia.app;
+const ADMIN_KEY = firebaseFunctions.config().algolia.key;
 
 // Initialize algoliasearch API.
 const CLIENT = algoliasearch(APP_ID, ADMIN_KEY);

@@ -14,8 +14,8 @@ public class Ad {
   private long impressionsMin; 
   private long impressionsMax; 
   private boolean isTargetingAge; 
-  private List<String> genderTargets; 
-  private List<String> geoTargets;
+  private List<String> genderTarget; 
+  private List<String> geoTarget;
   private long spendMin; 
   private long spendMax; 
   private String headline; 
@@ -79,21 +79,21 @@ public class Ad {
     this.isTargetingAge = isTargetingAge; 
   }
   /*
-   * genderTargets refers to the genders at which the ad is targeted.
+   * genderTarget refers to the genders at which the ad is targeted.
    * Expected format: A list containing only "Not targeted", or a list containing
    *        at least one of the following: "Female", "Male", "Unknown gender".
    *        (Ex: ["Female", "Unknown gender"])
    */ 
-  public void setGenderTargets(List<String> genderTargets) {
-    this.genderTargets = genderTargets; 
+  public void setGenderTarget(List<String> genderTarget) {
+    this.genderTarget = genderTarget; 
   }
   /*
-   * geoTargets refers to the states at which the ad is targeted.
+   * geoTarget refers to the states at which the ad is targeted.
    * Expected format: A list containing at least one of the 50 states or US
    *        territories (Ex: ["California", "Texas"])
    */ 
-  public void setGeoTargets(List<String> geoTargets) {
-    this.geoTargets = geoTargets;
+  public void setGeoTarget(List<String> geoTarget) {
+    this.geoTarget = geoTarget;
   }
   /*
    * spendMin is the estimated minimum amount of money paid to run the ad.
@@ -183,11 +183,11 @@ public class Ad {
   public boolean getIsTargetingAge() {
     return this.isTargetingAge; 
   }
-  public List<String> getGenderTargets() {
-    return this.genderTargets; 
+  public List<String> getGenderTarget() {
+    return this.genderTarget; 
   }
-  public List<String> getGeoTargets() {
-    return this.geoTargets;
+  public List<String> getGeoTarget() {
+    return this.geoTarget;
   }
   public long getSpendMin() {
     return this.spendMin; 
@@ -252,12 +252,12 @@ public class Ad {
       instance.setIsTargetingAge(isTargetingAge); 
       return this; 
     }
-    public Ad.Builder genderTargets(List<String> genderTargets) {
-      instance.setGenderTargets(genderTargets); 
+    public Ad.Builder genderTarget(List<String> genderTarget) {
+      instance.setGenderTarget(genderTarget); 
       return this; 
     }
-    public Ad.Builder geoTargets(List<String> geoTargets) {
-      instance.setGeoTargets(geoTargets); 
+    public Ad.Builder geoTarget(List<String> geoTarget) {
+      instance.setGeoTarget(geoTarget); 
       return this; 
     }
     public Ad.Builder spendMin(long spendMin) {

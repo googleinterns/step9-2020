@@ -1,5 +1,4 @@
 *.iml
 target/
 node_modules/
-serviceAccountKey.json
 .idea

@@ -14,9 +14,7 @@ const { test, assert, sinon, firestoreMock, firestoreWrap } =
 // Import the generic cloud functions.
 const devAlgoliaFunctions = 
     require('../../algoliaCloudFunctions/devAlgoliaFunctions');
-const prodAlgoliaFunctions = 
-    require('../../algoliaCloudFunctions/prodAlgoliaFunctions');
-const { DEV_ADS_INDEX, PROD_ADS_INDEX } = 
+const { DEV_ADS_INDEX } = 
     require('../../algoliaCloudFunctions/algoliaConfig');
 
 // Import mock saveObject, mock deleteObject, and helpers.
@@ -26,9 +24,8 @@ describe("Algolia cloud functions", () => {
   // Restore the stubs after each test. 
   afterEach(() => {
     sinon.restore();
-  });
 
-  describe("test_CreateRecord", () => {
+  describe("test_createRecord", () => {
     it('should call saveObject with correct values, return its output', () => {
       const saveStub = 
           sinon.stub(DEV_ADS_INDEX, "saveObject").callsFake(mockSaveObject);
@@ -47,7 +44,7 @@ describe("Algolia cloud functions", () => {
     });
   });
 
-  describe("test_UpdateRecord", () => {
+  describe("test_updateRecord", () => {
     it('should call saveObject with correct values, return its output', () => {
       const saveStub = 
           sinon.stub(DEV_ADS_INDEX, "saveObject").callsFake(mockSaveObject);
@@ -67,7 +64,7 @@ describe("Algolia cloud functions", () => {
     });
   });
 
-  describe("test_DeleteRecord", () => {
+  describe("test_deleteRecord", () => {
     it('should call deleteObject with correct values, return its output', () => {
       const deleteStub = 
           sinon.stub(DEV_ADS_INDEX, "deleteObject").callsFake(mockDeleteObject);
