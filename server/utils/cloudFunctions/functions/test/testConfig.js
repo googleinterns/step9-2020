@@ -59,7 +59,8 @@ chai.use(sinonChai);
 
 module.exports = { test, 
                    assert, 
-                   sinon, 
+                   sinon,
+                   chai,
                    firestoreMock, 
                    firestoreWrap, 
                    snapFromJson/*, 

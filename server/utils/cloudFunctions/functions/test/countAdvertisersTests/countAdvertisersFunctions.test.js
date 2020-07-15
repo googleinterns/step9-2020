@@ -10,6 +10,7 @@
 const { test, 
         assert, 
         sinon, 
+        chai,
         firestoreMock, 
         firestoreWrap, 
         snapFromJson/*, 
@@ -27,13 +28,6 @@ const { devUpdateAggregateOnCreate, devUpdateAggregateOnDelete } =
 // Save some space for test explanation in the test description
 const SHOULD_INCREMENT = "should increment advertisers ad count "; 
 
-// Sample snapshot data.
-// Call with snapFromJson(AD_DOC_X, "dev_ads") to get a snapshot. 
-const AD_DOC_A = {advertiser: 'advertiser_a', startDate: '2019-10-15'};
-const AD_DOC_B = {advertiser: 'adverister_b', startDate: '2019-10-15'};
-const AD_DOC_C = {advertiser: 'advertiser_c', startDate: '2020-10-15'};
-const AD_DOC_D = {advertiser: 'advertiser_d', startDate: '2018-10-15'};
-
 describe('Aggregate cloud functions', () => {
   after(() => {
     deleteCollection(DB, 'dev_ads');
@@ -41,7 +35,6 @@ describe('Aggregate cloud functions', () => {
     deleteCollection(DB, 'dev_aggregates/2019/advertisers');
     deleteCollection(DB, 'dev_aggregates/2020/advertisers');
   });
-
   describe("test_updateAggregateOnCreate", () => {
     it(SHOULD_INCREMENT + 'in the correct year', () => {
       const advertiser = "adv_a"; 
@@ -49,8 +42,8 @@ describe('Aggregate cloud functions', () => {
       const startYear = "2019";
       const snap = snapFromJson({advertiser, startDate}, "dev_ads");
 
-      const wrapped = firestoreWrap(devUpdateAggregateOnCreate);
-      return wrapped(snap).then(() => {
+      const wrapper = firestoreWrap(devUpdateAggregateOnCreate);
+      return wrapper(snap).then(() => {
         return DEV_AGGREGATES_COLLECTION
             .doc(startYear)
             .collection("advertisers")
@@ -66,10 +59,10 @@ describe('Aggregate cloud functions', () => {
       const snap_2019 = snapFromJson({advertiser, startDate: "2019-10-15"}, "dev_ads");
       const snap_2020 = snapFromJson({advertiser, startDate: "2020-10-15"}, "dev_ads");
 
-      const wrapped = firestoreWrap(devUpdateAggregateOnCreate);
-      wrapped(snap_2018).then(() => {
-        wrapped(snap_2019).then(() => {
-          wrapped(snap_2020).then(() => {
+      const wrapper = firestoreWrap(devUpdateAggregateOnCreate);
+      wrapper(snap_2018).then(() => {
+        wrapper(snap_2019).then(() => {
+          wrapper(snap_2020).then(() => {
             DEV_AGGREGATES_COLLECTION
                 .doc("2018")
                 .collection("advertisers")
@@ -101,10 +94,10 @@ describe('Aggregate cloud functions', () => {
       const snap_one = snapFromJson({advertiser, startDate: "2019-10-15"}, "dev_ads");
       const snap_two = snapFromJson({advertiser, startDate: "2019-10-16"}, "dev_ads");
 
-      const wrapped = firestoreWrap(devUpdateAggregateOnCreate);
+      const wrapper = firestoreWrap(devUpdateAggregateOnCreate);
       
-      return wrapped(snap_one).then(() => {
-        return wrapped(snap_two).then(() => {
+      return wrapper(snap_one).then(() => {
+        return wrapper(snap_two).then(() => {
           return DEV_AGGREGATES_COLLECTION
               .doc("2019")
               .collection("advertisers")
@@ -120,10 +113,10 @@ describe('Aggregate cloud functions', () => {
       const snap_one = snapFromJson({advertiser, startDate: "2019-10-15"}, "dev_ads");
       const snap_two = snapFromJson({advertiser, startDate: "2019-10-15"}, "dev_ads");
 
-      const wrapped = firestoreWrap(devUpdateAggregateOnCreate);
+      const wrapper = firestoreWrap(devUpdateAggregateOnCreate);
       
-      return wrapped(snap_one).then(() => {
-        return wrapped(snap_two).then(() => {
+      return wrapper(snap_one).then(() => {
+        return wrapper(snap_two).then(() => {
           return DEV_AGGREGATES_COLLECTION
               .doc("2019")
               .collection("advertisers")
@@ -139,17 +132,16 @@ describe('Aggregate cloud functions', () => {
       const snap_one = snapFromJson({advertiser, startDate: "2019-10-15"}, "dev_ads");
       const snap_two = snapFromJson({advertiser, startDate: "2020-10-15"}, "dev_ads");
 
-      const wrapped = firestoreWrap(devUpdateAggregateOnCreate);
+      const wrapper = firestoreWrap(devUpdateAggregateOnCreate);
       
-      return wrapped(snap_one).then(() => {
-        return wrapped(snap_two).then(() => {
+      return wrapper(snap_one).then(() => {
+        return wrapper(snap_two).then(() => {
           DEV_AGGREGATES_COLLECTION
-              .doc("2019")
+              .doc("2020")
               .collection("advertisers")
               .doc(advertiser).get().then(function(doc) {
                 assert.equal(doc.data().numberOfAds, 1);
               });
-          
           DEV_AGGREGATES_COLLECTION
               .doc("2020")
               .collection("advertisers")
@@ -164,26 +156,52 @@ describe('Aggregate cloud functions', () => {
       const snap_one = snapFromJson({advertiser: "adv_f", startDate: "2019-10-15"}, "dev_ads");
       const snap_two = snapFromJson({advertiser: "adv_g", startDate: "2020-10-15"}, "dev_ads");
 
-      const wrapped = firestoreWrap(devUpdateAggregateOnCreate);
+      const wrapper = firestoreWrap(devUpdateAggregateOnCreate);
       
-      return wrapped(snap_one).then(() => {
-        return wrapped(snap_two).then(() => {
-          DEV_AGGREGATES_COLLECTION
-              .doc("2019")
-              .collection("advertisers")
-              .doc("adv_e").get().then(function(doc) {
-                assert.equal(doc.data().numberOfAds, 1);
-              });
-          
+      return wrapper(snap_one).then(() => {
+        return wrapper(snap_two).then(() => {
           DEV_AGGREGATES_COLLECTION
               .doc("2019")
               .collection("advertisers")
               .doc("adv_f").get().then(function(doc) {
                 assert.equal(doc.data().numberOfAds, 1);
               });
+          
+          DEV_AGGREGATES_COLLECTION
+              .doc("2020")
+              .collection("advertisers")
+              .doc("adv_g").get().then(function(doc) {
+                assert.equal(doc.data().numberOfAds, 1);
+              });
         });
       }); 
     });  
+  });
+  
+  describe("test_updateAggregateOnDelete", () => {
+    it("should decrement ad count when deleting an advertisers ad", () => {
+      const snap = snapFromJson({advertiser: "adv_a", startDate: "2018-10-15"}, "dev_ads");
+
+      const createWrapper = firestoreWrap(devUpdateAggregateOnCreate);
+      const deleteWrapper = firestoreWrap(devUpdateAggregateOnDelete);
+
+      return createWrapper(snap).then(() => {
+        DEV_AGGREGATES_COLLECTION
+              .doc("2018")
+              .collection("advertisers")
+              .doc("adv_a").get().then(function(doc) {
+                assert.equal(doc.data().numberOfAds, 1);
+              });
+        return deleteWrapper(snap).then(() => {
+          DEV_AGGREGATES_COLLECTION
+              .doc("2018")
+              .collection("advertisers")
+              .doc("adv_a").get().then(function(doc) {
+                assert.equal(doc.data().numberOfAds, 0);
+              });
+        });
+      });
+    });
   });
 });
 
