@@ -2,7 +2,7 @@
  * Description: Unit tests for countAdvertisers.js
  *              Uses sinon/chai to spy on calls and validate behavior.
  *              compile with `npm run test`.
- * Note: Tests are structured in the following format: 
+ * Tests are structured in the following format: 
  * - Setup snapshot data.
  * - Initialize wrapper(s).
  * - Combine wrapper(s) with snapshot, creating a promise.
@@ -15,6 +15,15 @@
  *     nesting is advantageous because it easily keeps everything in scope
  *     without much fuss. Thus, nesting is fine to use. 
  *   - Also this is how the official docs do it. 
+ * Testing note: 
+ * - Firebase recommends running tests online, i.e., on a real db
+ *   for testing simplicity.
+ *   - See: https://firebase.google.com/docs/functions/get-started
+ * - Test cleanup is performed by an `after` function, that wipes 
+ *   all touched collections. 
+ *   - Firestore doesn't have a default method to delete collections
+ *     so a method has been taken from firestore docs and is in the `test`
+ *     directory as `deleteCollection.js`.   
  * Author: Robert Marcus
  * Date: July 13, 2020
  */
