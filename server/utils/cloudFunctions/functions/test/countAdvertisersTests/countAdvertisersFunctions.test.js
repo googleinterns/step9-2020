@@ -35,6 +35,7 @@ describe('Aggregate cloud functions', () => {
     deleteCollection(DB, 'dev_aggregates/2019/advertisers');
     deleteCollection(DB, 'dev_aggregates/2020/advertisers');
   });
+
   describe("test_updateAggregateOnCreate", () => {
     it(SHOULD_INCREMENT + 'in the correct year', () => {
       const advertiser = "adv_a"; 
@@ -202,8 +203,55 @@ describe('Aggregate cloud functions', () => {
         });
       });
     });
+
+    it("should only decrement if ad count is positive", () => {
+      const snap = snapFromJson({advertiser: "adv_a", startDate: "2018-10-15"}, "dev_ads");
+
+      const deleteWrapper = firestoreWrap(devUpdateAggregateOnDelete);
+      
+      return deleteWrapper(snap).then(() => {
+        DEV_AGGREGATES_COLLECTION
+            .doc("2018")
+            .collection("advertisers")
+            .doc("adv_a").get().then(function(doc) {
+              assert.equal(doc.data().numberOfAds, 0);
+            });
+      });
+    });
+
+    it("should throw some sort of an error if doc doesn't exist", () => {
+      const snap = snapFromJson({advertiser: "adv_Z", startDate: "2018-10-16"}, "dev_ads");
+
+      const deleteWrapper = firestoreWrap(devUpdateAggregateOnDelete);
+      const expect = require('chai').expect;
+      expect(() => new deleteWrapper(snap)).to.throw(Error);
+    });
+    
+    it("should decrement the right advertisers count when deleting an advertisers ad", () => {
+      const snapOne = snapFromJson({advertiser: "adv_X", startDate: "2018-10-16"}, "dev_ads");
+      const snapTwo = snapFromJson({advertiser: "adv_Y", startDate: "2018-10-16"}, "dev_ads");
+
+      const createWrapper = firestoreWrap(devUpdateAggregateOnCreate);
+      const deleteWrapper = firestoreWrap(devUpdateAggregateOnDelete);
+
+      return createWrapper(snapOne).then(() => {
+        return createWrapper(snapTwo).then(() => {
+          return deleteWrapper(snapOne).then(() => {
+            DEV_AGGREGATES_COLLECTION
+                  .doc("2018")
+                  .collection("advertisers")
+                  .doc("adv_X").get().then(function(doc) {
+                    assert.equal(doc.data().numberOfAds, 0);
+                  });
+            DEV_AGGREGATES_COLLECTION
+                .doc("2018")
+                .collection("advertisers")
+                .doc("adv_Y").get().then(function(doc) {
+                  assert.equal(doc.data().numberOfAds, 1);
+                });
+          });
+        });
+      });
+    });
   });
 });
-
-// Un-stub adminInitStub. 
-sinon.restore();

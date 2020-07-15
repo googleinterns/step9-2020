@@ -50,6 +50,7 @@ function decrementAdvertiserAggregate(snapshot, collection) {
                              message: snapshot.data().advertiser + 
                                       snapshot.data().startDate +
                                       "aggregate doc not found"};
+
       throw errorMessage;
     }
   }).catch(err => console.log(err));
