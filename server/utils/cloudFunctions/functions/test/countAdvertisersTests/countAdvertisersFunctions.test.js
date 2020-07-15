@@ -278,14 +278,16 @@ describe('Count advertisers cloud functions', () => {
       const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
       // Because 'new_adv' has never been added to any collection, 
-      // It won't have a document/counter associated with it in `dev_aggregates/2018/advertisers`
-      // So an error will be thrown and caught. In practice, this should only
+      // It won't have a document/counter associated with it in 
+      // `dev_aggregates/2018/advertisers`.
+      // An error will be thrown and caught. In practice, this should only
       // happen if a `updateAdvertiserCountOnCreate` fails during writing 
       // without retry, or if the entry is manually deleted. 
       chai.expect(() => deleteWrapper(snap)).to.throw(Error);
     });
     
-    it("should decrement the right advertisers count when deleting an advertisers ad", () => {
+    it("should decrement the right advertisers count when" +
+       "deleting an advertisers ad", () => {
       const snapOne = snapFromJson({advertiser: "adv_B", 
                                     startDate: "2018-10-16"}, DEV_ADS_PATH);
       const snapTwo = snapFromJson({advertiser: "adv_C", 
@@ -317,7 +319,8 @@ describe('Count advertisers cloud functions', () => {
       });
     });
 
-    it("should decrement the right years ad count when deleting an advertisers ad", () => {
+    it("should decrement the right years ad count when deleting " +
+       "an advertisers ad", () => {
       const snapOne = snapFromJson({advertiser: "adv_D", 
                                     startDate: "2018-10-15"}, DEV_ADS_PATH);
       const snapTwo = snapFromJson({advertiser: "adv_D", 
@@ -332,14 +335,14 @@ describe('Count advertisers cloud functions', () => {
             DEV_AGGREGATES_COLLECTION
                   .doc("2018")
                   .collection("advertisers")
-                  .doc("adv_Z").get().then(function(doc) {
+                  .doc("adv_D").get().then(function(doc) {
                     return assert.equal(doc.data().numberOfAds, 0);
                   }).catch(err => console.log(err)); 
              
             DEV_AGGREGATES_COLLECTION
                 .doc("2019")
                 .collection("advertisers")
-                .doc("adv_Z").get().then(function(doc) {
+                .doc("adv_D").get().then(function(doc) {
                   return assert.equal(doc.data().numberOfAds, 1);
                 }).catch(err => console.log(err));
 
