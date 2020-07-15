@@ -269,12 +269,14 @@ describe('Count advertisers cloud functions', () => {
       const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
       
       return deleteWrapper(snap).then(() => {
-        return DEV_AGGREGATES_COLLECTION
+        DEV_AGGREGATES_COLLECTION
             .doc("2018")
             .collection("advertisers")
             .doc("adv_A").get().then(function(doc) {
               return assert.equal(doc.data().numberOfAds, 0);
-            });
+            }).catch(err => console.log(err));
+        
+        return;
       });
     });
 
