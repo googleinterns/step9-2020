@@ -53,7 +53,6 @@ const { devCountAdvertisersOnCreate, devCountAdvertisersOnDelete } =
 const SHOULD_INCREMENT = "should increment advertisers ad count "; 
 
 describe('Count advertisers cloud functions', () => {
-
   // After every 'describe' block, reset the test environments. 
   // Since these are live dev db's, this process can be very flaky.
   // In general, don't expect an 'advertiser' will be reset from 
@@ -233,7 +232,6 @@ describe('Count advertisers cloud functions', () => {
   
   describe("test_countAdvertisersOnDelete", () => {
     it("should decrement ad count when deleting an advertisers ad", () => {
-
       // The 'after' should cleanup the DB of "adv_a" references and values
       // in time, but it can be flaky. 
       // Easy way to avoid this problem is just to switch to adv_A, adv_B, 
