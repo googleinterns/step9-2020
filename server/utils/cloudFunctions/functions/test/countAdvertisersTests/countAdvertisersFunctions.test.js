@@ -61,9 +61,9 @@ describe('Aggregate cloud functions', () => {
       const snap_2020 = snapFromJson({advertiser, startDate: "2020-10-15"}, "dev_ads");
 
       const wrapper = firestoreWrap(devUpdateAggregateOnCreate);
-      wrapper(snap_2018).then(() => {
-        wrapper(snap_2019).then(() => {
-          wrapper(snap_2020).then(() => {
+      return wrapper(snap_2018).then(() => {
+        return wrapper(snap_2019).then(() => {
+          return wrapper(snap_2020).then(() => {
             DEV_AGGREGATES_COLLECTION
                 .doc("2018")
                 .collection("advertisers")
@@ -219,12 +219,11 @@ describe('Aggregate cloud functions', () => {
       });
     });
 
-    it("should throw some sort of an error if doc doesn't exist", () => {
-      const snap = snapFromJson({advertiser: "adv_Z", startDate: "2018-10-16"}, "dev_ads");
+    it("should throw some sort of an error if doc doesn't exist", async () => {
+      const snap = snapFromJson({advertiser: "adv_ZZY", startDate: "2018-10-16"}, "dev_ads");
 
       const deleteWrapper = firestoreWrap(devUpdateAggregateOnDelete);
-      const expect = require('chai').expect;
-      expect(() => new deleteWrapper(snap)).to.throw(Error);
+      chai.expect(() => deleteWrapper(snap)).to.throw(Error);
     });
     
     it("should decrement the right advertisers count when deleting an advertisers ad", () => {
@@ -247,6 +246,33 @@ describe('Aggregate cloud functions', () => {
                 .doc("2018")
                 .collection("advertisers")
                 .doc("adv_Y").get().then(function(doc) {
+                  assert.equal(doc.data().numberOfAds, 1);
+                });
+          });
+        });
+      });
+    });
+
+    it("should decrement the right years ad count when deleting an advertisers ad", () => {
+      const snapOne = snapFromJson({advertiser: "adv_Z", startDate: "2018-10-16"}, "dev_ads");
+      const snapTwo = snapFromJson({advertiser: "adv_Z", startDate: "2019-10-16"}, "dev_ads");
+
+      const createWrapper = firestoreWrap(devUpdateAggregateOnCreate);
+      const deleteWrapper = firestoreWrap(devUpdateAggregateOnDelete);
+
+      return createWrapper(snapOne).then(() => {
+        return createWrapper(snapTwo).then(() => {
+          return deleteWrapper(snapOne).then(() => {
+            DEV_AGGREGATES_COLLECTION
+                  .doc("2018")
+                  .collection("advertisers")
+                  .doc("adv_Z").get().then(function(doc) {
+                    assert.equal(doc.data().numberOfAds, 0);
+                  });
+            DEV_AGGREGATES_COLLECTION
+                .doc("2019")
+                .collection("advertisers")
+                .doc("adv_Z").get().then(function(doc) {
                   assert.equal(doc.data().numberOfAds, 1);
                 });
           });
