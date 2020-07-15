@@ -1,4 +1,5 @@
 *.iml
 target/
 node_modules/
+test.txt
 .idea
