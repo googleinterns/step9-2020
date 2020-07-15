@@ -1,6 +1,6 @@
 /**
  * Description: Initialize the index environment by 
- *              initializng the firebase api to access the dev/prod ads db.
+ *              initializing the firebase api to access the dev/prod ads db.
  * Author: Robert Marcus
  * Date: July 7, 2020
  */
@@ -12,7 +12,7 @@ const ADMIN = require('firebase-admin');
 // Initialize access to tardigrade firestore db
 const CONFIG = 
     {
-      apiKey: functions.config().firestore.key,
+      apiKey: firebaseFunctions.config().firestore.key,
       authDomain: "step9-2020-capstone.firebaseapp.com",
       projectId: "step9-2020-capstone"
     };

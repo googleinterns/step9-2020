@@ -21,9 +21,11 @@ const { DEV_ADS_INDEX } =
 const { mockDeleteObject, mockSaveObject } = require('./algoliaMocks');
 
 describe("Algolia cloud functions", () => {
+  
   // Restore the stubs after each test. 
   afterEach(() => {
     sinon.restore();
+  });
 
   describe("test_createRecord", () => {
     it('should call saveObject with correct values, return its output', () => {

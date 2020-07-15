@@ -8,7 +8,7 @@
  */
 
 // Import firebase functions for access to env vars.
-const { functions, ADMIN, DB } = require('../firebaseConfig');
+const { ADMIN, DB } = require('../firebaseConfig');
 
 const DEV_AGGREGATES_COLLECTION_NAME = "dev_aggregates";
 const DEV_AGGREGATES_COLLECTION = 
