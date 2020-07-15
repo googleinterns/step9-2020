@@ -9,10 +9,10 @@ const { DEV_ADS_DOCS } = require('../firebaseConfig');
 
 // Import links to firebase dev advertisers collections
 // These are used to write directly to a collection
-const { DEV_AGGREGATES_COLLECTION, FieldValue } = require('./countAdvertisersConfig');
+const { DEV_AGGREGATES_COLLECTION } = require('./countAdvertisersConfig');
 
 // Import helper functions
-const { incrementAdvertiserAggregate, decrementAdvertiserAggregate } = 
+const { incrementAdvertiserCount, decrementAdvertiserCount } = 
     require('./countAdvertisersHelpers');
 
 /**
@@ -21,9 +21,9 @@ const { incrementAdvertiserAggregate, decrementAdvertiserAggregate } =
  * Years possible are 2018, 2019, 2020. Event triggered on create.
  * @returns {!Promise}     
  */
-exports.devUpdateAggregateOnCreate = 
+exports.devUpdateAdvertiserCountOnCreate = 
   DEV_ADS_DOCS.onCreate(snapshot => {
-      return incrementAdvertiserAggregate(snapshot, DEV_AGGREGATES_COLLECTION);
+      return incrementAdvertiserCount(snapshot, DEV_AGGREGATES_COLLECTION);
     });
 
 /**
@@ -32,7 +32,7 @@ exports.devUpdateAggregateOnCreate =
  * Years possible are 2018, 2019, 2020. Event triggered on create.
  * @returns {!Promise} 
  */
-exports.devUpdateAggregateOnDelete = 
+exports.devUpdateAdvertiserCountOnDelete = 
     DEV_ADS_DOCS.onDelete(snapshot => {
-      return decrementAdvertiserAggregate(snapshot, DEV_AGGREGATES_COLLECTION);
+      return decrementAdvertiserCount(snapshot, DEV_AGGREGATES_COLLECTION);
     });

@@ -21,7 +21,9 @@
  */
 
 // Export dev code for firebase -> algolia code. 
-// exports.devAlgolia = require('./algoliaCloudFunctions/devAlgoliaFunctions');
+exports.devAlgolia = require('./algoliaCloudFunctions/devAlgoliaFunctions');
+exports.prodAlgolia = require('./algoliaCloudFunctions/prodAlgoliaFunctions');
+
 
 exports.devAggregates = 
     require('./countAdvertisersCloudFunctions/devCountAdvertisersFunctions');

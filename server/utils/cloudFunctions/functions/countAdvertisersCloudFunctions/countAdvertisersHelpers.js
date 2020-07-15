@@ -8,7 +8,7 @@ const { FieldValue } = require('./countAdvertisersConfig');
  * @param {Object} collection reference to a particular firestore collection
  * @returns {Object} 
  */
-function getAggregateReference(snapshot, collection) {
+function getAdvertiserCountReference(snapshot, collection) {
   const data = snapshot.data();
 
   const advertiser = data.advertiser;
@@ -33,8 +33,8 @@ function getAggregateReference(snapshot, collection) {
  * @param {Object} collection reference to a particular firestore collection
  * @returns {!Promise} 
  */
-function decrementAdvertiserAggregate(snapshot, collection) {
-  const aggregateReference = getAggregateReference(snapshot, collection);
+function decrementAdvertiserCount(snapshot, collection) {
+  const aggregateReference = getAdvertiserCountReference(snapshot, collection);
 
   return aggregateReference.get().then(function(doc) {
     if (doc.exists) {
@@ -66,8 +66,8 @@ function decrementAdvertiserAggregate(snapshot, collection) {
  * @param {Object} collection reference to a particular firestore collection
  * @returns {!Promise} 
  */
-function incrementAdvertiserAggregate(snapshot, collection) {
-  const aggregateReference = getAggregateReference(snapshot, collection);
+function incrementAdvertiserCount(snapshot, collection) {
+  const aggregateReference = getAdvertiserCountReference(snapshot, collection);
 
   return aggregateReference.get().then(function(doc) {
     if (doc.exists) {
@@ -78,5 +78,5 @@ function incrementAdvertiserAggregate(snapshot, collection) {
   }).catch(err => console.log(err));
 }
 
-module.exports = { decrementAdvertiserAggregate, 
-                   incrementAdvertiserAggregate };
+module.exports = { decrementAdvertiserCount, 
+                   incrementAdvertiserCount };
