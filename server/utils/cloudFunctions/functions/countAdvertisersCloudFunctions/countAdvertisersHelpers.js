@@ -16,12 +16,14 @@ function checkAdvertiser(advertiser) {
 }
 
 /**
- * Assert `startDate` is a string with length at least 4.
+ * Assert `startDate` is a string and a valid iso date string.
+ * If `startDate` is not a valid iso string, `isoStartDate` will == NaN.
  * @param {string} startDate as derived from snapshot
+ * @param {Object} isoStartDate Date(startDate) output, json string
  */
-function checkStartDate(startDate) {
+function checkStartDate(startDate, isoStartDate) {
   assert.typeOf(startDate, 'string');
-  assert.isAtLeast(startDate.split('-')[0].length, 4); // check "YYYY-..."
+  assert.ok(isoStartDate.getFullYear()); 
 }
 
 /**
@@ -38,11 +40,12 @@ function getAdvertiserCountReference(snapshot, collection) {
   const data = snapshot.data();
   const advertiser = data.advertiser;
   const startDate = data.startDate;
+  const isoStartDate = new Date(startDate);
 
   checkAdvertiser(advertiser);
-  checkStartDate(startDate);
-  
-  const startYear = startDate.slice(0, 4);
+  checkStartDate(startDate, isoStartDate);
+
+  const startYear = isoStartDate.getFullYear().toString(); 
 
   const advertiserCountReference = 
       collection.doc(startYear)

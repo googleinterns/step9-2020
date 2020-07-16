@@ -240,8 +240,6 @@ describe('Count advertisers cloud functions', () => {
       const snapThree = 
           snapFromJson({advertiser: "adv", startDate: "201-910-15"}, 
                         DEV_ADS_PATH);
-      const snapFour = 
-          snapFromJson({advertiser: "adv", startDate: "201"}, DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
 
@@ -392,8 +390,6 @@ describe('Count advertisers cloud functions', () => {
       const snapThree = 
           snapFromJson({advertiser: "adv", startDate: "201-910-15"}, 
                         DEV_ADS_PATH);
-      const snapFour = 
-          snapFromJson({advertiser: "adv", startDate: "201"}, DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
