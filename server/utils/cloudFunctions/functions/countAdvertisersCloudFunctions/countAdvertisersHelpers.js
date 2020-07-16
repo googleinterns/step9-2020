@@ -4,8 +4,8 @@
  * Date: July 14, 2020
  */
 
-const { FieldValue } = require('./countAdvertisersConfig');
 const { assert } = require('../test/testConfig');
+const { FieldValue } = require('./countAdvertisersConfig');
 
 /**
  * Assert `advertiser` is a string

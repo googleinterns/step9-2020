@@ -57,6 +57,3 @@ Some implementation details:
   have a similar level of expectation - don't test with garbage data. If 
   garbage data does come in, some type of error will show up in the firebase
   log.~~ It was easy to implement so I implemented it. 
-
-
-  

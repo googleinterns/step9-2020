@@ -18,11 +18,12 @@
  *   Firebase has native support for enabling retry on failure
  *   This feature will be integrated at some point post-MVP. 
  *   https://cloud.google.com/functions/docs/bestpractices/retries
+ * - read `readme.md` for deployment notes. 
  */
 
 // Export dev code for firebase -> algolia code. 
 exports.devAlgolia = require('./algoliaCloudFunctions/devAlgoliaFunctions');
 exports.prodAlgolia = require('./algoliaCloudFunctions/prodAlgoliaFunctions');
 
-exports.devAggregates = 
+exports.devCountAdvertisers = 
     require('./countAdvertisersCloudFunctions/devCountAdvertisersFunctions');

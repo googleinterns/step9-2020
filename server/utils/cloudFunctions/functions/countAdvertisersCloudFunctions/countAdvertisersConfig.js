@@ -13,9 +13,8 @@ const DEV_AGGREGATES_COLLECTION =
     DB.collection(DEV_AGGREGATES_COLLECTION_NAME);
 
 // `FieldValue` is a method that allows atomic operations on int/long fields.
-// i.e., `FieldValue.increment(change)` will atomically increment the field value
-// by `change`. 
+// i.e., `FieldValue.increment(change)` will atomically increment the 
+// field value by `change`. 
 const FieldValue = ADMIN.firestore.FieldValue;
 
-module.exports = 
-    { DEV_AGGREGATES_COLLECTION, FieldValue }
+module.exports = { DEV_AGGREGATES_COLLECTION, FieldValue }

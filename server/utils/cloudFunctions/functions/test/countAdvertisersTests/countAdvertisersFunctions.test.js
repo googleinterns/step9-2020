@@ -40,7 +40,7 @@ const { test,
 
 const { deleteCollection } = require('../deleteCollection');
 
-const { ADMIN, DB } = require('../../firebaseConfig');
+const { DB } = require('../../firebaseConfig');
 
 const { DEV_AGGREGATES_COLLECTION } = 
     require('../../countAdvertisersCloudFunctions/countAdvertisersConfig');
