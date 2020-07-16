@@ -58,10 +58,11 @@ describe('Count advertisers cloud functions', () => {
   // In general, don't expect an 'advertiser' will be reset from 
   // test to test. 
   after(() => {
-    deleteCollection(DB, 'dev_ads');
-    deleteCollection(DB, 'dev_aggregates/2018/advertisers');
-    deleteCollection(DB, 'dev_aggregates/2019/advertisers');
-    deleteCollection(DB, 'dev_aggregates/2020/advertisers');
+    const collections = ['dev_ads',
+                         'dev_aggregates/2018/advertisers',
+                         'dev_aggregates/2019/advertisers',
+                         'dev_aggregates/2018/advertisers']
+    collections.forEach(collection => deleteCollection(DB, collection));
   });
 
   describe("test_countAdvertisersOnCreate", () => {
