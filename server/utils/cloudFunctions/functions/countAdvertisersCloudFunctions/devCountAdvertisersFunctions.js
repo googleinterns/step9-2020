@@ -1,5 +1,12 @@
 /**
- * Description: Cloud functions for DEV count advertisers.git s      
+ * Description: Cloud functions for DEV count advertisers.
+ *              When an ad document is created in `dev_ads`
+ *              a document will be created at 
+ *              `/dev_aggregates/{startYear}/advertisers/{advertiser}`
+ *              with the field `numberOfAds: 1`. If the document already 
+ *              exists, `numberOfAds` will be incremented by 1. 
+ *              If this document is deleted, `numberOfAds` will be decremented
+ *              if `numberOfAds` is greater than 0. 
  * Author: Robert Marcus
  * Date: July 14, 2020
  */
@@ -16,9 +23,9 @@ const { incrementAdvertiserCount, decrementAdvertiserCount } =
     require('./countAdvertisersHelpers');
 
 /**
- * Increments an advertisers annual aggregate by one for an ad in a given year
+ * Increments an advertiser's annual ad count by one for an ad in a given year.
  * in dev env. Annual aggregate stored in firebase collection `DEV_AGGREGATES_COLLECTION`.
- * Years possible are 2018, 2019, 2020. Event triggered on create.
+ * Event triggered on create.
  * @returns {!Promise}     
  */
 exports.devCountAdvertisersOnCreate = 
@@ -27,9 +34,9 @@ exports.devCountAdvertisersOnCreate =
     });
 
 /**
- * Decrements an advertisers annual aggregate by one for an ad in a given year
+ * Decrements an advertiser's annual ad count by one for an ad in a given year.
  * in dev env. Annual aggregate stored in firebase collection `DEV_AGGREGATES_COLLECTION`.
- * Years possible are 2018, 2019, 2020. Event triggered on delete.
+ * Event triggered on delete.
  * @returns {!Promise} 
  */
 exports.devCountAdvertisersOnDelete = 

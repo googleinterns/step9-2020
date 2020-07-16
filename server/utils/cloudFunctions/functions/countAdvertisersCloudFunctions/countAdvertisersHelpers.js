@@ -16,7 +16,6 @@ const { FieldValue } = require('./countAdvertisersConfig');
  */
 function getAdvertiserCountReference(snapshot, collection) {
   const data = snapshot.data();
-
   const advertiser = data.advertiser;
   const startDate = data.startDate;
   const startYear = startDate.slice(0, 4);
@@ -30,11 +29,9 @@ function getAdvertiserCountReference(snapshot, collection) {
 }
 
 /**
- * Decrements an advertisers annual aggregate by one for an ad in a given year
- * in dev env. Annual aggregate stored in firebase collection `DEV_AGGREGATES_COLLECTION`.
- * Years possible are 2018, 2019, 2020. Event triggered on delete.
- * If the advertisers count document does not exist in the relevant collection,
- * a 500 error will be thrown.
+ * Decrements an advertiser's annual ad count by one for an ad in a given year.
+ * Event triggered on delete. If the advertiser's count document does not 
+ * exist in the relevant collection, a 500 error will be thrown.
  * @param {Object} snapshot a json string
  * @param {Object} collection reference to a particular firestore collection
  * @returns {!Promise} 
@@ -64,10 +61,9 @@ function decrementAdvertiserCount(snapshot, collection) {
 }
 
 /**
- * Increments an advertisers annual aggregate by one for an ad in a given year
- * in dev env. Annual aggregate stored in firebase collection `DEV_AGGREGATES_COLLECTION`.
- * Years possible are 2018, 2019, 2020. Event triggered on create.
- * If the advertisers count document does not exist in the relevant collection,
+ * Increments an advertiser's annual ad count by one for an ad in a given year.
+ * Event triggered on create.
+ * If the advertiser's count document does not exist in the relevant collection,
  * the document will be made and populated with default value of 1. 
  * @param {Object} snapshot a json string
  * @param {Object} collection reference to a particular firestore collection
