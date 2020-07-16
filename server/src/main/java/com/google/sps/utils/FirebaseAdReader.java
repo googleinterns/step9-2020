@@ -24,18 +24,14 @@ import java.util.List;
  * Author: Kira Toal
  * Date: July 14, 2020
  */ 
-public class FirebaseAdReader {
+public final class FirebaseAdReader {
 
-  private static final String COLLECTION = "testing";
-  private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
-  private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
-  private static final int TIMEOUT_ALLOWANCE = 30; // Time in seconds before future.get() times out.
-
-  public static void main(String[] args) throws Exception {
-    FileInputStream serviceAccount = new FileInputStream(PATH_TO_SERVICE_ACCOUNT);
+  public static List<Ad> readAds(String collection, String databaseURL, String pathToServiceAccount,
+    int timeoutAllowance) throws Exception {
+    FileInputStream serviceAccount = new FileInputStream(pathToServiceAccount);
     FirebaseOptions options = new FirebaseOptions.Builder()
         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-        .setDatabaseUrl(DATABASE_URL)
+        .setDatabaseUrl(databaseURL)
         .build();
     
     // Initialize app.
@@ -45,11 +41,12 @@ public class FirebaseAdReader {
     Firestore db = FirestoreClient.getFirestore();
 
     // Retrieve all documents from the collection.
-    ApiFuture<QuerySnapshot> future = db.collection(COLLECTION).get();
-    List<QueryDocumentSnapshot> documents = future.get(TIMEOUT_ALLOWANCE, TimeUnit.SECONDS).getDocuments();
+    ApiFuture<QuerySnapshot> future = db.collection(collection).get();
+    List<QueryDocumentSnapshot> documents = future.get(timeoutAllowance, TimeUnit.SECONDS).getDocuments();
     List<Ad> ads = new ArrayList<Ad>(); 
     for (QueryDocumentSnapshot document : documents) {
       ads.add(document.toObject(Ad.class));
     }
+    return ads;
   }
 }
