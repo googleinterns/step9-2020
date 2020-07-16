@@ -6,7 +6,7 @@ import { PAGE_MAP } from './constants/header_constant';
 import PageNav from './components/PageNav/PageNav';
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('Ads Search');
+  const [currentPage, setCurrentPage] = useState('Sentiment Analysis');
 
   return (
     <div>

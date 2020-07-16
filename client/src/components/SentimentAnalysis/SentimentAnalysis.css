@@ -35,3 +35,43 @@
 .analysis-label {
   margin: 0px;
 }
+
+.analysis-result-container {
+  width: 100%;
+  margin: 30px 0px;
+  align-items: flex-start;
+  padding: 20px 0px;
+  background: linear-gradient(#c7c7c7, #c7c7c7) no-repeat center/2px 100%;
+}
+
+.analysis-card {
+  width: 50%;
+  flex-direction: column;
+}
+
+.color-bar {
+  border-radius: 15px;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.analysis-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.analysis-text {
+  background-color: var(--secondary-color);
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 20px;
+}
+
+#special-text {
+  background-color: var(--primary-color);
+  color: white;
+  margin-right: 20px;
+}
