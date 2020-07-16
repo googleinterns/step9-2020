@@ -27,13 +27,10 @@ describe("Algolia integrations tests", () => {
       const data = {advertiser: "test", startDate: "2019-10-15"};
 
       return DB.collection(DEV_ADS_PATH).doc("0").set(data).then(() => {
-        setTimeout(function(){
-          return DEV_ADS_INDEX.getObject("0", function(err, content) {
-            console.log(content.objectID + ": " + content.toString());
-            assert.deepEqual(data, content);
-          });
-        }, 5000);
+        return DEV_ADS_INDEX.getObject("0").then(content => {
+          chai.expect(content.data).to.deep.equal(data);
+        });
       });
-    })
+    }).timeout(5000);
   });
 });
