@@ -49,9 +49,14 @@ Some implementation details:
   only has these years, hence, examples and tests use them. 
   If an ad with a `startDate` outside this range were added,
   it would be properly counted, and its year would be properly recorded.   
-- Ads are not currently checked for well-formedness. This decision was made 
-  because, as cloud functions, `countAdvertisersOnCreate` and 
-  `countAdvertisersOnDelete` are only triggered by
+- Ads are not currently checked for well-formedness or well-typed. 
+  This decision was made because, as cloud functions, `countAdvertisersOnCreate` 
+  and `countAdvertisersOnDelete` are only triggered by write events to the `ads`
+  or `dev_ads` database. Writes to `ads` should only occur from `adWriter.java`,
+  which should only push well-formed, well-typed data. Writes to `dev_ads` 
+  have a similar level of expectation - don't test with garbage data. If 
+  garbage data does come in, some type of error will show up in the firebase
+  log. 
 
 
   
