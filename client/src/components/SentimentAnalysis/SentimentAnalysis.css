@@ -1,0 +1,37 @@
+@import url("../../styles/colors.css");
+
+.ad-input {
+  margin-bottom: 10px;
+  padding: 15px 10px;
+  outline: none;
+  margin-top: 15px;
+  border-radius: 5px;
+  border: solid 1px gray;
+  font-size: 16px;
+  min-width: 400px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  line-height: 25px;
+}
+
+.analysis-button {
+  background-color: var(--secondary-color);
+  border: none;
+  outline: none;
+  padding: 10px 15px;
+  margin-bottom: 40px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: white solid 1px;
+  font-size: 15px;
+  color: var(--label-color);
+  font-weight: 600;
+}
+
+.analysis-button:hover {
+  background-color: var(--label-color);
+  color: var(--secondary-color);
+}
+
+.analysis-label {
+  margin: 0px;
+}
