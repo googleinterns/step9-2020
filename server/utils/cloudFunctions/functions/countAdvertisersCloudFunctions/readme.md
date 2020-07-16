@@ -17,6 +17,7 @@ A motivated example might be:
     - `advertiser` collection
       - `advertiser_A` doc
         - `numberOfAds: 3`
+
 In this case, there would be 8 ads in `dev_ads` in total, 
 by advertisers `A`, `B`, `C`. At one point, `advertiser_D` had at least one ad
 during `2019`, but they were all deleted. 
@@ -24,10 +25,10 @@ during `2019`, but they were all deleted.
 Motivation for doing this: 
 - Enable a simple query for `10 most common advertisers in 20XX`.  
 - This would be a complicated query to do client side. 
-- (This would be a read expensive query to do repeatedly - 
-   can't rely on firestore cache easily) [https://stackoverflow.com/questions/38423277/does-firebase-cache-the-data]
-- This would be a slow query to do client side (would have to tabulate across 
-  all advertisers, then only keep a small portion)
+- This would be a read expensive query to do repeatedly - 
+  can't rely on firestore cache easily. See [here.](https://stackoverflow.com/questions/38423277/does-firebase-cache-the-data)
+- This would be a slow query to do client side/just in time (would have to 
+  tabulate across all advertisers, then only keep a small portion)
 
 Sample query: 
 ```javascript
@@ -42,6 +43,8 @@ Some implementation details:
 - An advertiser is considerered to have
   an ad in a particular year if the `startDate` began in said year (i.e., an ad
   with `startDate: 2019-12-31` would fall in `2019`.)
+  - Ads are imported as iso date strings into firestore by `adWriter.java`.
+    Simple string parsing is used to recover the year. 
 - Ads are not *strictly* limited to 2018, 2019, 2020. The current dataset
   only has these years, hence, examples and tests use them. 
   If an ad with a `startDate` outside this range were added,
