@@ -26,7 +26,7 @@ const { incrementAdvertiserCount, decrementAdvertiserCount } =
 
 /**
  * Increments an advertiser's annual ad count by one for an ad in a given year.
- * in dev env. Annual aggregate stored in firebase collection `DEV_AGGREGATES_COLLECTION`.
+ * in dev env. Annual ad count stored in firebase collection `DEV_AGGREGATES_COLLECTION`.
  * Event triggered on create.
  * @returns {!Promise}     
  */
@@ -37,7 +37,7 @@ exports.devCountAdvertisersOnCreate =
 
 /**
  * Decrements an advertiser's annual ad count by one for an ad in a given year.
- * in dev env. Annual aggregate stored in firebase collection `DEV_AGGREGATES_COLLECTION`.
+ * in dev env. Annual ad count stored in firebase collection `DEV_AGGREGATES_COLLECTION`.
  * Event triggered on delete.
  * @returns {!Promise} 
  */
