@@ -5,7 +5,7 @@
  */
 
 const { assert } = require('../test/testConfig');
-const { FieldValue } = require('./countAdvertisersConfig');
+const { firestoreFieldValue } = require('./countAdvertisersConfig');
 
 /**
  * Assert `advertiser` is a string
@@ -73,7 +73,7 @@ function decrementAdvertiserCount(snapshot, collection) {
       const change = doc.data().numberOfAds > 0 ? -1 : 0;
 
       return advertiserCountReference
-                .update({numberOfAds: FieldValue.increment(change)});
+                .update({numberOfAds: firestoreFieldValue.increment(change)});
     } else {
       
       // If the document doesn't exist throw an error.
@@ -104,7 +104,7 @@ function incrementAdvertiserCount(snapshot, collection) {
   return advertiserCountReference.get().then(function(doc) {
     if (doc.exists) {
       return advertiserCountReference
-                  .update({numberOfAds: FieldValue.increment(1)});
+                  .update({numberOfAds: firestoreFieldValue.increment(1)});
     } else {
 
       // If the doc doesn't exist, create a doc with the advertiser name 
