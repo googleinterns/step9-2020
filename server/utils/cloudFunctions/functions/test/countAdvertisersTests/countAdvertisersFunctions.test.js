@@ -201,10 +201,12 @@ describe('Count advertisers cloud functions', () => {
     });   
 
     it(SHOULD_INCREMENT + 'only for an advertisers own ads', () => {
-      const snapOne = snapFromJson({advertiser: "adv_f", startDate: "2019-10-15"}, 
-                                    DEV_ADS_PATH);
-      const snapTwo = snapFromJson({advertiser: "adv_g", startDate: "2020-10-15"}, 
-                                    DEV_ADS_PATH);
+      const snapOne = 
+          snapFromJson({advertiser: "adv_f", startDate: "2019-10-15"}, 
+                        DEV_ADS_PATH);
+      const snapTwo = 
+          snapFromJson({advertiser: "adv_g", startDate: "2020-10-15"}, 
+                        DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
       
@@ -230,10 +232,16 @@ describe('Count advertisers cloud functions', () => {
     });
 
     it("should fail with malformed inputs", () => {
-      const snapOne = snapFromJson({advertiser: 101, startDate: "2019-10-15"}, DEV_ADS_PATH);
-      const snapTwo = snapFromJson({advertiser: "adv", startDate: 2019}, DEV_ADS_PATH);
-      const snapThree = snapFromJson({advertiser: "adv", startDate: "201-910-15"}, DEV_ADS_PATH);
-      const snapFour = snapFromJson({advertiser: "adv", startDate: "201"}, DEV_ADS_PATH);
+      const snapOne = 
+          snapFromJson({advertiser: 101, startDate: "2019-10-15"}, 
+                        DEV_ADS_PATH);
+      const snapTwo = 
+          snapFromJson({advertiser: "adv", startDate: 2019}, DEV_ADS_PATH);
+      const snapThree = 
+          snapFromJson({advertiser: "adv", startDate: "201-910-15"}, 
+                        DEV_ADS_PATH);
+      const snapFour = 
+          snapFromJson({advertiser: "adv", startDate: "201"}, DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
 
@@ -376,10 +384,16 @@ describe('Count advertisers cloud functions', () => {
     });
 
     it("should fail with malformed inputs", () => {
-      const snapOne = snapFromJson({advertiser: 101, startDate: "2019-10-15"}, DEV_ADS_PATH);
-      const snapTwo = snapFromJson({advertiser: "adv", startDate: 2019}, DEV_ADS_PATH);
-      const snapThree = snapFromJson({advertiser: "adv", startDate: "201-910-15"}, DEV_ADS_PATH);
-      const snapFour = snapFromJson({advertiser: "adv", startDate: "201"}, DEV_ADS_PATH);
+      const snapOne = 
+          snapFromJson({advertiser: 101, startDate: "2019-10-15"}, 
+                        DEV_ADS_PATH);
+      const snapTwo = 
+          snapFromJson({advertiser: "adv", startDate: 2019}, DEV_ADS_PATH);
+      const snapThree = 
+          snapFromJson({advertiser: "adv", startDate: "201-910-15"}, 
+                        DEV_ADS_PATH);
+      const snapFour = 
+          snapFromJson({advertiser: "adv", startDate: "201"}, DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
