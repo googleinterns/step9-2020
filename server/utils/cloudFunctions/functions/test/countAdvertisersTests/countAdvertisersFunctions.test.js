@@ -227,6 +227,20 @@ describe('Count advertisers cloud functions', () => {
           return;
         });
       }); 
+    });
+
+    it("should fail with malformed inputs", () => {
+      const snapOne = snapFromJson({advertiser: 101, startDate: "2019-10-15"}, DEV_ADS_PATH);
+      const snapTwo = snapFromJson({advertiser: "adv", startDate: 2019}, DEV_ADS_PATH);
+      const snapThree = snapFromJson({advertiser: "adv", startDate: "201-910-15"}, DEV_ADS_PATH);
+      const snapFour = snapFromJson({advertiser: "adv", startDate: "201"}, DEV_ADS_PATH);
+
+      const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
+
+      assert.throws(() => wrapper(snapOne), Error);
+      assert.throws(() => wrapper(snapTwo), Error);
+      assert.throws(() => wrapper(snapThree), Error);
+      assert.throws(() => wrapper(snapFour), Error);
     });  
   });
   
@@ -360,5 +374,19 @@ describe('Count advertisers cloud functions', () => {
         });
       });
     });
+
+    it("should fail with malformed inputs", () => {
+      const snapOne = snapFromJson({advertiser: 101, startDate: "2019-10-15"}, DEV_ADS_PATH);
+      const snapTwo = snapFromJson({advertiser: "adv", startDate: 2019}, DEV_ADS_PATH);
+      const snapThree = snapFromJson({advertiser: "adv", startDate: "201-910-15"}, DEV_ADS_PATH);
+      const snapFour = snapFromJson({advertiser: "adv", startDate: "201"}, DEV_ADS_PATH);
+
+      const wrapper = firestoreWrap(devCountAdvertisersOnDelete);
+
+      assert.throws(() => wrapper(snapOne), Error);
+      assert.throws(() => wrapper(snapTwo), Error);
+      assert.throws(() => wrapper(snapThree), Error);
+      assert.throws(() => wrapper(snapFour), Error);
+    });  
   });
 });

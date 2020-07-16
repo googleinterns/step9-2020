@@ -6,7 +6,9 @@
  *              with the field `numberOfAds: 1`. If the document already 
  *              exists, `numberOfAds` will be incremented by 1. 
  *              If this document is deleted, `numberOfAds` will be decremented
- *              if `numberOfAds` is greater than 0. 
+ *              if `numberOfAds` is greater than 0.
+ *              If `advertiser` or `startDate` field is not well-typed/formed, 
+ *              an assertion error will be thrown. 
  * Author: Robert Marcus
  * Date: July 14, 2020
  */
