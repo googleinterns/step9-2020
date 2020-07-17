@@ -1,30 +1,29 @@
-@import url("../../styles/colors.css");
-
+@import url('../../styles/colors.css');
 .ad-input {
-  margin-bottom: 10px;
-  padding: 15px 10px;
-  outline: none;
-  margin-top: 15px;
-  border-radius: 5px;
   border: solid 1px gray;
+  border-radius: 5px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   font-size: 16px;
-  min-width: 400px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   line-height: 25px;
+  margin-bottom: 10px;
+  margin-top: 15px;
+  min-width: 400px;
+  outline: none;
+  padding: 15px 10px;
 }
 
 .analysis-button {
   background-color: var(--secondary-color);
-  border: none;
+  border: white solid 1px;
+  border-radius: 6px;
+  color: var(--label-color);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 40px;
   outline: none;
   padding: 10px 15px;
-  margin-bottom: 40px;
-  border-radius: 6px;
-  cursor: pointer;
-  border: white solid 1px;
-  font-size: 15px;
-  color: var(--label-color);
-  font-weight: 600;
 }
 
 .analysis-button:hover {
@@ -47,7 +46,7 @@
 .analysis-card {
   width: 45%;
   flex-direction: column;
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
   padding-bottom: 40px;
   border-radius: 10px;
 }
