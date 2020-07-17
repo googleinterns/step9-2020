@@ -1,8 +1,8 @@
 import algoliasearch from 'algoliasearch/lite';
 
 const searchClient = algoliasearch(
-  'E82P8D3AVW',
-  '18f48284be85f748f3201280dc0938ce'
+  /* Application ID      = */ 'E82P8D3AVW',
+  /* Search only API Key = */ '18f48284be85f748f3201280dc0938ce'
 );
 
 const DEV_INDEX = 'dev_ADS';
