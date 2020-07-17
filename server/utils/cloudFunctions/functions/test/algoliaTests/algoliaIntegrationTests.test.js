@@ -7,6 +7,9 @@
  * - For simplicity, advertisment json's are denoted as `ad`, and 
  *   the advertiser is used as the documents `primary key`. 
  *   - In practice, primary key is a random string.
+ *   - If used something like `adOne` as `primary key`, would probably
+ *     run into a lot of collisions with other `adOne`'s not deleted
+ *     fast enough between tests (see note about `after` cleanup below.)
  * - Two methods are used to retrieve algolia records, `getObject` and 
  *   `getObjects`. 
  *   - `getObject` takes a string `objectID` returns a json object. 
@@ -168,9 +171,9 @@ describe("Algolia integrations tests", () => {
             DEV_ADS_INDEX.getObjects(["h"]).then(content => {
 
               // Checking `ad` is deleted, so verify an error message
-              // Exists, has the right message, and that index 0
+              // exists, has the right message, and that index 0
               // is null. Check existence because if doesn't, `.trim()`
-              // will yield an unhelpful error and obfuscate the true error
+              // will yield an unhelpful error and obfuscate the true error.
               chai.expect(content.message).to.exist;
               chai.expect(content.message.trim())
                   .to.be.equal("ObjectID h does not exist.");
@@ -194,7 +197,7 @@ describe("Algolia integrations tests", () => {
               DEV_ADS_INDEX.getObjects(["i", "j"]).then(content => {
 
                 // Checking `adOne` is deleted, so verify an error message
-                // Exists, has the right message, and that index 0
+                // exists, has the right message, and that index 0
                 // is null, while `adTwo` still exists. Check existence 
                 // because if doesn't, `.trim()` will yield an unhelpful error
                 // and obfuscate the true error.
