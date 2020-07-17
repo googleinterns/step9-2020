@@ -115,6 +115,8 @@ describe("Algolia integrations tests", () => {
       DEV_ADS_COLLECTION.doc("e").set(ad).then(() => {
         DEV_ADS_COLLECTION.doc("e").update({startDate: "2020-10-15"}).then(() => {
           setTimeout(function() {
+
+            // Verify that `ad` was updated.
             DEV_ADS_INDEX.getObject("e").then(content => {
               chai.expect(content.data)
                   .to.deep.equal({advertiser: "e", startDate: "2020-10-15"});
@@ -135,6 +137,8 @@ describe("Algolia integrations tests", () => {
         DEV_ADS_COLLECTION.doc("g").set(adTwo).then(() => {
           DEV_ADS_COLLECTION.doc("f").update({startDate: "2020-10-15"}).then(() => {
             setTimeout(function(){
+
+              // Verify that `adOne` was updated, `adTwo` was not. 
               DEV_ADS_INDEX.getObject("f").then(content => {
                 chai.expect(content.data)
                     .to.deep.equal({advertiser: "f", startDate: "2020-10-15"});
@@ -160,6 +164,10 @@ describe("Algolia integrations tests", () => {
         DEV_ADS_COLLECTION.doc("h").delete().then(() => {
           setTimeout(function(){
             DEV_ADS_INDEX.getObjects(["h"]).then(content => {
+
+              // Checking `ad` is deleted, so verify an error message
+              // Exists, has the right message, and that index 0
+              // is null.
               chai.expect(content.message).to.exist;
               chai.expect(content.message.trim()).to.be.equal("ObjectID h does not exist.");
               chai.expect(content.results[0]).to.be.null;
@@ -180,9 +188,15 @@ describe("Algolia integrations tests", () => {
           DEV_ADS_COLLECTION.doc("i").delete().then(() => {
             setTimeout(function(){
               DEV_ADS_INDEX.getObjects(["i", "j"]).then(content => {
+
+                // Checking `adOne` is deleted, so verify an error message
+                // Exists, has the right message, and that index 0
+                // is null, while `adTwo` still exists. 
                 chai.expect(content.message).to.exist;
-                chai.expect(content.message.trim()).to.be.equal("ObjectID i does not exist.");
+                chai.expect(content.message.trim())
+                    .to.be.equal("ObjectID i does not exist.");
                 chai.expect(content.results[0]).to.be.null;
+                chai.expect(content.results[1].data).to.deep.equal(adTwo);   
               }).catch(err => console.log(err));
 
               done();
