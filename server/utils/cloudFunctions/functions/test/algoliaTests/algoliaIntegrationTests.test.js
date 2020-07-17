@@ -4,6 +4,8 @@
  *              it is probably a problem with algolia flaking. When in doubt,
  *              re-run the tests. Compile with `npm run test`.
  * Notes:
+ * - For simplicity, advertisment json's are denoted as `ad`, and 
+ *   the advertiser is used as the documents `primary key`. 
  * - Two methods are used to retrieve algolia records, `getObject` and 
  *   `getObjects`. 
  *   - `getObject` takes a string `objectID` returns a json object. 
@@ -12,13 +14,13 @@
  *     object. 
  *     - If all records exist, the document is of the form 
  *       `{ results: [record1, record2, ...]}`
- *     - If a record doesn't exist, it's index in the list will be `null`.
+ *     - If a record doesn't exist, its index in the list will be `null`.
  *       There will also be an additional field `message`:
  *       `{ results, message }`. The message is of the form `'ObjectID {records objectID} does not exist. '`
  *     - Because `getObjects` does not throw an error, it is more useful than 
  *       `getObject` to validate a record has been deleted - if the query 
  *       fails/throws an error for a different reason than the `getObject` 
- *       error, the test will still pass. Checking for a `null` field
+ *       error, the test would still pass. Checking for a `null` field
  *       and a string equality match is alternatively much easier. 
  *     - For the above reason, `getObjects` is used with singleton lists
  *       to verify that a record has been deleted instead of `getObject`. 
@@ -26,6 +28,8 @@
  *   functions, it seems reasonable to not test for invalid inputs or 
  *   other failures (per Aileme.)
  * - `setTimeout` is used to allow firebase changes to propogate to algolia. 
+ *   - `setTimeout` requires that `done()` be called at the end of the 
+ *     inner function body. It is not equivalent to `return`. 
  * - `TIMEOUT_10S` was chosen because this is the maximum amount of latency 
  *   for firebase to execute a function. 
  * - `TIMEOUT_15S` is used to extend the default 2000ms limit set by mocha.
@@ -124,11 +128,11 @@ describe("Algolia integrations tests", () => {
 
     it("should propogate a firestore document update to " + 
        "the proper algolia record", function(done) {
-      const data = {advertiser: "f", startDate: "2019-10-15"};
-      const dataTwo = {advertiser: "g", startDate: "2019-10-15"};
+      const adOne = {advertiser: "f", startDate: "2019-10-15"};
+      const adTwo = {advertiser: "g", startDate: "2019-10-15"};
 
-      DEV_ADS_COLLECTION.doc("f").set(data).then(() => {
-        DEV_ADS_COLLECTION.doc("g").set(dataTwo).then(() => {
+      DEV_ADS_COLLECTION.doc("f").set(adOne).then(() => {
+        DEV_ADS_COLLECTION.doc("g").set(adTwo).then(() => {
           DEV_ADS_COLLECTION.doc("f").update({startDate: "2020-10-15"}).then(() => {
             setTimeout(function(){
               DEV_ADS_INDEX.getObject("f").then(content => {
@@ -137,7 +141,7 @@ describe("Algolia integrations tests", () => {
               }).catch(err => console.log(err));
               
               DEV_ADS_INDEX.getObject("g").then(content => {
-                chai.expect(content.data).to.deep.equal(dataTwo);                
+                chai.expect(content.data).to.deep.equal(adTwo);                
               }).catch(err => console.log(err));
 
               done(); 
@@ -150,9 +154,9 @@ describe("Algolia integrations tests", () => {
 
   describe("test_deleteRecord", () => {
     it("should delete an algolia record when a firestore document is deleted", function(done) {
-      const data = {advertiser: "h", startDate: "2019-10-15"};
+      const ad = {advertiser: "h", startDate: "2019-10-15"};
 
-      DEV_ADS_COLLECTION.doc("h").set(data).then(() => {
+      DEV_ADS_COLLECTION.doc("h").set(ad).then(() => {
         DEV_ADS_COLLECTION.doc("h").delete().then(() => {
           setTimeout(function(){
             DEV_ADS_INDEX.getObjects(["h"]).then(content => {
@@ -168,11 +172,11 @@ describe("Algolia integrations tests", () => {
     }).timeout(TIMEOUT_15S); 
 
     it("should delete the right algolia record when a firestore document is deleted", function(done) {
-      const data = {advertiser: "i", startDate: "2019-10-15"};
-      const dataTwo = {advertiser: "j", startDate: "2019-10-15"};
+      const adOne = {advertiser: "i", startDate: "2019-10-15"};
+      const adTwo = {advertiser: "j", startDate: "2019-10-15"};
 
-      DEV_ADS_COLLECTION.doc("i").set(data).then(() => {
-        DEV_ADS_COLLECTION.doc("j").set(data).then(() => {
+      DEV_ADS_COLLECTION.doc("i").set(adOne).then(() => {
+        DEV_ADS_COLLECTION.doc("j").set(adTwo).then(() => {
           DEV_ADS_COLLECTION.doc("i").delete().then(() => {
             setTimeout(function(){
               DEV_ADS_INDEX.getObjects(["i", "j"]).then(content => {
