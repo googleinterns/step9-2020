@@ -40,13 +40,16 @@
   width: 100%;
   margin: 30px 0px;
   align-items: flex-start;
+  justify-content: space-around;
   padding: 20px 0px;
-  background: linear-gradient(#c7c7c7, #c7c7c7) no-repeat center/2px 100%;
 }
 
 .analysis-card {
-  width: 50%;
+  width: 45%;
   flex-direction: column;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  padding-bottom: 40px;
+  border-radius: 10px;
 }
 
 .color-bar {
