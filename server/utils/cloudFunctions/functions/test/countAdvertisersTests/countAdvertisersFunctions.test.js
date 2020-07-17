@@ -29,11 +29,8 @@
  */
 
 // Import the testing environment configuration
-const { test, 
-        assert, 
-        sinon, 
+const { assert,  
         chai,
-        firestoreMock, 
         firestoreWrap, 
         snapFromJson,
         DEV_ADS_PATH } = require('../testConfig');
@@ -61,7 +58,7 @@ describe('Count advertisers cloud functions', () => {
     const collections = ['dev_ads',
                          'dev_aggregates/2018/advertisers',
                          'dev_aggregates/2019/advertisers',
-                         'dev_aggregates/2018/advertisers']
+                         'dev_aggregates/2020/advertisers']
     collections.forEach(collection => deleteCollection(DB, collection));
   });
 
