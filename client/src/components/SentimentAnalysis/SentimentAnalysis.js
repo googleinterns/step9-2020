@@ -1,7 +1,8 @@
 import './SentimentAnalysis.css';
 
-import { AnalysisInput, ColorBar, INPUT_LIST, TermsDisplay } from './Helpers';
+import { AnalysisInput, ColorBar, TermsDisplay } from './Helpers';
 
+import { INPUT_LIST } from '../../constants/analysis_constants';
 import React from 'react';
 import tardigrade from '../../images/tardigrade.png';
 

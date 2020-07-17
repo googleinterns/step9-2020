@@ -2,7 +2,7 @@ import './App.css';
 
 import React, { useState } from 'react';
 
-import { PAGE_MAP } from './constants/header_constant';
+import { PAGE_MAP } from './constants/header_constants';
 import PageNav from './components/PageNav/PageNav';
 
 const App = () => {

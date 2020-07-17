@@ -1,15 +1,7 @@
+import { COLOR_MAP, INPUT_ROWS } from '../../constants/analysis_constants';
+
 import PropTypes from 'prop-types';
 import React from 'react';
-
-const HEADLINE_PLACEHOLDER =
-  'i.e. Fighting Climate Change | Pete Buttigieg 2020 | Learn More';
-const CONTENT_PLACEHOLDER =
-  "i.e. Climate change is a life and death issue for our generation. It's time for bold action.";
-
-const INPUT_LIST = [
-  { label: 'HEADER', placeholder: HEADLINE_PLACEHOLDER },
-  { label: 'CONTENT', placeholder: CONTENT_PLACEHOLDER },
-];
 
 const AnalysisInput = props => {
   const { label, placeholder } = props;
@@ -19,7 +11,7 @@ const AnalysisInput = props => {
       <h3 className="analysis-label">{label}</h3>
       <textarea
         type="text"
-        rows={3}
+        rows={INPUT_ROWS}
         className="ad-input"
         placeholder={placeholder}
       />
@@ -35,18 +27,12 @@ AnalysisInput.propTypes = {
 const ColorBar = props => {
   const { score, magnitude } = props;
 
-  const colorMap = {
-    negative: { label: 'Negative', color: 'red', background: '#ffbbc6' },
-    neutral: { label: 'Neutral', color: 'gray', background: '#e8e8e8' },
-    positive: { label: 'Positive', color: 'green', background: '#a8ffcc' },
-  };
-
-  const colorObject = colorMap.neutral;
+  const colorObject = COLOR_MAP.neutral;
 
   if (score < 0.0) {
-    Object.assign(colorObject, colorMap.negative);
+    Object.assign(colorObject, COLOR_MAP.negative);
   } else if (score > 0.0) {
-    Object.assign(colorObject, colorMap.positive);
+    Object.assign(colorObject, COLOR_MAP.positive);
   }
 
   return (
@@ -92,4 +78,4 @@ TermsDisplay.propTypes = {
   termList: PropTypes.array,
 };
 
-export { AnalysisInput, ColorBar, INPUT_LIST, TermsDisplay };
+export { AnalysisInput, ColorBar, TermsDisplay };

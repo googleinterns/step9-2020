@@ -1,6 +1,6 @@
 import './PageNav.css';
 
-import { HEADERS } from '../../constants/header_constant';
+import { HEADERS } from '../../constants/header_constants';
 import PropTypes from 'prop-types';
 import React from 'react';
 
