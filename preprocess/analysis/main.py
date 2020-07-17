@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from language_analysis import analyze_entities, analyze_sentiment
 
 app = Flask(__name__)
