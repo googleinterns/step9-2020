@@ -6,6 +6,7 @@
  * Notes:
  * - For simplicity, advertisment json's are denoted as `ad`, and 
  *   the advertiser is used as the documents `primary key`. 
+ *   - In practice, primary key is a random string.
  * - Two methods are used to retrieve algolia records, `getObject` and 
  *   `getObjects`. 
  *   - `getObject` takes a string `objectID` returns a json object. 
@@ -157,7 +158,8 @@ describe("Algolia integrations tests", () => {
   });
 
   describe("test_deleteRecord", () => {
-    it("should delete an algolia record when a firestore document is deleted", function(done) {
+    it("should delete an algolia record when a firestore " + 
+       "document is deleted", function(done) {
       const ad = {advertiser: "h", startDate: "2019-10-15"};
 
       DEV_ADS_COLLECTION.doc("h").set(ad).then(() => {
@@ -167,9 +169,11 @@ describe("Algolia integrations tests", () => {
 
               // Checking `ad` is deleted, so verify an error message
               // Exists, has the right message, and that index 0
-              // is null.
+              // is null. Check existence because if doesn't, `.trim()`
+              // will yield an unhelpful error and obfuscate the true error
               chai.expect(content.message).to.exist;
-              chai.expect(content.message.trim()).to.be.equal("ObjectID h does not exist.");
+              chai.expect(content.message.trim())
+                  .to.be.equal("ObjectID h does not exist.");
               chai.expect(content.results[0]).to.be.null;
             }).catch(err => console.log(err));
 
@@ -191,7 +195,9 @@ describe("Algolia integrations tests", () => {
 
                 // Checking `adOne` is deleted, so verify an error message
                 // Exists, has the right message, and that index 0
-                // is null, while `adTwo` still exists. 
+                // is null, while `adTwo` still exists. Check existence 
+                // because if doesn't, `.trim()` will yield an unhelpful error
+                // and obfuscate the true error.
                 chai.expect(content.message).to.exist;
                 chai.expect(content.message.trim())
                     .to.be.equal("ObjectID i does not exist.");
