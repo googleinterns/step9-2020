@@ -17,4 +17,26 @@ const DEV_AGGREGATES_COLLECTION =
 // field value by `change`. 
 const firestoreFieldValue = ADMIN.firestore.FieldValue;
 
-module.exports = { DEV_AGGREGATES_COLLECTION, firestoreFieldValue }
+// Custom error for illegally decrementing a document 
+class IllegalAdCountDecrement extends Error {
+  constructor() {
+    super();
+    this.message = "Cannot decrement `numberOfAds` past 0."
+    this.name = "IllegalAdCountDecrement"; 
+    this.code = 400; // Bad request. 
+  }
+}
+
+// Custom error for illegally decrementing a document 
+class AdvertiserDocumentNotFound extends Error {
+  constructor(message) {
+    super(message); 
+    this.name = "AdvertiserDocumentNotFound"; 
+    this.code = 404; // Not found error code. 
+  }
+}
+
+module.exports = { DEV_AGGREGATES_COLLECTION, 
+                   firestoreFieldValue, 
+                   IllegalAdCountDecrement, 
+                   AdvertiserDocumentNotFound }

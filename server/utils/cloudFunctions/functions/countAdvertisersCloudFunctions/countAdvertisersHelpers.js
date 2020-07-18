@@ -4,27 +4,9 @@
  * Date: July 14, 2020
  */
 
-const { assert } = require('../test/testConfig');
-const { firestoreFieldValue } = require('./countAdvertisersConfig');
-
-/**
- * Assert `advertiser` is a string
- * @param {string} advertiser as derived from snapshot
- */
-function checkAdvertiser(advertiser) {
-  assert.typeOf(advertiser, 'string');
-}
-
-/**
- * Assert `startDate` is a string and a valid iso date string.
- * If `startDate` is not a valid iso string, `isoStartDate` will == NaN.
- * @param {string} startDate as derived from snapshot
- * @param {Object} isoStartDate Date(startDate) output, json string
- */
-function checkStartDate(startDate, isoStartDate) {
-  assert.typeOf(startDate, 'string');
-  assert.ok(isoStartDate.getFullYear()); 
-}
+const { firestoreFieldValue, 
+        AdvertiserDocumentNotFound, 
+        IllegalAdCountDecrement } = require('./countAdvertisersConfig');
 
 /**
  * Returns a filepath reference to a doc containing the numberOfAds an 
@@ -41,9 +23,6 @@ function getAdvertiserCountReference(snapshot, collection) {
   const advertiser = data.advertiser;
   const startDate = data.startDate;
   const isoStartDate = new Date(startDate);
-
-  checkAdvertiser(advertiser);
-  checkStartDate(startDate, isoStartDate);
 
   const startYear = isoStartDate.getFullYear().toString(); 
 
@@ -71,22 +50,20 @@ function decrementAdvertiserCount(snapshot, collection) {
 
   return advertiserCountReference.get().then(function(doc) {
     if (doc.exists) {
-
-      // Only decrement if the numberOfAds is positive.
-      const change = doc.data().numberOfAds > 0 ? -1 : 0;
+      if (doc.data().numberOfAds < 1) {
+        throw new IllegalAdCountDecrement();
+      }
 
       return advertiserCountReference
-                .update({numberOfAds: firestoreFieldValue.increment(change)});
+                .update({numberOfAds: firestoreFieldValue.increment(-1)});
     } else {
       
       // If the document doesn't exist throw an error.
-      const errorMessage = { code: 500, 
-                             message: snapshot.data().advertiser + 
-                                      snapshot.data().startDate +
-                                      "advertiser numberOfAds doc not found"};
-      throw errorMessage;
+      throw new AdvertiserDocumentNotFound(snapshot.data().advertiser + 
+                                              snapshot.data().startDate + 
+                                              " `numberOfAds` doc not found");
     }
-  }).catch(err => console.log(err));
+  }).catch(err => Promise.reject(err));
 }
 
 /**

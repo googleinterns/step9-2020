@@ -35,6 +35,10 @@ const { assert,
         snapFromJson,
         DEV_ADS_PATH } = require('../testConfig');
 
+// set chai to use `chai-as-promised` (helpful for promises) 
+// instead of `sinonChai` (helpful for spying/stubbing).
+chai.use(require('chai-as-promised'));
+
 const { deleteCollection } = require('../deleteCollection');
 
 const { DB } = require('../../firebaseConfig');
@@ -45,6 +49,13 @@ const { DEV_AGGREGATES_COLLECTION } =
 // Import the cloud functions.
 const { devCountAdvertisersOnCreate, devCountAdvertisersOnDelete } = 
     require('../../countAdvertisersCloudFunctions/devCountAdvertisersFunctions');
+
+// Import the helper functions. This is useful for testing exceptions. 
+const { decrementAdvertiserCount, incrementAdvertiserCount } = 
+    require('../../countAdvertisersCloudFunctions/countAdvertisersHelpers');
+
+const { IllegalAdCountDecrement, AdvertiserDocumentNotFound } =
+    require('../../countAdvertisersCloudFunctions/countAdvertisersHelpers');
 
 // Save some space for test explanation in the test description
 const SHOULD_INCREMENT = "should increment advertisers ad count "; 
@@ -198,7 +209,7 @@ describe('Count advertisers cloud functions', () => {
       }); 
     });   
 
-    it(SHOULD_INCREMENT + 'only for an advertisers own ads', () => {
+    it(SHOULD_INCREMENT + 'for their own ads, and not other advertisers', () => {
       const snapOne = 
           snapFromJson({advertiser: "adv_f", startDate: "2019-10-15"}, 
                         DEV_ADS_PATH);
@@ -228,24 +239,6 @@ describe('Count advertisers cloud functions', () => {
         });
       }); 
     });
-
-    it("should fail with malformed inputs", () => {
-      const snapOne = 
-          snapFromJson({advertiser: 101, startDate: "2019-10-15"}, 
-                        DEV_ADS_PATH);
-      const snapTwo = 
-          snapFromJson({advertiser: "adv", startDate: 2019}, DEV_ADS_PATH);
-      const snapThree = 
-          snapFromJson({advertiser: "adv", startDate: "201-910-15"}, 
-                        DEV_ADS_PATH);
-
-      const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
-
-      assert.throws(() => wrapper(snapOne), Error);
-      assert.throws(() => wrapper(snapTwo), Error);
-      assert.throws(() => wrapper(snapThree), Error);
-      assert.throws(() => wrapper(snapFour), Error);
-    });  
   });
   
   describe("test_countAdvertisersOnDelete", () => {
@@ -280,22 +273,13 @@ describe('Count advertisers cloud functions', () => {
       });
     });
 
-    it("should only decrement if ad count is positive", () => {
+    it("should throw an error if decrementing past zero", async () => {
       const snap = snapFromJson({advertiser: "adv_A", 
                                  startDate: "2018-10-15"}, DEV_ADS_PATH);
 
       const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
-      
-      return deleteWrapper(snap).then(() => {
-        DEV_AGGREGATES_COLLECTION
-            .doc("2018")
-            .collection("advertisers")
-            .doc("adv_A").get().then(function(doc) {
-              return assert.equal(doc.data().numberOfAds, 0);
-            }).catch(err => console.log(err));
-        
-        return;
-      });
+      await chai.expect(deleteWrapper(snap)).to.eventually.be.rejectedWith("Cannot decrement `numberOfAds` past 0.").and.be.an.instanceOf(Error);
+
     });
 
     it("should throw some sort of an error if doc doesn't exist", async () => {
@@ -310,7 +294,7 @@ describe('Count advertisers cloud functions', () => {
       // An error will be thrown and caught. In practice, this should only
       // happen if a `updateAdvertiserCountOnCreate` fails during writing 
       // without retry, or if the entry is manually deleted. 
-      chai.expect(() => deleteWrapper(snap)).to.throw(Error);
+      await chai.expect(deleteWrapper(snap)).to.eventually.be.rejectedWith("new_adv2018-10-15 `numberOfAds` doc not found").and.be.an.instanceOf(Error);
     });
     
     it("should decrement the right advertisers count when" +
@@ -378,23 +362,5 @@ describe('Count advertisers cloud functions', () => {
         });
       });
     });
-
-    it("should fail with malformed inputs", () => {
-      const snapOne = 
-          snapFromJson({advertiser: 101, startDate: "2019-10-15"}, 
-                        DEV_ADS_PATH);
-      const snapTwo = 
-          snapFromJson({advertiser: "adv", startDate: 2019}, DEV_ADS_PATH);
-      const snapThree = 
-          snapFromJson({advertiser: "adv", startDate: "201-910-15"}, 
-                        DEV_ADS_PATH);
-
-      const wrapper = firestoreWrap(devCountAdvertisersOnDelete);
-
-      assert.throws(() => wrapper(snapOne), Error);
-      assert.throws(() => wrapper(snapTwo), Error);
-      assert.throws(() => wrapper(snapThree), Error);
-      assert.throws(() => wrapper(snapFour), Error);
-    });  
   });
 });
