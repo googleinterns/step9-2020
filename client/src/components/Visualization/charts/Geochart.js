@@ -7,12 +7,14 @@
 import { ads } from '../../../firebase/FirestoreDocumentReader';
 import { Chart } from "react-google-charts";
 import firebase from '../../../firebase/firebase';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { states } from './StateDataParser';
 import { app, database } from '../../../firebase/firebase';
 
 
 const Geochart = () => {
+
+  const [adTotal, setAdTotal] = useState(0);
 
   class GeochartAd {
     constructor(id, impressionsMin) {
@@ -41,61 +43,20 @@ const Geochart = () => {
       return new GeochartAd(data.id, data.impressionsMin)
     }
   }
-
-  async function getAdTotal(state) {
-    let documentRef = database.collection('ads');
-    let activeRef = await documentRef.where("geoTarget", "array-contains", state)
-                                     .withConverter(adConverter)
-                                     .get();
-    let i = 0;
-    for (const ad of activeRef.docs) {
-      // console.log(ad.id);
-      i++;
-    }      
-    return i; 
-  }
-
-  async function killme() {
-    const users = await getAdTotal("Nevada");
-    console.log(users);
-  }
-
-  killme();
-
-  // console.log(getAdTotal());
-
-
-  // console.log(getAdTotal("California").value);
-
-
-  function getNumberOfAds(data, state) {
-    database.collection("ads").where("geoTarget", "array-contains", state).withConverter(adConverter)
-      .get()
-      .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
-              // console.log(doc.id, " => ", doc.data());
-          });
-      })
-      .catch(function(error) {
-          console.log("Error getting documents: ", error);
-      });
-  }
-
-  /*
-   * Currently, getData assigns a meaningless random number to each state.
-   * In the future, once the states dictionary contains ad information, getData will
-   *    retrieve information such as minimum ad impressions and maximum ad spend.
-   */ 
-  function getData() {
+    
+  useEffect(
+    async () => {
     let data = [["State", "Random Number"]];
-    // console.log(getNumberOfAds("California"));
     for (let state in states) {
-      // console.log(state + "  " + AAA(state));
-      getNumberOfAds(data, state);
-      // data.push([state, Math.floor(Math.random() * Math.floor(1000))]);
+      const documentRef = database.collection('ads');
+      const query = await documentRef.where("geoTarget", "array-contains", state)
+                                  .withConverter(adConverter)
+                                  .get();
+      data.push([state, query.docs.length]); // Update data table.
     }
-    return data;
-  }
+    console.log(data);
+    setAdTotal(data)
+  }, [])
 
   const options = {
     enableRegionInteractivity: true,
@@ -105,10 +66,12 @@ const Geochart = () => {
     tooltip: {trigger:'focus'} // Trigger info box on mouse hover over state.
   };
 
+  let sampleData = [["State", "Number"], ["California", 100], ["Montana", 12]];
+
   return (
     <div className="search-header center">
       <p>Impressions Geochart</p>
-      <Chart chartType="GeoChart" width="700px" height="400px" data={getData()} options={options} />
+      <Chart chartType="GeoChart" width="700px" height="400px" data={ adTotal } options={ options } />
     </div>
   );
 };
