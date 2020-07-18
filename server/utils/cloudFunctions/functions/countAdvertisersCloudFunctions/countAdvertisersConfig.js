@@ -23,7 +23,7 @@ class IllegalAdCountDecrement extends Error {
     super();
     this.message = "Cannot decrement `numberOfAds` past 0."
     this.name = "IllegalAdCountDecrement"; 
-    this.code = 400; // Bad request. 
+    this.statusCode = 400; // Bad request. 
   }
 }
 
@@ -32,7 +32,7 @@ class AdvertiserDocumentNotFound extends Error {
   constructor(message) {
     super(message); 
     this.name = "AdvertiserDocumentNotFound"; 
-    this.code = 404; // Not found error code. 
+    this.statusCode = 404; // Not found error code. 
   }
 }
 

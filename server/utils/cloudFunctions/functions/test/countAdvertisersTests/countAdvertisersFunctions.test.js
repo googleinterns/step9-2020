@@ -15,6 +15,11 @@
  *     nesting is advantageous because it easily keeps everything in scope
  *     without much fuss. Thus, nesting is fine to use. 
  *   - Also this is how the official docs do it. 
+ *   - Where possible, `Promise.allSettled` is used to parallelize calls.
+ *     - Not always possible, because:
+ *       - Might need a somewhat sequential ordering (e.g., creating/deleting)
+ *       - Other situations where it did not want to work (not sure why...)
+ *         - See: `for every ad`, `even if ads have same start date`
  * Testing note: 
  * - Firebase recommends running tests online, i.e., on a real db
  *   for testing simplicity.
@@ -50,10 +55,8 @@ const { DEV_AGGREGATES_COLLECTION } =
 const { devCountAdvertisersOnCreate, devCountAdvertisersOnDelete } = 
     require('../../countAdvertisersCloudFunctions/devCountAdvertisersFunctions');
 
-// Import the helper functions. This is useful for testing exceptions. 
-const { decrementAdvertiserCount, incrementAdvertiserCount } = 
-    require('../../countAdvertisersCloudFunctions/countAdvertisersHelpers');
-
+// Import the custom error types for illegal decrementing, and accessing 
+// non-existent advertiser documents. 
 const { IllegalAdCountDecrement, AdvertiserDocumentNotFound } =
     require('../../countAdvertisersCloudFunctions/countAdvertisersHelpers');
 
@@ -103,37 +106,35 @@ describe('Count advertisers cloud functions', () => {
 
       const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
 
-      return wrapper(snapOne).then(() => {
-        return wrapper(snapTwo).then(() => {
-          return wrapper(snapThree).then(() => {
-            DEV_AGGREGATES_COLLECTION
-                .doc("2018")
-                .collection("advertisers")
-                .doc(advertiser).get().then(function(doc) {
-                  return assert.equal(doc.data().numberOfAds, 1);
-                }).catch(err => console.log(err));
-            
-            DEV_AGGREGATES_COLLECTION
-                .doc("2019")
-                .collection("advertisers")
-                .doc(advertiser).get().then(function(doc) {
-                  return assert.equal(doc.data().numberOfAds, 1);
+      return Promise.all([wrapper(snapOne),
+                          wrapper(snapTwo),
+                          wrapper(snapThree)]).then(() => {
+        DEV_AGGREGATES_COLLECTION
+            .doc("2018")
+            .collection("advertisers")
+            .doc(advertiser).get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
             }).catch(err => console.log(err));
-            
-            DEV_AGGREGATES_COLLECTION
-                .doc("2020")
-                .collection("advertisers")
-                .doc(advertiser).get().then(function(doc) {
-                  return assert.equal(doc.data().numberOfAds, 1);
-                }).catch(err => console.log(err));
 
-            return;
-          });
-        });
+        DEV_AGGREGATES_COLLECTION
+            .doc("2019")
+            .collection("advertisers")
+            .doc(advertiser).get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+        }).catch(err => console.log(err));
+        
+        DEV_AGGREGATES_COLLECTION
+            .doc("2020")
+            .collection("advertisers")
+            .doc(advertiser).get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+            }).catch(err => console.log(err));
+
+        return;
       });
     });
     
-    it(SHOULD_INCREMENT +  'for every ad', () => {
+    it(SHOULD_INCREMENT +  'for every ad', async () => {
       const advertiser = "adv_c"; 
       const snapOne = 
           snapFromJson({advertiser, startDate: "2019-10-15"}, DEV_ADS_PATH);
@@ -153,7 +154,7 @@ describe('Count advertisers cloud functions', () => {
             
           return;
         });
-      }); 
+      });
     });
 
     it(SHOULD_INCREMENT + 'even if ads have same start date', () => {
@@ -187,26 +188,24 @@ describe('Count advertisers cloud functions', () => {
           snapFromJson({advertiser, startDate: "2020-10-15"}, DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
-      
-      return wrapper(snapOne).then(() => {
-        return wrapper(snapTwo).then(() => {
-          DEV_AGGREGATES_COLLECTION
-              .doc("2020")
-              .collection("advertisers")
-              .doc(advertiser).get().then(function(doc) {
-                return assert.equal(doc.data().numberOfAds, 1);
-              }).catch(err => console.log(err));
-          
-          DEV_AGGREGATES_COLLECTION
-              .doc("2020")
-              .collection("advertisers")
-              .doc(advertiser).get().then(function(doc) {
-                return assert.equal(doc.data().numberOfAds, 1);
-              }).catch(err => console.log(err));
 
-          return;
-        });
-      }); 
+      return Promise.allSettled([wrapper(snapOne), wrapper(snapTwo)]).then(() => {
+        DEV_AGGREGATES_COLLECTION
+            .doc("2020")
+            .collection("advertisers")
+            .doc(advertiser).get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+            }).catch(err => console.log(err));
+        
+        DEV_AGGREGATES_COLLECTION
+            .doc("2020")
+            .collection("advertisers")
+            .doc(advertiser).get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+            }).catch(err => console.log(err));
+
+        return;        
+      });
     });   
 
     it(SHOULD_INCREMENT + 'for their own ads, and not other advertisers', () => {
@@ -218,26 +217,24 @@ describe('Count advertisers cloud functions', () => {
                         DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
-      
-      return wrapper(snapOne).then(() => {
-        return wrapper(snapTwo).then(() => {
-          DEV_AGGREGATES_COLLECTION
-              .doc("2019")
-              .collection("advertisers")
-              .doc("adv_f").get().then(function(doc) {
-                return assert.equal(doc.data().numberOfAds, 1);
-              }).catch(err => console.log(err));
-          
-          DEV_AGGREGATES_COLLECTION
-              .doc("2020")
-              .collection("advertisers")
-              .doc("adv_g").get().then(function(doc) {
-                return assert.equal(doc.data().numberOfAds, 1);
-              }).catch(err => console.log(err));
-          
-          return;
-        });
-      }); 
+
+      return Promise.allSettled([wrapper(snapOne), wrapper(snapTwo)]).then(() => {
+        DEV_AGGREGATES_COLLECTION
+            .doc("2019")
+            .collection("advertisers")
+            .doc("adv_f").get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+            }).catch(err => console.log(err));
+        
+        DEV_AGGREGATES_COLLECTION
+            .doc("2020")
+            .collection("advertisers")
+            .doc("adv_g").get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+            }).catch(err => console.log(err));
+        
+        return;      
+      });
     });
   });
   
@@ -278,8 +275,10 @@ describe('Count advertisers cloud functions', () => {
                                  startDate: "2018-10-15"}, DEV_ADS_PATH);
 
       const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
-      await chai.expect(deleteWrapper(snap)).to.eventually.be.rejectedWith("Cannot decrement `numberOfAds` past 0.").and.be.an.instanceOf(Error);
 
+      await chai.expect(deleteWrapper(snap))
+                .to.eventually.be.rejectedWith("Cannot decrement `numberOfAds` past 0.")
+                .and.have.property('statusCode', 400);
     });
 
     it("should throw some sort of an error if doc doesn't exist", async () => {
@@ -294,7 +293,9 @@ describe('Count advertisers cloud functions', () => {
       // An error will be thrown and caught. In practice, this should only
       // happen if a `updateAdvertiserCountOnCreate` fails during writing 
       // without retry, or if the entry is manually deleted. 
-      await chai.expect(deleteWrapper(snap)).to.eventually.be.rejectedWith("new_adv2018-10-15 `numberOfAds` doc not found").and.be.an.instanceOf(Error);
+      await chai.expect(deleteWrapper(snap))
+          .to.eventually.be.rejectedWith("new_adv2018-10-15 `numberOfAds` doc not found")
+          .and.have.property('statusCode', 404);
     });
     
     it("should decrement the right advertisers count when" +
@@ -307,9 +308,11 @@ describe('Count advertisers cloud functions', () => {
       const createWrapper = firestoreWrap(devCountAdvertisersOnCreate);
       const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
-      return createWrapper(snapOne).then(() => {
-        return createWrapper(snapTwo).then(() => {
-          return deleteWrapper(snapOne).then(() => {
+      // Call create and delete separately to avoid `delete` being called before
+      // `create`.  
+      return Promise.allSettled([createWrapper(snapOne), 
+                                 createWrapper(snapTwo)]).then(() => {
+        return deleteWrapper(snapOne).then(() => {
             DEV_AGGREGATES_COLLECTION
                   .doc("2018")
                   .collection("advertisers")
@@ -326,8 +329,7 @@ describe('Count advertisers cloud functions', () => {
 
             return;
           });
-        });
-      });
+      })
     });
 
     it("should decrement the right years ad count when deleting " +
@@ -340,25 +342,24 @@ describe('Count advertisers cloud functions', () => {
       const createWrapper = firestoreWrap(devCountAdvertisersOnCreate);
       const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
-      return createWrapper(snapOne).then(() => {
-        return createWrapper(snapTwo).then(() => {
-          return deleteWrapper(snapOne).then(() => {
-            DEV_AGGREGATES_COLLECTION
-                  .doc("2018")
-                  .collection("advertisers")
-                  .doc("adv_D").get().then(function(doc) {
-                    return assert.equal(doc.data().numberOfAds, 0);
-                  }).catch(err => console.log(err)); 
-             
-            DEV_AGGREGATES_COLLECTION
-                .doc("2019")
-                .collection("advertisers")
-                .doc("adv_D").get().then(function(doc) {
-                  return assert.equal(doc.data().numberOfAds, 1);
-                }).catch(err => console.log(err));
+      return Promise.allSettled([createWrapper(snapOne), 
+                                 createWrapper(snapTwo)]).then(() => {
+        return deleteWrapper(snapOne).then(() => {
+          DEV_AGGREGATES_COLLECTION
+              .doc("2018")
+              .collection("advertisers")
+              .doc("adv_D").get().then(function(doc) {
+                return assert.equal(doc.data().numberOfAds, 0);
+              }).catch(err => console.log(err)); 
+            
+          DEV_AGGREGATES_COLLECTION
+              .doc("2019")
+              .collection("advertisers")
+              .doc("adv_D").get().then(function(doc) {
+                return assert.equal(doc.data().numberOfAds, 1);
+              }).catch(err => console.log(err));
 
-            return;
-          });
+          return;
         });
       });
     });
