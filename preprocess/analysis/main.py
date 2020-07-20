@@ -1,7 +1,10 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort, Response
 from language_analysis import analyze_entities, analyze_sentiment
 
 app = Flask(__name__)
+
+def is_valid(string):
+  return not (string is None or not string)
 
 @app.route('/')
 def root():
@@ -10,15 +13,19 @@ def root():
 @app.route('/analysis', methods=['POST'])
 def analyze():
   # header and content MUST EXISTED!
-  header = request.form['header']
-  content = request.form['content']
+  header = request.form.get('header')
+  content = request.form.get('content')
 
-  return jsonify(
-    header_sentiment=analyze_sentiment(header),
-    header_entities=analyze_entities(header),
-    content_sentiment=analyze_sentiment(content),
-    content_entities=analyze_entities(content),
-  )
+  if is_valid(header) and is_valid(content):
+    return jsonify(
+      header_sentiment=analyze_sentiment(header),
+      header_entities=analyze_entities(header),
+      content_sentiment=analyze_sentiment(content),
+      content_entities=analyze_entities(content),
+    )
+  else:
+    errorMessage = '"header" or "content" field was either empty or not included in form.'
+    abort(500, errorMessage)  # 500 Internal Server Error server error
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
