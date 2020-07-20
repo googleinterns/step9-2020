@@ -1,13 +1,17 @@
-/** 
+/**
  * Description: Geochart implements a Google geochart component.
  * Author: Kira Toal
  * Date: 2020/07/13
  */
 
+import { Chart } from 'react-google-charts';
+import React from 'react';
 import { ads } from '../../../firebase/FirestoreDocumentReader';
-import { Chart } from "react-google-charts";
 import firebase from '../../../firebase/firebase';
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
+=======
+>>>>>>> 6eeefeebcf1f87cdc60d15648d4e17ca46f2447d
 import { states } from './StateDataParser';
 import { app, database } from '../../../firebase/firebase';
 
@@ -41,6 +45,18 @@ const Geochart = () => {
     fromFirestore: function(snapshot, options){
       const data = snapshot.data(options);
       return new GeochartAd(data.id, data.impressionsMin)
+
+  /*
+   * Currently, getData assigns a meaningless random number to each state.
+   * In the future, once the states dictionary contains ad information, getData will
+   *    retrieve information such as minimum ad impressions and maximum ad spend.
+   */
+
+  function getData() {
+    const data = [['State', 'Random Number']];
+    for (const state in states) {
+      data.push([state, Math.floor(Math.random() * Math.floor(1000))]);
+>>>>>>> 6eeefeebcf1f87cdc60d15648d4e17ca46f2447d
     }
   }
 
@@ -61,10 +77,10 @@ const Geochart = () => {
 
   const options = {
     enableRegionInteractivity: true,
-    legend: {textStyle: {color: 'black', fontSize: 10}},     
+    legend: { textStyle: { color: 'black', fontSize: 10 } },
     resolution: 'provinces',
-    region:'US',
-    tooltip: {trigger:'focus'} // Trigger info box on mouse hover over state.
+    region: 'US',
+    tooltip: { trigger: 'focus' }, // Trigger info box on mouse hover over state.
   };
 
   let sampleData = [["State", "Number"], ["California", 100], ["Montana", 12]];
@@ -72,7 +88,17 @@ const Geochart = () => {
   return (
     <div className="search-header center">
       <p>Impressions Geochart</p>
+<<<<<<< HEAD
       <Chart chartType="GeoChart" width="700px" height="400px" data={ adTotal } options={ options } />
+=======
+      <Chart
+        chartType="GeoChart"
+        width="700px"
+        height="400px"
+        data={getData()}
+        options={options}
+      />
+>>>>>>> 6eeefeebcf1f87cdc60d15648d4e17ca46f2447d
     </div>
   );
 };
