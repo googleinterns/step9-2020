@@ -43,14 +43,15 @@ const Geochart = () => {
       return new GeochartAd(data.id, data.impressionsMin)
     }
   }
+
+  
     
-  useEffect(
-    async () => {
+  useEffect(async () => {
     let data = [["State", "Random Number"]];
     for (let state in states) {
       const documentRef = database.collection('ads');
       const query = await documentRef.where("geoTarget", "array-contains", state)
-                                  .withConverter(adConverter)
+                                  // .withConverter(adConverter)
                                   .get();
       data.push([state, query.docs.length]); // Update data table.
     }
