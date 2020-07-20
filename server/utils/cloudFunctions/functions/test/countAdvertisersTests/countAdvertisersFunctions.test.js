@@ -15,6 +15,11 @@
  *     nesting is advantageous because it easily keeps everything in scope
  *     without much fuss. Thus, nesting is fine to use. 
  *   - Also this is how the official docs do it. 
+ *   - Where possible, `Promise.allSettled` is used to parallelize calls.
+ *     - Not always possible, because:
+ *       - Might need a somewhat sequential ordering (e.g., creating/deleting)
+ *       - Other situations where it did not want to work (not sure why...)
+ *         - See: `for every ad`, `even if ads have same start date`
  * Testing note: 
  * - Firebase recommends running tests online, i.e., on a real db
  *   for testing simplicity.
@@ -29,14 +34,15 @@
  */
 
 // Import the testing environment configuration
-const { test, 
-        assert, 
-        sinon, 
+const { assert,  
         chai,
-        firestoreMock, 
         firestoreWrap, 
         snapFromJson,
         DEV_ADS_PATH } = require('../testConfig');
+
+// set chai to use `chai-as-promised` (helpful for promises) 
+// instead of `sinonChai` (helpful for spying/stubbing).
+chai.use(require('chai-as-promised'));
 
 const { deleteCollection } = require('../deleteCollection');
 
@@ -58,10 +64,11 @@ describe('Count advertisers cloud functions', () => {
   // In general, don't expect an 'advertiser' will be reset from 
   // test to test. 
   after(() => {
-    deleteCollection(DB, 'dev_ads');
-    deleteCollection(DB, 'dev_aggregates/2018/advertisers');
-    deleteCollection(DB, 'dev_aggregates/2019/advertisers');
-    deleteCollection(DB, 'dev_aggregates/2020/advertisers');
+    const collections = ['dev_ads',
+                         'dev_aggregates/2018/advertisers',
+                         'dev_aggregates/2019/advertisers',
+                         'dev_aggregates/2020/advertisers']
+    collections.forEach(collection => deleteCollection(DB, collection));
   });
 
   describe("test_countAdvertisersOnCreate", () => {
@@ -84,52 +91,53 @@ describe('Count advertisers cloud functions', () => {
     });
 
     it(SHOULD_INCREMENT + 'for 2018, 2019, 2020', () => {
-      const advertiser = "adv_b"; 
       const snapOne = 
-          snapFromJson({advertiser, startDate: "2018-10-15"}, DEV_ADS_PATH);
+          snapFromJson({advertiser: "adv_b", startDate: "2018-10-15"}, 
+                        DEV_ADS_PATH);
       const snapTwo = 
-          snapFromJson({advertiser, startDate: "2019-10-15"}, DEV_ADS_PATH);
+          snapFromJson({advertiser: "adv_b", startDate: "2019-10-15"},
+                        DEV_ADS_PATH);
       const snapThree = 
-          snapFromJson({advertiser, startDate: "2020-10-15"}, DEV_ADS_PATH);
+          snapFromJson({advertiser: "adv_b", startDate: "2020-10-15"}, 
+                        DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
 
-      return wrapper(snapOne).then(() => {
-        return wrapper(snapTwo).then(() => {
-          return wrapper(snapThree).then(() => {
-            DEV_AGGREGATES_COLLECTION
-                .doc("2018")
-                .collection("advertisers")
-                .doc(advertiser).get().then(function(doc) {
-                  return assert.equal(doc.data().numberOfAds, 1);
-                }).catch(err => console.log(err));
-            
-            DEV_AGGREGATES_COLLECTION
-                .doc("2019")
-                .collection("advertisers")
-                .doc(advertiser).get().then(function(doc) {
-                  return assert.equal(doc.data().numberOfAds, 1);
+      return Promise.all([wrapper(snapOne),
+                          wrapper(snapTwo),
+                          wrapper(snapThree)]).then(() => {
+        DEV_AGGREGATES_COLLECTION
+            .doc("2018")
+            .collection("advertisers")
+            .doc("adv_b").get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
             }).catch(err => console.log(err));
-            
-            DEV_AGGREGATES_COLLECTION
-                .doc("2020")
-                .collection("advertisers")
-                .doc(advertiser).get().then(function(doc) {
-                  return assert.equal(doc.data().numberOfAds, 1);
-                }).catch(err => console.log(err));
 
-            return;
-          });
-        });
+        DEV_AGGREGATES_COLLECTION
+            .doc("2019")
+            .collection("advertisers")
+            .doc("adv_b").get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+        }).catch(err => console.log(err));
+        
+        DEV_AGGREGATES_COLLECTION
+            .doc("2020")
+            .collection("advertisers")
+            .doc("adv_b").get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+            }).catch(err => console.log(err));
+
+        return;
       });
     });
     
-    it(SHOULD_INCREMENT +  'for every ad', () => {
-      const advertiser = "adv_c"; 
+    it(SHOULD_INCREMENT +  'for every ad', async () => {
       const snapOne = 
-          snapFromJson({advertiser, startDate: "2019-10-15"}, DEV_ADS_PATH);
+          snapFromJson({advertiser: "adv_c", startDate: "2019-10-15"}, 
+                        DEV_ADS_PATH);
       const snapTwo = 
-          snapFromJson({advertiser, startDate: "2019-10-16"}, DEV_ADS_PATH);
+          snapFromJson({advertiser: "adv_c", startDate: "2019-10-16"}, 
+                        DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
       
@@ -138,21 +146,22 @@ describe('Count advertisers cloud functions', () => {
           DEV_AGGREGATES_COLLECTION
               .doc("2019")
               .collection("advertisers")
-              .doc(advertiser).get().then(function(doc) {
+              .doc("adv_c").get().then(function(doc) {
                 return assert.equal(doc.data().numberOfAds, 2);
               }).catch(err => console.log(err));
             
           return;
         });
-      }); 
+      });
     });
 
     it(SHOULD_INCREMENT + 'even if ads have same start date', () => {
-      const advertiser = "adv_d"; 
       const snapOne = 
-          snapFromJson({advertiser, startDate: "2019-10-15"}, DEV_ADS_PATH);
+          snapFromJson({advertiser: "adv_d", startDate: "2019-10-15"},
+                        DEV_ADS_PATH);
       const snapTwo = 
-          snapFromJson({advertiser, startDate: "2019-10-15"}, DEV_ADS_PATH);
+          snapFromJson({advertiser: "adv_d", startDate: "2019-10-15"}, 
+                        DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
       
@@ -161,7 +170,7 @@ describe('Count advertisers cloud functions', () => {
           DEV_AGGREGATES_COLLECTION
               .doc("2019")
               .collection("advertisers")
-              .doc(advertiser).get().then(function(doc) {
+              .doc("adv_d").get().then(function(doc) {
                 return assert.equal(doc.data().numberOfAds, 2);
               }).catch(err => console.log(err));
           
@@ -171,36 +180,36 @@ describe('Count advertisers cloud functions', () => {
     });
 
     it(SHOULD_INCREMENT + 'only for ads in same year', () => {
-      const advertiser = "adv_e"; 
       const snapOne = 
-          snapFromJson({advertiser, startDate: "2019-10-15"}, DEV_ADS_PATH);
+          snapFromJson({advertiser: "adv_e", startDate: "2019-10-15"}, 
+                        DEV_ADS_PATH);
       const snapTwo = 
-          snapFromJson({advertiser, startDate: "2020-10-15"}, DEV_ADS_PATH);
+          snapFromJson({advertiser: "adv_e", startDate: "2020-10-15"},
+                        DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
-      
-      return wrapper(snapOne).then(() => {
-        return wrapper(snapTwo).then(() => {
-          DEV_AGGREGATES_COLLECTION
-              .doc("2020")
-              .collection("advertisers")
-              .doc(advertiser).get().then(function(doc) {
-                return assert.equal(doc.data().numberOfAds, 1);
-              }).catch(err => console.log(err));
-          
-          DEV_AGGREGATES_COLLECTION
-              .doc("2020")
-              .collection("advertisers")
-              .doc(advertiser).get().then(function(doc) {
-                return assert.equal(doc.data().numberOfAds, 1);
-              }).catch(err => console.log(err));
 
-          return;
-        });
-      }); 
+      return Promise.allSettled([wrapper(snapOne), 
+                                 wrapper(snapTwo)]).then(() => {
+        DEV_AGGREGATES_COLLECTION
+            .doc("2020")
+            .collection("advertisers")
+            .doc("adv_e").get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+            }).catch(err => console.log(err));
+        
+        DEV_AGGREGATES_COLLECTION
+            .doc("2020")
+            .collection("advertisers")
+            .doc("adv_e").get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+            }).catch(err => console.log(err));
+
+        return;        
+      });
     });   
 
-    it(SHOULD_INCREMENT + 'only for an advertisers own ads', () => {
+    it(SHOULD_INCREMENT + 'for their own ads, and not other advertisers', () => {
       const snapOne = 
           snapFromJson({advertiser: "adv_f", startDate: "2019-10-15"}, 
                         DEV_ADS_PATH);
@@ -209,47 +218,26 @@ describe('Count advertisers cloud functions', () => {
                         DEV_ADS_PATH);
 
       const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
-      
-      return wrapper(snapOne).then(() => {
-        return wrapper(snapTwo).then(() => {
-          DEV_AGGREGATES_COLLECTION
-              .doc("2019")
-              .collection("advertisers")
-              .doc("adv_f").get().then(function(doc) {
-                return assert.equal(doc.data().numberOfAds, 1);
-              }).catch(err => console.log(err));
-          
-          DEV_AGGREGATES_COLLECTION
-              .doc("2020")
-              .collection("advertisers")
-              .doc("adv_g").get().then(function(doc) {
-                return assert.equal(doc.data().numberOfAds, 1);
-              }).catch(err => console.log(err));
-          
-          return;
-        });
-      }); 
+
+      return Promise.allSettled([wrapper(snapOne), 
+                                 wrapper(snapTwo)]).then(() => {
+        DEV_AGGREGATES_COLLECTION
+            .doc("2019")
+            .collection("advertisers")
+            .doc("adv_f").get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+            }).catch(err => console.log(err));
+        
+        DEV_AGGREGATES_COLLECTION
+            .doc("2020")
+            .collection("advertisers")
+            .doc("adv_g").get().then(function(doc) {
+              return assert.equal(doc.data().numberOfAds, 1);
+            }).catch(err => console.log(err));
+        
+        return;      
+      });
     });
-
-    it("should fail with malformed inputs", () => {
-      const snapOne = 
-          snapFromJson({advertiser: 101, startDate: "2019-10-15"}, 
-                        DEV_ADS_PATH);
-      const snapTwo = 
-          snapFromJson({advertiser: "adv", startDate: 2019}, DEV_ADS_PATH);
-      const snapThree = 
-          snapFromJson({advertiser: "adv", startDate: "201-910-15"}, 
-                        DEV_ADS_PATH);
-      const snapFour = 
-          snapFromJson({advertiser: "adv", startDate: "201"}, DEV_ADS_PATH);
-
-      const wrapper = firestoreWrap(devCountAdvertisersOnCreate);
-
-      assert.throws(() => wrapper(snapOne), Error);
-      assert.throws(() => wrapper(snapTwo), Error);
-      assert.throws(() => wrapper(snapThree), Error);
-      assert.throws(() => wrapper(snapFour), Error);
-    });  
   });
   
   describe("test_countAdvertisersOnDelete", () => {
@@ -258,8 +246,9 @@ describe('Count advertisers cloud functions', () => {
       // in time, but it can be flaky. 
       // Easy way to avoid this problem is just to switch to adv_A, adv_B, 
       // and so on. 
-      const snap = snapFromJson({advertiser: "adv_A", startDate: "2018-10-15"}, 
-                                DEV_ADS_PATH);
+      const snap = 
+          snapFromJson({advertiser: "adv_A", startDate: "2018-10-15"}, 
+                        DEV_ADS_PATH);
 
       const createWrapper = firestoreWrap(devCountAdvertisersOnCreate);
       const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
@@ -271,6 +260,7 @@ describe('Count advertisers cloud functions', () => {
               .doc("adv_A").get().then(function(doc) {
                 return assert.equal(doc.data().numberOfAds, 1);
               }).catch(err => console.log(err));
+        
         return deleteWrapper(snap).then(() => {
           DEV_AGGREGATES_COLLECTION
               .doc("2018")
@@ -284,27 +274,22 @@ describe('Count advertisers cloud functions', () => {
       });
     });
 
-    it("should only decrement if ad count is positive", () => {
-      const snap = snapFromJson({advertiser: "adv_A", 
-                                 startDate: "2018-10-15"}, DEV_ADS_PATH);
+    it("should throw an error if decrementing past zero", async () => {
+      const snap = 
+          snapFromJson({advertiser: "adv_A", startDate: "2018-10-15"}, 
+                        DEV_ADS_PATH);
 
       const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
-      
-      return deleteWrapper(snap).then(() => {
-        DEV_AGGREGATES_COLLECTION
-            .doc("2018")
-            .collection("advertisers")
-            .doc("adv_A").get().then(function(doc) {
-              return assert.equal(doc.data().numberOfAds, 0);
-            }).catch(err => console.log(err));
-        
-        return;
-      });
+
+      await chai.expect(deleteWrapper(snap)).to.eventually.be
+                .rejectedWith("Cannot decrement `numberOfAds` past 0.")
+                .and.have.property('statusCode', 400);
     });
 
     it("should throw some sort of an error if doc doesn't exist", async () => {
-      const snap = snapFromJson({advertiser: "new_adv", 
-                                 startDate: "2018-10-15"}, DEV_ADS_PATH);
+      const snap = 
+          snapFromJson({advertiser: "new_adv", startDate: "2018-10-15"}, 
+                        DEV_ADS_PATH);
 
       const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
@@ -314,22 +299,28 @@ describe('Count advertisers cloud functions', () => {
       // An error will be thrown and caught. In practice, this should only
       // happen if a `updateAdvertiserCountOnCreate` fails during writing 
       // without retry, or if the entry is manually deleted. 
-      chai.expect(() => deleteWrapper(snap)).to.throw(Error);
+      await chai.expect(deleteWrapper(snap)).to.eventually.be
+                .rejectedWith("new_adv2018-10-15 `numberOfAds` doc not found")
+                .and.have.property('statusCode', 404);
     });
     
     it("should decrement the right advertisers count when" +
        "deleting an advertisers ad", () => {
-      const snapOne = snapFromJson({advertiser: "adv_B", 
-                                    startDate: "2018-10-16"}, DEV_ADS_PATH);
-      const snapTwo = snapFromJson({advertiser: "adv_C", 
-                                    startDate: "2018-10-16"}, DEV_ADS_PATH);
+      const snapOne = 
+          snapFromJson({advertiser: "adv_B", startDate: "2018-10-16"}, 
+                        DEV_ADS_PATH);
+      const snapTwo = 
+          snapFromJson({advertiser: "adv_C", startDate: "2018-10-16"}, 
+                        DEV_ADS_PATH);
 
       const createWrapper = firestoreWrap(devCountAdvertisersOnCreate);
       const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
-      return createWrapper(snapOne).then(() => {
-        return createWrapper(snapTwo).then(() => {
-          return deleteWrapper(snapOne).then(() => {
+      // Call create and delete separately to avoid `delete` being called 
+      // before `create`.  
+      return Promise.allSettled([createWrapper(snapOne), 
+                                 createWrapper(snapTwo)]).then(() => {
+        return deleteWrapper(snapOne).then(() => {
             DEV_AGGREGATES_COLLECTION
                   .doc("2018")
                   .collection("advertisers")
@@ -346,61 +337,41 @@ describe('Count advertisers cloud functions', () => {
 
             return;
           });
-        });
-      });
+      })
     });
 
     it("should decrement the right years ad count when deleting " +
        "an advertisers ad", () => {
-      const snapOne = snapFromJson({advertiser: "adv_D", 
-                                    startDate: "2018-10-15"}, DEV_ADS_PATH);
-      const snapTwo = snapFromJson({advertiser: "adv_D", 
-                                    startDate: "2019-10-15"}, DEV_ADS_PATH);
+      const snapOne = 
+          snapFromJson({advertiser: "adv_D", startDate: "2018-10-15"}, 
+                        DEV_ADS_PATH);
+      const snapTwo = 
+          snapFromJson({advertiser: "adv_D", startDate: "2019-10-15"},
+                        DEV_ADS_PATH);
 
       const createWrapper = firestoreWrap(devCountAdvertisersOnCreate);
       const deleteWrapper = firestoreWrap(devCountAdvertisersOnDelete);
 
-      return createWrapper(snapOne).then(() => {
-        return createWrapper(snapTwo).then(() => {
-          return deleteWrapper(snapOne).then(() => {
-            DEV_AGGREGATES_COLLECTION
-                  .doc("2018")
-                  .collection("advertisers")
-                  .doc("adv_D").get().then(function(doc) {
-                    return assert.equal(doc.data().numberOfAds, 0);
-                  }).catch(err => console.log(err)); 
-             
-            DEV_AGGREGATES_COLLECTION
-                .doc("2019")
-                .collection("advertisers")
-                .doc("adv_D").get().then(function(doc) {
-                  return assert.equal(doc.data().numberOfAds, 1);
-                }).catch(err => console.log(err));
+      return Promise.allSettled([createWrapper(snapOne), 
+                                 createWrapper(snapTwo)]).then(() => {
+        return deleteWrapper(snapOne).then(() => {
+          DEV_AGGREGATES_COLLECTION
+              .doc("2018")
+              .collection("advertisers")
+              .doc("adv_D").get().then(function(doc) {
+                return assert.equal(doc.data().numberOfAds, 0);
+              }).catch(err => console.log(err)); 
+            
+          DEV_AGGREGATES_COLLECTION
+              .doc("2019")
+              .collection("advertisers")
+              .doc("adv_D").get().then(function(doc) {
+                return assert.equal(doc.data().numberOfAds, 1);
+              }).catch(err => console.log(err));
 
-            return;
-          });
+          return;
         });
       });
     });
-
-    it("should fail with malformed inputs", () => {
-      const snapOne = 
-          snapFromJson({advertiser: 101, startDate: "2019-10-15"}, 
-                        DEV_ADS_PATH);
-      const snapTwo = 
-          snapFromJson({advertiser: "adv", startDate: 2019}, DEV_ADS_PATH);
-      const snapThree = 
-          snapFromJson({advertiser: "adv", startDate: "201-910-15"}, 
-                        DEV_ADS_PATH);
-      const snapFour = 
-          snapFromJson({advertiser: "adv", startDate: "201"}, DEV_ADS_PATH);
-
-      const wrapper = firestoreWrap(devCountAdvertisersOnDelete);
-
-      assert.throws(() => wrapper(snapOne), Error);
-      assert.throws(() => wrapper(snapTwo), Error);
-      assert.throws(() => wrapper(snapThree), Error);
-      assert.throws(() => wrapper(snapFour), Error);
-    });  
   });
 });
