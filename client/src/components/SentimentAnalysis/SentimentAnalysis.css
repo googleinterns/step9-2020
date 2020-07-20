@@ -21,7 +21,6 @@
   cursor: pointer;
   font-size: 15px;
   font-weight: 600;
-  margin-bottom: 40px;
   outline: none;
   padding: 10px 15px;
 }
@@ -76,4 +75,8 @@
   background-color: var(--primary-color);
   color: white;
   margin-right: 20px;
+}
+
+.bottom-padding {
+  padding-bottom: 40px;
 }
