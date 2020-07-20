@@ -4,7 +4,7 @@
  *              it is probably a problem with algolia flaking. When in doubt,
  *              re-run the tests. Compile with `npm run test`.
  * Notes:
- * - For simplicity, advertisment json's are denoted as `ad`, and 
+ * - For simplicity, advertisment JSONs are denoted as `ad`, and 
  *   the advertiser is used as the documents `primary key`. 
  *   - In practice, primary key is a random string.
  *   - If used something like `adOne` as `primary key`, would probably
@@ -70,6 +70,11 @@
 
 
 // Import the testing environment configuration.
+// `TIMEOUT_10S` is the maximum amount of latency for firebase 
+// to execute a function. 
+// `TIMEOUT_15S` is used to extend the default 2000ms test limit set by 
+// mocha. This gives a 5000ms latency period for the algolia api call
+// and corresponding tests to resolve and execute.
 const { chai,
         TIMEOUT_10S,
         TIMEOUT_15S,
@@ -86,7 +91,7 @@ const { DEV_ADS_INDEX } =
 
 describe("Algolia integrations tests", () => {
   // After every 'describe' block, reset the test environments. 
-  // Since these are live dev db's, this process can be very flaky.
+  // Since these are live dev DBs, this process can be very flaky.
   // In general, don't expect an 'advertiser' will be reset from 
   // test to test. 
   // Note: this will also delete ad records in the corresponding 
