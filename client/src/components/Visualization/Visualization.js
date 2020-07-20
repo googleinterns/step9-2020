@@ -5,6 +5,7 @@ import { Col, Container, Row } from 'react-grid-system';
 import BarChart from './charts/BarChart';
 import Geochart from './charts/Geochart';
 import Interpolation from './charts/Interpolation';
+import ScatterPlot from './charts/ScatterPlot';
 import React from 'react';
 import ZoomLine from './charts/ZoomLine';
 import tardigrade from '../../images/tardigrade.png';
@@ -12,7 +13,7 @@ import tardigrade from '../../images/tardigrade.png';
 // Charts are presented as a grid, with each row containing one or many charts
 const CHARTS_TABLE = [
   ['Zoomable Line'], // first row, 1 column
-  ['Interpolation', 'Vertical Bar'], // second row, 2 columns
+  ['Interpolation', 'Scatter plot'], // second row, 2 columns
   ['Geochart'],
 ];
 
@@ -20,7 +21,7 @@ const Visualization = () => {
   const chartMap = {
     'Zoomable Line': <ZoomLine />,
     'Interpolation': <Interpolation />,
-    'Vertical Bar': <BarChart />,
+    'Scatter plot': <ScatterPlot />,
     'Geochart': <Geochart />,
   };
 
