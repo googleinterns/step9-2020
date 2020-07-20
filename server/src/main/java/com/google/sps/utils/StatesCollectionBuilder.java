@@ -78,13 +78,13 @@ public class StatesCollectionBuilder {
       List<QueryDocumentSnapshot> documents = future.get().getDocuments();
 
       // Advertiser name, ad ids
-      Map<String, HashSet> advertiserToAdIds = new HashMap<>();
+      Map<String, ArrayList> advertiserToAdIds = new HashMap<>();
 
       for (QueryDocumentSnapshot document : documents) {
         Ad ad = document.toObject(Ad.class);
         // Build dictionary.
         String key = ad.getAdvertiser();
-        HashSet<String> value = new HashSet<String>(); 
+        ArrayList<String> value = new ArrayList<String>(); 
         if (advertiserToAdIds.containsKey(key)) {
           value = advertiserToAdIds.get(key);
           value.add(ad.getId());
@@ -96,9 +96,11 @@ public class StatesCollectionBuilder {
 
       for (String key : advertiserToAdIds.keySet()) {
         // use the key here
-        System.out.println(advertiserToAdIds.get(key));
+        Map<String, Object> data = new HashMap<>();
+        data.put("ads", advertiserToAdIds.get(key));
+        db.collection(state.toLowerCase()).document(key).set(data, SetOptions.merge());
       }
-        
+
         // db.collection(state.toLowerCase()).document(ad.getAdvertiser()).set(data, SetOptions.merge());
         // db.collection(state.toLowerCase()).document(ad.getAdvertiser()).update("ads", FieldValue.arrayUnion(ad.getId()));
     }
