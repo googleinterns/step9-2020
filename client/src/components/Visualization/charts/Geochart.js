@@ -5,16 +5,11 @@
  */
 
 import { Chart } from 'react-google-charts';
-import React from 'react';
 import { ads } from '../../../firebase/FirestoreDocumentReader';
 import firebase from '../../../firebase/firebase';
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
-=======
->>>>>>> 6eeefeebcf1f87cdc60d15648d4e17ca46f2447d
 import { states } from './StateDataParser';
 import { app, database } from '../../../firebase/firebase';
-
 
 const Geochart = () => {
 
@@ -56,12 +51,10 @@ const Geochart = () => {
     const data = [['State', 'Random Number']];
     for (const state in states) {
       data.push([state, Math.floor(Math.random() * Math.floor(1000))]);
->>>>>>> 6eeefeebcf1f87cdc60d15648d4e17ca46f2447d
     }
   }
 
   
-    
   useEffect(async () => {
     let data = [["State", "Random Number"]];
     for (let state in states) {
@@ -88,9 +81,6 @@ const Geochart = () => {
   return (
     <div className="search-header center">
       <p>Impressions Geochart</p>
-<<<<<<< HEAD
-      <Chart chartType="GeoChart" width="700px" height="400px" data={ adTotal } options={ options } />
-=======
       <Chart
         chartType="GeoChart"
         width="700px"
@@ -98,7 +88,6 @@ const Geochart = () => {
         data={getData()}
         options={options}
       />
->>>>>>> 6eeefeebcf1f87cdc60d15648d4e17ca46f2447d
     </div>
   );
 };
