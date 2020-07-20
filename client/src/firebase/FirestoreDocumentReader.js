@@ -7,8 +7,8 @@
 
 import { app, database } from './firebase';
 
-const COLLECTION = "testing";
-let ads = []; 
+const COLLECTION = 'testing';
+const ads = [];
 
 /**
  * Firestore documents are read into ad objects for convenience.
@@ -18,37 +18,42 @@ let ads = [];
  */
 class GeochartAd {
   constructor(id, impressionsMin) {
-  /**
-   * @param {string} id
-   * @param {long} impressionsMin
-   */
+    /**
+     * @param {string} id
+     * @param {long} impressionsMin
+     */
     this.id = id;
     this.impressionsMin = impressionsMin;
   }
   toString() {
-    return this.id + ', ' + this.impressionsMin;
+    return `${this.id}, ${this.impressionsMin}`;
   }
 }
 
 // Firestore data converter converts snapshots to custom objects.
 const adConverter = {
-  toFirestore: function(ad) {
+  toFirestore(ad) {
     return {
       id: ad.id,
       impressionsMin: ad.impressionsMin,
-    }
+    };
   },
-  fromFirestore: function(snapshot, options){
+  fromFirestore(snapshot, options) {
     const data = snapshot.data(options);
-    return new GeochartAd(data.id, data.impressionsMin)
-  }
-}
+    return new GeochartAd(data.id, data.impressionsMin);
+  },
+};
 
-database.collection(COLLECTION).withConverter(adConverter).get().then(function(querySnapshot) {
-  querySnapshot.forEach(function(doc) { 
-    // doc.data() is never undefined for query doc snapshots.
-    ads.push(doc.data()); // Push ad object to ads array.
-  });
-}).catch(err => console.log(err));
+database
+  .collection(COLLECTION)
+  .withConverter(adConverter)
+  .get()
+  .then(querySnapshot => {
+    querySnapshot.forEach(doc => {
+      // doc.data() is never undefined for query doc snapshots.
+      ads.push(doc.data()); // Push ad object to ads array.
+    });
+  })
+  .catch(err => console.log(err));
 
 export { ads };
