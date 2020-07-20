@@ -10,7 +10,6 @@ from routes import configure_routes
 from test_language_analysis import STRING_ONE, STRING_TWO
 import pytest
 
-base_url = '/'
 analysis_url = '/analysis'
 form_type = 'multipart/form-data'
 
@@ -20,11 +19,6 @@ def client():
   configure_routes(app)
   client = app.test_client()
   return client
-
-def test_base_route(client):
-  response = client.get(base_url)
-  assert response.get_data() == b'Hello World!'
-  assert response.status_code == 200
 
 def test_analysis_route_success(client):
   mock_data = { 'header': STRING_ONE, 'content': STRING_TWO }
