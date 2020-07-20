@@ -92,7 +92,7 @@ describe("Algolia integrations tests", () => {
       const adList = [{advertiser: "b", startDate: "2019-10-15"},
                       {advertiser: "c", startDate: "2019-10-15"},
                       {advertiser: "d", startDate: "2019-10-16"}];
-
+      
       DEV_ADS_COLLECTION.doc("b").set(adList[0]).then(() => {
         DEV_ADS_COLLECTION.doc("c").set(adList[1]).then(() => {
           DEV_ADS_COLLECTION.doc("d").set(adList[2]).then(() => {
