@@ -55,11 +55,6 @@ const { DEV_AGGREGATES_COLLECTION } =
 const { devCountAdvertisersOnCreate, devCountAdvertisersOnDelete } = 
     require('../../countAdvertisersCloudFunctions/devCountAdvertisersFunctions');
 
-// Import the custom error types for illegal decrementing, and accessing 
-// non-existent advertiser documents. 
-const { IllegalAdCountDecrement, AdvertiserDocumentNotFound } =
-    require('../../countAdvertisersCloudFunctions/countAdvertisersHelpers');
-
 // Save some space for test explanation in the test description
 const SHOULD_INCREMENT = "should increment advertisers ad count "; 
 
