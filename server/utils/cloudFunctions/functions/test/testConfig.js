@@ -31,6 +31,11 @@ const test = require('firebase-functions-test')({
 const firestoreMock = test.firestore;   
 const firestoreWrap = test.wrap;
 
+const snapFromJson = test.firestore.makeDocumentSnapshot;
+
+// Path to `dev_ads` collection. 
+const DEV_ADS_PATH = "dev_ads";
+
 /**
  * Initialize chai, and sinon. Mocha should be downloaded with npm.  
  * Mocha is:  
@@ -55,4 +60,11 @@ const sinonChai = require("sinon-chai");
 chai.should();
 chai.use(sinonChai);
 
-module.exports = { assert, sinon, firestoreMock, firestoreWrap };
+module.exports = { test, 
+                   assert, 
+                   sinon,
+                   chai,
+                   firestoreMock, 
+                   firestoreWrap, 
+                   snapFromJson,
+                   DEV_ADS_PATH };
