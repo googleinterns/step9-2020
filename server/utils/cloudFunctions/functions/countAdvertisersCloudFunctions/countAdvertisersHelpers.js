@@ -51,7 +51,7 @@ function decrementAdvertiserCount(snapshot, collection) {
   return advertiserCountReference.get().then(function(doc) {
     if (doc.exists) {
       if (doc.data().numberOfAds < 1) {
-        throw new IllegalAdCountDecrement();
+        throw new IllegalAdCountDecrement(); // Data has been corrupted
       }
 
       return advertiserCountReference
@@ -91,7 +91,7 @@ function incrementAdvertiserCount(snapshot, collection) {
       // as the primary key, and with the field `numberOfAds` set to 1.  
       return advertiserCountReference.set({numberOfAds: 1});
     }
-  }).catch(err => console.log(err));
+  }).catch(err => Promise.reject(err));
 }
 
 module.exports = { decrementAdvertiserCount, 
