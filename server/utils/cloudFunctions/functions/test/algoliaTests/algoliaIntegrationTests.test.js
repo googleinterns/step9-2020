@@ -10,6 +10,16 @@
  *   - If used something like `adOne` as `primary key`, would probably
  *     run into a lot of collisions with other `adOne`'s not deleted
  *     fast enough between tests (see note about `after` cleanup below.)
+ *   - Advertiser naming convention for this test suite is alphabetical 
+ *     enumeration. This is in contrast to the `countAdvertisersFunction`
+ *     test suite, which used alphabetical `ad_x` enumeration. 
+ *     - Done to avoid collisions with slow record deletions. 
+ *     - Underlying code implementation doesn't rely on advertiser naming
+ *       at all, just dumps the document data into an algolia record
+ *       so this naming scheme doesn't impact testing.  
+ *     - Consistency would be nice with the other tests... 
+ *       - But not worth the effort to figure out how to delete faster etc. 
+ *       - This works and is simple :)
  * - Two methods are used to retrieve algolia records, `getObject` and 
  *   `getObjects`. 
  *   - `getObject` takes a string `objectID` returns a json object. 
@@ -28,22 +38,28 @@
  *       and a string equality match is alternatively much easier. 
  *     - For the above reason, `getObjects` is used with singleton lists
  *       to verify that a record has been deleted instead of `getObject`. 
- * - Since error handling is managed by Firestore instead of the cloud 
- *   functions, it seems reasonable to not test for invalid inputs or 
- *   other failures (per Aileme.)
  * - `setTimeout` is used to allow firebase changes to propogate to algolia. 
  *   - `setTimeout` requires that `done()` be called at the end of the 
  *     inner function body. It is not equivalent to `return`. 
  * - `TIMEOUT_10S` was chosen because this is the maximum amount of latency 
  *   for firebase to execute a function. 
- * - `TIMEOUT_15S` is used to extend the default 2000ms limit set by mocha.
+ * - `TIMEOUT_15S` is used to extend the default 2000ms test limit set by 
+ *   mocha.
  * - The overall test timeout limit must be longer than the `setTimeout`
  *   method to allow time for the algolia api call.    
+ * - Due to the use of `done()` at the end of `setTimeout`, promises
+ *   are not returned as they are in `countAdvertisersFunction` test suite.
+ *   - This is because it will make the test `overspecified`
+ *   - Read more here: `https://medium.com/@durja/mocha-tests-with-async-await-2aead4afeca1`
+ *   - This does not impact testing at all, but is a notable style difference.
  * Tests are structured with promise nesting. 
  * - There is a debate about nesting vs chaining promises. In this case, 
  *     nesting is advantageous because it easily keeps everything in scope
  *     without much fuss. Thus, nesting is fine to use. 
  * - Also this is how the official docs do it. 
+ * - `Promise.allSettled` is used to avoid nesting hell where possible. 
+ *   Sometimes not possible if their is some sequential order that
+ *   must be obeyed (e.g., create and then delete.)  
  * Author: Robert Marcus
  * Date: July 16, 2020
  */
@@ -69,6 +85,8 @@ describe("Algolia integrations tests", () => {
   // Since these are live dev db's, this process can be very flaky.
   // In general, don't expect an 'advertiser' will be reset from 
   // test to test. 
+  // Note: this will also delete ad records in the corresponding 
+  // algolia index. 
   after(() => {
     deleteCollection(DB, 'dev_ads');
   });
@@ -92,21 +110,19 @@ describe("Algolia integrations tests", () => {
       const adList = [{advertiser: "b", startDate: "2019-10-15"},
                       {advertiser: "c", startDate: "2019-10-15"},
                       {advertiser: "d", startDate: "2019-10-16"}];
-      
-      DEV_ADS_COLLECTION.doc("b").set(adList[0]).then(() => {
-        DEV_ADS_COLLECTION.doc("c").set(adList[1]).then(() => {
-          DEV_ADS_COLLECTION.doc("d").set(adList[2]).then(() => {
-            setTimeout(function(){
-              DEV_ADS_INDEX.getObjects(["b", "c", "d"]).then(content => {
-                chai.expect(content.results[0].data).to.deep.equal(adList[0]);
-                chai.expect(content.results[1].data).to.deep.equal(adList[1]);
-                chai.expect(content.results[2].data).to.deep.equal(adList[2]);
-              }).catch(err => console.log(err));
 
-              done();
-            }, TIMEOUT_10S);
-          });
-        });
+      Promise.allSettled([DEV_ADS_COLLECTION.doc("b").set(adList[0]),
+                          DEV_ADS_COLLECTION.doc("c").set(adList[1]),
+                          DEV_ADS_COLLECTION.doc("d").set(adList[2])]).then(() => {
+        setTimeout(function(){
+          DEV_ADS_INDEX.getObjects(["b", "c", "d"]).then(content => {
+            chai.expect(content.results[0].data).to.deep.equal(adList[0]);
+            chai.expect(content.results[1].data).to.deep.equal(adList[1]);
+            chai.expect(content.results[2].data).to.deep.equal(adList[2]);
+          }).catch(err => console.log(err));
+
+          done();
+        }, TIMEOUT_10S);
       });
     }).timeout(TIMEOUT_15S);
   });
@@ -136,11 +152,12 @@ describe("Algolia integrations tests", () => {
        "the proper algolia record", function(done) {
       const adOne = {advertiser: "f", startDate: "2019-10-15"};
       const adTwo = {advertiser: "g", startDate: "2019-10-15"};
-
-      DEV_ADS_COLLECTION.doc("f").set(adOne).then(() => {
-        DEV_ADS_COLLECTION.doc("g").set(adTwo).then(() => {
-          DEV_ADS_COLLECTION.doc("f").update({startDate: "2020-10-15"}).then(() => {
-            setTimeout(function(){
+    
+      Promise.allSettled([DEV_ADS_COLLECTION.doc("f").set(adOne),
+                          DEV_ADS_COLLECTION.doc("g").set(adTwo)]).then(() => {
+        DEV_ADS_COLLECTION.doc("f").update({startDate: "2020-10-15"})
+                          .then(() => {
+          setTimeout(function(){
 
               // Verify that `adOne` was updated, `adTwo` was not. 
               DEV_ADS_INDEX.getObject("f").then(content => {
@@ -154,7 +171,6 @@ describe("Algolia integrations tests", () => {
 
               done(); 
             }, TIMEOUT_10S);
-          });
         });
       });
     }).timeout(TIMEOUT_15S);
@@ -190,27 +206,26 @@ describe("Algolia integrations tests", () => {
       const adOne = {advertiser: "i", startDate: "2019-10-15"};
       const adTwo = {advertiser: "j", startDate: "2019-10-15"};
 
-      DEV_ADS_COLLECTION.doc("i").set(adOne).then(() => {
-        DEV_ADS_COLLECTION.doc("j").set(adTwo).then(() => {
-          DEV_ADS_COLLECTION.doc("i").delete().then(() => {
-            setTimeout(function(){
-              DEV_ADS_INDEX.getObjects(["i", "j"]).then(content => {
+      Promise.allSettled([DEV_ADS_COLLECTION.doc("i").set(adOne), 
+                          DEV_ADS_COLLECTION.doc("j").set(adTwo)]).then(() => {
+        DEV_ADS_COLLECTION.doc("i").delete().then(() => {
+          setTimeout(function(){
+            DEV_ADS_INDEX.getObjects(["i", "j"]).then(content => {
 
-                // Checking `adOne` is deleted, so verify an error message
-                // exists, has the right message, and that index 0
-                // is null, while `adTwo` still exists. Check existence 
-                // because if doesn't, `.trim()` will yield an unhelpful error
-                // and obfuscate the true error.
-                chai.expect(content.message).to.exist;
-                chai.expect(content.message.trim())
-                    .to.be.equal("ObjectID i does not exist.");
-                chai.expect(content.results[0]).to.be.null;
-                chai.expect(content.results[1].data).to.deep.equal(adTwo);   
-              }).catch(err => console.log(err));
+              // Checking `adOne` is deleted, so verify an error message
+              // exists, has the right message, and that index 0
+              // is null, while `adTwo` still exists. Check existence 
+              // because if doesn't, `.trim()` will yield an unhelpful error
+              // and obfuscate the true error.
+              chai.expect(content.message).to.exist;
+              chai.expect(content.message.trim())
+                  .to.be.equal("ObjectID i does not exist.");
+              chai.expect(content.results[0]).to.be.null;
+              chai.expect(content.results[1].data).to.deep.equal(adTwo);   
+            }).catch(err => console.log(err));
 
-              done();
-            }, TIMEOUT_10S);
-          });
+            done();
+          }, TIMEOUT_10S);        
         });
       });
     }).timeout(TIMEOUT_15S); 
