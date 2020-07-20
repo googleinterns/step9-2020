@@ -6,7 +6,7 @@ Created on Tue Jul 20 16:36:57 2020
 @author: scarlet
 """
 from flask import Flask
-from routes import configure_routes
+from routes import configure_routes, MAX_CHAR_LIMIT
 from test_language_analysis import STRING_ONE, STRING_TWO
 import pytest
 
@@ -47,3 +47,15 @@ def test_analysis_route_fail_empty_fields(client):
   mock_data_2 = { 'header': STRING_ONE, 'content': '',}
   response = client.post(analysis_url, content_type=form_type, data=mock_data_2)
   assert response.status_code == 500
+
+def test_analysis_route_fail_exceed_character_limit(client):
+  exceeded_string = "x" * (MAX_CHAR_LIMIT + 1)
+  mock_data = { 'header': STRING_ONE, 'content': exceeded_string }
+  response = client.post(analysis_url, content_type=form_type, data=mock_data)
+  assert response.status_code == 500
+
+def test_analysis_route_success_within_character_limit_boundary(client):
+  inbound_string = "x" * MAX_CHAR_LIMIT
+  mock_data = { 'header': STRING_ONE, 'content': inbound_string }
+  response = client.post(analysis_url, content_type=form_type, data=mock_data)
+  assert response.status_code == 200

@@ -1,10 +1,12 @@
 from flask import Flask, jsonify, request, abort
 from language_analysis import analyze_entities, analyze_sentiment
 
-ERROR_MESSAGE = '"header" or "content" field was either empty or not included in form.'
+ERROR_MESSAGE = ('"header" or "content" field was either empty,' +
+                 'not included in form or has invalid values.')
+MAX_CHAR_LIMIT = 1000
 
 def is_valid(string):
-  return not (string is None or not string)
+  return not (string is None or not string or len(string) > MAX_CHAR_LIMIT)
 
 def configure_routes(app):
   @app.route('/')
