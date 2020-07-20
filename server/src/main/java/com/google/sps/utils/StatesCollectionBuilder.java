@@ -33,7 +33,6 @@ import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.SetOptions;
 
 
-
 /* 
  * Description:  
  * Author: Kira Toal
@@ -71,33 +70,42 @@ public class StatesCollectionBuilder {
   }
 
   public static void createSubcollections() throws Exception {
-    for (String state: TEST_SET) {
-      List<Ad> ads = new ArrayList<Ad>(); 
-      
+    for (String state: TEST_SET) {      
       // Get all documents from each state.
       ApiFuture<QuerySnapshot> future = db.collection(READ_FROM_COLLECTION)
                                           .whereArrayContains("geoTarget", state)
                                           .get();
       List<QueryDocumentSnapshot> documents = future.get().getDocuments();
 
+      // Advertiser name, ad ids
+      Map<String, HashSet> advertiserToAdIds = new HashMap<>();
+
       for (QueryDocumentSnapshot document : documents) {
-        // Look at the advertiser for each ad. If the state subcollection contains a 
-        // corresponsing advertiser document, update its field. Otherise, create a new
-        // advertiser document.
         Ad ad = document.toObject(Ad.class);
-
-        // Update one field, creating the document if it does not already exist.
-        Map<String, Object> data = new HashMap<>();
-        data.put("ads", Arrays.asList(ad.getId()));
-
-        db.collection(state.toLowerCase()).document(ad.getAdvertiser()).set(data, SetOptions.merge());
+        // Build dictionary.
+        String key = ad.getAdvertiser();
+        HashSet<String> value = new HashSet<String>(); 
+        if (advertiserToAdIds.containsKey(key)) {
+          value = advertiserToAdIds.get(key);
+          value.add(ad.getId());
+        } else {
+          value.add(ad.getId());
+        }
+        advertiserToAdIds.put(key, value);
       }
+
+      for (String key : advertiserToAdIds.keySet()) {
+        // use the key here
+        System.out.println(advertiserToAdIds.get(key));
+      }
+        
+        // db.collection(state.toLowerCase()).document(ad.getAdvertiser()).set(data, SetOptions.merge());
+        // db.collection(state.toLowerCase()).document(ad.getAdvertiser()).update("ads", FieldValue.arrayUnion(ad.getId()));
     }
   }
 
   public static void main(String[] args) throws Exception {
     initializeApp();
-    // createCollection();
     createSubcollections();
   }
 
