@@ -12,7 +12,6 @@ def root():
 
 @app.route('/analysis', methods=['POST'])
 def analyze():
-  # header and content MUST EXISTED!
   header = request.form.get('header')
   content = request.form.get('content')
 
