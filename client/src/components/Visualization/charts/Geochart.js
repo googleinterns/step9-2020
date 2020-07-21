@@ -1,4 +1,4 @@
-/** 
+/**
  * Description: Geochart implements a Google geochart component.
  * Author: Kira Toal
  * Date: 2020/07/13
@@ -14,18 +14,18 @@ import { app, database } from '../../../firebase/firebase';
 const Geochart = () => {
 
   const [adTotal, setAdTotal] = useState(0);
+  const width = "700px";
+  const height = "400px";
 
   class GeochartAd {
-    constructor(id, impressionsMin) {
+    constructor(id) {
     /**
     * @param {string} id
-    * @param {long} impressionsMin
     */
       this.id = id;
-      this.impressionsMin = impressionsMin;
     }
     toString() {
-      return this.id + ', ' + this.impressionsMin;
+      return this.id;
     }
   }
 
@@ -34,12 +34,11 @@ const Geochart = () => {
     toFirestore: function(ad) {
       return {
         id: ad.id,
-        impressionsMin: ad.impressionsMin,
       }
     },
     fromFirestore: function(snapshot, options){
       const data = snapshot.data(options);
-      return new GeochartAd(data.id, data.impressionsMin)
+      return new GeochartAd(data.id)
     }
   }
     
@@ -68,7 +67,7 @@ const Geochart = () => {
   return (
     <div className="search-header center">
       <p>Impressions Geochart</p>
-      <Chart chartType="GeoChart" width="700px" height="400px" data={ adTotal } options={ options } />
+      <Chart chartType="GeoChart" width={ width } height={ height } data={ adTotal } options={ options } />
     </div>
   );
 };
