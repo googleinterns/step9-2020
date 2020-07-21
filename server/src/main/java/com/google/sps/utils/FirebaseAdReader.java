@@ -27,7 +27,7 @@ import java.util.List;
 public final class FirebaseAdReader {
 
   public static List<Ad> readAds(String collection, String databaseURL, String pathToServiceAccount,
-    int timeoutAllowance) throws Exception {
+    int limit, int timeoutAllowance) throws Exception {
     FileInputStream serviceAccount = new FileInputStream(pathToServiceAccount);
     FirebaseOptions options = new FirebaseOptions.Builder()
         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -35,13 +35,13 @@ public final class FirebaseAdReader {
         .build();
     
     // Initialize app.
-    if(FirebaseApp.getApps().isEmpty()) {
+    if (FirebaseApp.getApps().isEmpty()) {
       FirebaseApp.initializeApp(options);
     }
     Firestore db = FirestoreClient.getFirestore();
 
     // Retrieve all documents from the collection.
-    ApiFuture<QuerySnapshot> future = db.collection(collection).get();
+    ApiFuture<QuerySnapshot> future = db.collection(collection).limit(limit).get();
     List<QueryDocumentSnapshot> documents = future.get(timeoutAllowance, TimeUnit.SECONDS).getDocuments();
     List<Ad> ads = new ArrayList<Ad>(); 
     for (QueryDocumentSnapshot document : documents) {

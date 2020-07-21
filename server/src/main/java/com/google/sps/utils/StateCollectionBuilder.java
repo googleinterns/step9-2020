@@ -74,13 +74,13 @@ public class StateCollectionBuilder {
     // Create a document for every advertiser.
     for (QueryDocumentSnapshot document : documents) {
       Ad ad = document.toObject(Ad.class); // Convert document to Ad to use methods like .getAdvertiser().
-      String key = ad.getAdvertiser();
-      ArrayList<String> value = new ArrayList<String>(); 
-      if (advertiserToAdIds.containsKey(key)) {
-        value = advertiserToAdIds.get(key);
+      String advertiser = ad.getAdvertiser();
+      ArrayList<String> ids = new ArrayList<String>(); 
+      if (advertiserToAdIds.containsKey(advertiser)) {
+        ids = advertiserToAdIds.get(advertiser);
       }
-      value.add(ad.getId());
-      advertiserToAdIds.put(key, value);
+      ids.add(ad.getId());
+      advertiserToAdIds.put(advertiser, ids);
     }
 
     // Add advertiser documents to the corresponding state collection.
