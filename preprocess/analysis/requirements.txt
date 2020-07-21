@@ -4,3 +4,5 @@ itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
 Werkzeug==1.0.1
+googleapis-common-protos==1.6.0
+google-cloud-language
