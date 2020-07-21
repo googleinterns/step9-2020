@@ -1,11 +1,16 @@
-import { VictoryTheme, VictoryScatter, VictoryChart, VictoryAxis, VictoryTooltip, VictoryLabel } from 'victory';
+import { VictoryTheme, 
+         VictoryScatter, 
+         VictoryChart, 
+         VictoryAxis, 
+         VictoryTooltip, 
+         VictoryLabel } from 'victory';
 import { database } from '../../../firebase/firebase';
 import React, { useState, useEffect } from 'react';
 
 /**
  * Creates a hexidecimal color string from a string input. 
  * Taken from here: `https://stackoverflow.com/a/16348977`.
- * Loosely cleaned up for style.
+ * Loosely cleaned up for style and comments.
  * This *should* return a valid hash, but if it doesn't,
  * the browser will just display `#000`.
  * @param {string} str input string 
@@ -39,10 +44,13 @@ function stringToColor(str) {
 function formatAdvertiserCountSnapshot(snap, year) {
   const numberOfAds = snap.data().numberOfAds;
   const advertiser = snap.id;
-  const victoryFormattedAdvertiserCount = {x: parseInt(year), 
-                                           y: parseInt(numberOfAds), 
-                                           fill: stringToColor(advertiser),
-                                           label: `${advertiser} had ${numberOfAds} ads in ${year}.`};
+
+  const victoryFormattedAdvertiserCount = 
+      {x: parseInt(year), 
+       y: parseInt(numberOfAds), 
+       fill: stringToColor(advertiser),
+       label: `${advertiser} had ${numberOfAds} ads in ${year}.`};
+
   return victoryFormattedAdvertiserCount;
 }
 
@@ -74,7 +82,8 @@ function useAdvertisers(year, limit) {
             .collection("advertisers")
             .orderBy("numberOfAds", "desc")
             .limit(limit)
-            .get().then((snapshots) => {
+            .get()
+            .then((snapshots) => {
       const newAdvertisers = snapshots.docs.map(snap => {
         return formatAdvertiserCountSnapshot(snap, year);
       });
