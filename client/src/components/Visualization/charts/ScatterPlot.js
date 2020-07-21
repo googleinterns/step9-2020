@@ -1,3 +1,12 @@
+/**
+ * Description: exports a react/victory object of 
+ *              a scatterplot with the top X most prolific advertisers
+ *              across 2018, 2019, 2020, as computed in `aggregates`
+ *              firestore collection. 
+ * Date: 7/21/2020
+ * Author: Robbie Marcus
+ */
+
 import { VictoryTheme, 
          VictoryScatter, 
          VictoryChart, 
@@ -56,6 +65,8 @@ function formatAdvertiserCountSnapshot(snap, year) {
 
 /**
  * Returns the exclusive bounds for the range of all data points being charted.
+ * Uses the spread `...` operator.
+ * `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax` 
  * @param {List[object]} victoryJsonList a list of objects in a victory-ready 
  *     format.
  * @returns {object}
