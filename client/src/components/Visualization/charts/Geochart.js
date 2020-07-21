@@ -4,7 +4,6 @@
  * Date: 2020/07/13
  */
 
-import { ads } from '../../../firebase/FirestoreDocumentReader';
 import { Chart } from "react-google-charts";
 import firebase from '../../../firebase/firebase';
 import React, { useState, useEffect } from 'react';
@@ -41,17 +40,53 @@ const Geochart = () => {
       return new GeochartAd(data.id)
     }
   }
-    
-  useEffect(async () => {
-    let data = [["State", "Total Number of Ads"]];
-    for (let state in states) {
-      const documentRef = database.collection('ads');
-      const query = await documentRef.where("geoTarget", "array-contains", state)
-                                  .withConverter(adConverter)
-                                  .get();
-      data.push([state, query.docs.length]); // Update data table.
+
+  async function doStuff() {
+    const documentRef = database.collection('states').doc('california').collection('ads');
+    const query = await documentRef.get();
+    for (let doc in query) {
+      console.log(doc.id, " => ", doc.data());
     }
-    setAdTotal(data)
+  }
+  doStuff();
+
+  // database.collection('states').doc('california').collection('ads')
+  //     .get()
+  //     .then(function(querySnapshot) {
+  //         querySnapshot.forEach(function(doc) {
+  //             // doc.data() is never undefined for query doc snapshots
+  //             console.log(doc.id, " => ", doc.data());
+  //         });
+  //     })
+  //     .catch(function(error) {
+  //         console.log("Error getting documents: ", error);
+  //     });
+
+
+  // async function doStuff() {
+  //   const documentRef = database.collection('states').doc('california').collection('ads').doc('CALIFORNIA ALLIANCE FOR JOBS');
+  //   const query = await documentRef.withConverter(adConverter).get();
+  //   //for (let document in query) {
+  //     console.log('query: ' + query.toString());
+  //   //}
+  // }
+
+  //doStuff();
+
+  // useEffect makes a Firestore query for the total number of ads targeted at each state.
+  useEffect(() => {
+    async function fetchData() {
+      let data = [["State", "Total Number of Ads"]];
+      for (let state in states) {
+        const documentRef = database.collection('ads');
+        const query = await documentRef.where("geoTarget", "array-contains", state)
+                                       .withConverter(adConverter)
+                                       .get();
+        data.push([state, query.docs.length]); // Update data table.
+      }
+      setAdTotal(data)
+    }
+    fetchData();
   }, [])
 
   const options = {
