@@ -41,17 +41,33 @@ const Geochart = () => {
       return new GeochartAd(data.id)
     }
   }
-    
-  useEffect(async () => {
-    let data = [["State", "Total Number of Ads"]];
-    for (let state in states) {
-      const documentRef = database.collection('ads');
-      const query = await documentRef.where("geoTarget", "array-contains", state)
-                                  .withConverter(adConverter)
-                                  .get();
-      data.push([state, query.docs.length]); // Update data table.
+
+  /**
+   * Get all of the IDs for a state
+   */ 
+  async function doStuff() {
+    const docRef = database.collection('states').doc('california').collection('ads');
+    const query = await docRef.get();
+    for (let doc of query.docs) { // For every advertisement group, 
+      console.log(doc.get('ads'));
+      // for (let id of doc.data()) {
     }
-    setAdTotal(data)
+  }
+  doStuff();
+
+  useEffect(() => {
+    async function fetchData() {
+      let data = [["State", "Total Number of Ads"]];
+      for (let state in states) {
+        const documentRef = database.collection('ads');
+        const query = await documentRef.where("geoTarget", "array-contains", state)
+                                    .withConverter(adConverter)
+                                    .get();
+        data.push([state, query.docs.length]); // Update data table.
+      }
+      setAdTotal(data)
+    }
+    fetchData();
   }, [])
 
   const options = {
