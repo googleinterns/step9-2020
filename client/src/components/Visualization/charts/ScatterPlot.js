@@ -1,31 +1,48 @@
-import { VictoryTheme, VictoryScatter, VictoryChart, VictoryAxis, VictoryTooltip } from 'victory';
+import { VictoryTheme, VictoryScatter, VictoryChart, VictoryAxis, VictoryTooltip, VictoryLabel } from 'victory';
 import { database } from '../../../firebase/firebase';
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+
+function stringToColour(str) {
+  var hash = 0;
+  for (var i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  var colour = '#';
+  for (var i = 0; i < 3; i++) {
+    var value = (hash >> (i * 8)) & 0xFF;
+    colour += ('00' + value.toString(16)).substr(-2);
+  }
+  return colour;
+}
 
 function formatAdvertiserCountSnapshot(snap, year) {
   const numberOfAds = snap.data().numberOfAds;
   const advertiser = snap.id;
   const victoryFormattedAdvertiserCount = {x: parseInt(year), 
-                                           y: numberOfAds, 
-                                           label: advertiser};
-  
+                                           y: parseInt(numberOfAds), 
+                                           fill: stringToColour(advertiser),
+                                           label: `${advertiser} had ${numberOfAds} ads in ${year}.`};
   return victoryFormattedAdvertiserCount;
 }
 
-function useAdvertisers() {
+function getChartRange(victoryJsonList) {
+  const ranges = victoryJsonList.map(json => json.y);
+
+  return {min: Math.min(...ranges), max: Math.max(...ranges)};
+}
+
+function useAdvertisers(year) {
   const [advertisers, setAdvertisers] = useState([]);
 
   useEffect(() => {
-
     database.collection("dev_aggregates")
-            .doc("2019")
+            .doc(year)
             .collection("advertisers")
             .orderBy("numberOfAds", "desc")
-            .limit(15)
+            .limit(5)
             .get().then((snapshots) => {
       const newAdvertisers = snapshots.docs.map(snap => {
-        return formatAdvertiserCountSnapshot(snap, "2019");
+        return formatAdvertiserCountSnapshot(snap, year);
       });
 
       setAdvertisers(newAdvertisers);
@@ -34,30 +51,46 @@ function useAdvertisers() {
 
   return advertisers;
 }
+
 const ScatterPlot = () => {
-  const advertisers = useAdvertisers();
-  console.log("Advertisers looks like ", advertisers)
+  const advertisers2018 = useAdvertisers("2018");
+  const advertisers2019 = useAdvertisers("2019");
+  const advertisers2020 = useAdvertisers("2020");
+  
+  const advertisers = [...advertisers2018,
+                       ...advertisers2019,
+                       ...advertisers2020];
+
+  const range = getChartRange(advertisers);
+  
   return (
     <VictoryChart
       theme={VictoryTheme.material}
-      domain={{ x: [2017, 2021], y: [0, 7] }}
+      domain={{ x: [2017, 2021], y: [range.min*.5, range.max*2] }}
+      scale={{ y: "log" }}
     >
-    <VictoryAxis tickValues = {[2018, 2019, 2020]}/>
+      <VictoryLabel
+        text="T5 Most prolific ad words advertisers/year (hover for details)"
+        x={175} y = {30}
+        textAnchor="middle"
+      />
+      <VictoryAxis 
+        tickValues = {[2018, 2019, 2020]}
+      />
+      <VictoryAxis 
+        dependentAxis
+        tickValues = {[range.min, range.max]}
+        label="# of ads (log scale)"
+      />
       <VictoryScatter
         labelComponent={<VictoryTooltip/>}
-        style={{ data: { fill: 'tomato' } }}
-        size={7}
-        data={/*[{ x: 2018, y: 2, label: "ad one" },
-        { x: 2019, y: 3, label: "another ad!" },
-        { x: 2020, y: 5, label: "omg another one 🗿" }]*/advertisers}
+        labels={({ datum }) => datum.y}
+        style={{ data: { fill: ({ datum }) => datum.fill}}}
+        size={10}
+        data={advertisers}
       />
     </VictoryChart>
   );
 }
-
-
-ScatterPlot.propTypes = {
-  data: PropTypes.array,
-};
 
 export default ScatterPlot;
