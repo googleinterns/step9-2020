@@ -62,9 +62,7 @@ const TermsDisplay = props => {
         const termObject = JSON.parse(termString);
         return (
           <div key={index} className="center">
-            <div className="analysis-text" id="special-text">
-              {termObject.name}
-            </div>
+            <div className="analysis-text special-text">{termObject.name}</div>
             <div className="analysis-text">type: {termObject.type}</div>
             <div className="analysis-text">salience: {termObject.salience}</div>
           </div>

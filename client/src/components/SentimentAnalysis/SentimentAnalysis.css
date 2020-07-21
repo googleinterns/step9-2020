@@ -71,7 +71,7 @@
   border-radius: 20px;
 }
 
-#special-text {
+.special-text {
   background-color: var(--primary-color);
   color: white;
   margin-right: 20px;
