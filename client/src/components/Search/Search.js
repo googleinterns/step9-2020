@@ -1,7 +1,7 @@
 import './Search.css';
 
-import { PROD_INDEX, SEARCH_CLIENT } from '../../constants/algolia_config';
 import React, { useState } from 'react';
+import { algoliaIndex, searchClient } from '../../constants/algolia_config';
 
 import FilterList from '../FilterList/FilterList';
 import { InstantSearch } from 'react-instantsearch-dom';
@@ -18,7 +18,7 @@ const Search = () => {
   return (
     <div className="search-container">
       <div className="container">
-        <InstantSearch searchClient={SEARCH_CLIENT} indexName={PROD_INDEX}>
+        <InstantSearch searchClient={searchClient} indexName={algoliaIndex}>
           <h3 className="filter-header" onClick={handleFilterToggle}>
             {`(${showFilter ? '-' : '+'}) FILTERS`}
           </h3>

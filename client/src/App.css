@@ -19,4 +19,12 @@ html {
   .searchbox {
     width: 90vw !important;
   }
+  .analysis-result-container {
+    flex-direction: column;
+    align-items: center !important;
+  }
+  .analysis-card {
+    width: 80% !important;
+    margin-bottom: 40px;
+  }
 }

@@ -1,6 +1,6 @@
 import './FilterList.css';
 
-import { COST, IMPRESSIONS } from '../../constants/filter_constant';
+import { COST, IMPRESSIONS } from '../../constants/filter_constants';
 import { NumericMenu, RefinementList } from 'react-instantsearch-dom';
 
 import React from 'react';
