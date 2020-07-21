@@ -1,0 +1,82 @@
+@import url('../../styles/colors.css');
+.ad-input {
+  border: solid 1px gray;
+  border-radius: 5px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-size: 16px;
+  line-height: 25px;
+  margin-bottom: 10px;
+  margin-top: 15px;
+  min-width: 400px;
+  outline: none;
+  padding: 15px 10px;
+}
+
+.analysis-button {
+  background-color: var(--secondary-color);
+  border: white solid 1px;
+  border-radius: 6px;
+  color: var(--label-color);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  outline: none;
+  padding: 10px 15px;
+}
+
+.analysis-button:hover {
+  background-color: var(--label-color);
+  color: var(--secondary-color);
+}
+
+.analysis-label {
+  margin: 0px;
+}
+
+.analysis-result-container {
+  width: 100%;
+  margin: 30px 0px;
+  align-items: flex-start;
+  justify-content: space-around;
+  padding: 20px 0px;
+}
+
+.analysis-card {
+  width: 45%;
+  flex-direction: column;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  padding-bottom: 40px;
+  border-radius: 10px;
+}
+
+.color-bar {
+  border-radius: 15px;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.analysis-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.analysis-text {
+  background-color: var(--secondary-color);
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 20px;
+}
+
+.special-text {
+  background-color: var(--primary-color);
+  color: white;
+  margin-right: 20px;
+}
+
+.bottom-padding {
+  padding-bottom: 40px;
+}

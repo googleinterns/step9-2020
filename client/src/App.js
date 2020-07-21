@@ -2,22 +2,16 @@ import './App.css';
 
 import React, { useState } from 'react';
 
+import { PAGE_MAP } from './constants/header_constants';
 import PageNav from './components/PageNav/PageNav';
-import Search from './components/Search/Search';
-import Visualization from './components/Visualization/Visualization';
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('Ads Search');
-
-  const pageMap = {
-    'Ads Search': <Search />,
-    'Data Visualization': <Visualization />,
-  };
+  const [currentPage, setCurrentPage] = useState('Sentiment Analysis');
 
   return (
     <div>
       <PageNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
-      {pageMap[currentPage]}
+      {PAGE_MAP[currentPage]}
     </div>
   );
 };
