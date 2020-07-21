@@ -7,14 +7,14 @@
  * Author: Robbie Marcus
  */
 
+import { database } from '../../../firebase/firebase';
+import React, { useState, useEffect } from 'react';
 import { VictoryTheme, 
          VictoryScatter, 
          VictoryChart, 
          VictoryAxis, 
          VictoryTooltip, 
          VictoryLabel } from 'victory';
-import { database } from '../../../firebase/firebase';
-import React, { useState, useEffect } from 'react';
 
 /**
  * Creates a hexidecimal color string from a string input. 
