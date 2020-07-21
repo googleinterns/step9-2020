@@ -59,9 +59,13 @@ function getChartRange(victoryJsonList) {
 }
 
 /**
- * 
+ * Custom react webhook. Currently calls `dev_aggregates` collection
+ * and queries for the top `year` 
+ * @param {string} year year to query
+ * @param {int} limit maximum number of database documents to return
+ * @return {object}
  */
-function useAdvertisers(year) {
+function useAdvertisers(year, limit) {
   const [advertisers, setAdvertisers] = useState([]);
 
   useEffect(() => {
@@ -69,7 +73,7 @@ function useAdvertisers(year) {
             .doc(year)
             .collection("advertisers")
             .orderBy("numberOfAds", "desc")
-            .limit(4)
+            .limit(limit)
             .get().then((snapshots) => {
       const newAdvertisers = snapshots.docs.map(snap => {
         return formatAdvertiserCountSnapshot(snap, year);
@@ -83,42 +87,48 @@ function useAdvertisers(year) {
 }
 
 const ScatterPlot = () => {
-  const advertisers2018 = useAdvertisers("2018");
-  const advertisers2019 = useAdvertisers("2019");
-  const advertisers2020 = useAdvertisers("2020");
+  const limit = 4; 
+
+  const advertisers2018 = useAdvertisers("2018", limit);
+  const advertisers2019 = useAdvertisers("2019", limit);
+  const advertisers2020 = useAdvertisers("2020", limit);
   
   const advertisers = [...advertisers2018,
                        ...advertisers2019,
                        ...advertisers2020];
 
   const range = getChartRange(advertisers);
+  const chartTitle = `T${limit} Most prolific ad words advertisers/year`;
   
   return (
     <VictoryChart
-      theme={VictoryTheme.material}
+      theme={ VictoryTheme.material }
       domain={{ x: [2017, 2021], y: [range.min*.5, range.max*2] }}
       scale={{ y: "log" }}
     >
       <VictoryLabel
-        text="T4 Most prolific ad words advertisers/year (hover for details)"
-        x={175} y = {30}
+        text={ chartTitle }
+        x={ 175 } y = { 30 }
         textAnchor="middle"
       />
+
       <VictoryAxis 
-        tickValues = {[2018, 2019, 2020]}
+        tickValues = { [2018, 2019, 2020] }
       />
-      <VictoryAxis 
-        dependentAxis
-        tickValues = {[range.min, range.max]}
+
+      <VictoryAxis dependentAxis
+        tickValues = { [range.min, range.max] }
         label="# of ads (log scale)"
       />
+
       <VictoryScatter
-        labelComponent={<VictoryTooltip/>}
+        labelComponent={ <VictoryTooltip/> }
         labels={({ datum }) => datum.y}
-        style={{ data: { fill: ({ datum }) => datum.fill}}}
-        size={10}
-        data={advertisers}
+        style={{ data: { fill: ({ datum }) => datum.fill }}}
+        size={ 10 }
+        data={ advertisers }
       />
+
     </VictoryChart>
   );
 }
