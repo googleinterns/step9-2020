@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-/* 
+/**
  * Description: Utility class that reads ad objects from Firestore. 
  * Author: Kira Toal
  * Date: July 14, 2020

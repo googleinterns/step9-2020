@@ -25,7 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-/* 
+
+/**
  * Description: StateCollectionBuilder reads in advertisements from the "ads" collection in Firestore.
  *              Ad documents that are geo-targeted at the same state are grouped together in a state
  *              subcollection. These subcollections are populated with advertiser documents. Each 
@@ -49,6 +50,8 @@ public class StateCollectionBuilder {
   private static final String MAIN_COLLECTION = "ads";
   private static Firestore db; 
 
+  private static final Set<String> MOCK_DATA = new HashSet<>(Arrays.asList("Utah", "California"));  
+
   public static void initializeApp() throws Exception {
     // Set account and build options.
     FileInputStream serviceAccount = new FileInputStream(PATH_TO_SERVICE_ACCOUNT);
@@ -58,7 +61,7 @@ public class StateCollectionBuilder {
         .build();
     
     // Initialize app.
-    if(FirebaseApp.getApps().isEmpty()) {
+    if (FirebaseApp.getApps().isEmpty()) {
       FirebaseApp.initializeApp(options);
     }
     db = FirestoreClient.getFirestore();
@@ -84,7 +87,10 @@ public class StateCollectionBuilder {
     for (String key : advertiserToAdIds.keySet()) {
       Map<String, Object> data = new HashMap<>();
       data.put("ads", advertiserToAdIds.get(key));
-      db.collection(state.toLowerCase()).document(key).set(data, SetOptions.merge());
+      db
+        .collection("states").document(state.toLowerCase())
+        .collection("ads").document(key)
+        .set(data, SetOptions.merge());
     }
   }
 
@@ -92,7 +98,7 @@ public class StateCollectionBuilder {
     initializeApp();
 
     // Sort ads into groups by geotarget.
-    for (String state: VALID_GEO_TARGETS) {      
+    for (String state: MOCK_DATA) {      
       ApiFuture<QuerySnapshot> future = db.collection(MAIN_COLLECTION)
                                           .whereArrayContains("geoTarget", state)
                                           .get();
