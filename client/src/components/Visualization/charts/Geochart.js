@@ -13,8 +13,8 @@ import { app, database } from '../../../firebase/firebase';
 const Geochart = () => {
 
   const [adTotal, setAdTotal] = useState(0);
-  const width = "700px";
-  const height = "400px";
+  const width = "700";
+  const height = "400";
 
   class GeochartAd {
     constructor(id) {
@@ -102,7 +102,7 @@ const Geochart = () => {
   return (
     <div className="search-header center">
       <p>Impressions Geochart</p>
-      <Chart chartType="GeoChart" width={ width } height={ height } data={ adTotal } options={ options } />
+      <Chart chartType="GeoChart" width={width} height={height} data={adTotal} options={options} />
     </div>
   );
 };
