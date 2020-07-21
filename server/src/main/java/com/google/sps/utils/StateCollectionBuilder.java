@@ -3,7 +3,6 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
@@ -45,12 +44,11 @@ public class StateCollectionBuilder {
           "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", 
           "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", 
           "Wisconsin", "Wyoming", "United States"));
+  private static final Set<String> MOCK_DATA = new HashSet<>(Arrays.asList("Utah", "California"));  
   private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
   private static final String MAIN_COLLECTION = "ads";
   private static Firestore db; 
-
-  private static final Set<String> MOCK_DATA = new HashSet<>(Arrays.asList("Utah", "California"));  
 
   public static void initializeApp() throws Exception {
     // Set account and build options.
@@ -67,7 +65,11 @@ public class StateCollectionBuilder {
     db = FirestoreClient.getFirestore();
   }
 
-  public static void updateStateCollection(String state, List<QueryDocumentSnapshot> documents) throws Exception {
+  /*
+   * Sorts advertisments into groups by advertiser. 
+   */
+  public static Map<String, ArrayList> getSortedAds(String state, List<QueryDocumentSnapshot> documents) 
+    throws Exception {
     // Initialize a HashMap to organize ad data into documents.
     Map<String, ArrayList> advertiserToAdIds = new HashMap<>();
 
@@ -82,7 +84,12 @@ public class StateCollectionBuilder {
       ids.add(ad.getId());
       advertiserToAdIds.put(advertiser, ids);
     }
+    return advertiserToAdIds;
+  }
 
+
+  public static void updateStateCollection(String state, Map<String, ArrayList> advertiserToAdIds) 
+    throws Exception {
     // Add advertiser documents to the corresponding state collection.
     for (String key : advertiserToAdIds.keySet()) {
       Map<String, Object> data = new HashMap<>();
@@ -103,7 +110,7 @@ public class StateCollectionBuilder {
                                           .whereArrayContains("geoTarget", state)
                                           .get();
       List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-      updateStateCollection(state, documents);
+      updateStateCollection(state, getSortedAds(state, documents));
     }
   }
 }
