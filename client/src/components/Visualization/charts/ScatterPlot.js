@@ -84,7 +84,7 @@ function getChartRange(victoryJsonList) {
  * @param {int} limit maximum number of database documents to return
  * @return {object}
  */
-function useAdvertisers(year, limit) {
+function useAdvertisers(year, queryLimit) {
   const [advertisers, setAdvertisers] = useState([]);
 
   useEffect(() => {
@@ -92,7 +92,7 @@ function useAdvertisers(year, limit) {
             .doc(year)
             .collection("advertisers")
             .orderBy("numberOfAds", "desc")
-            .limit(limit)
+            .limit(queryLimit)
             .get()
             .then((snapshots) => {
       const newAdvertisers = snapshots.docs.map(snap => {
@@ -107,18 +107,18 @@ function useAdvertisers(year, limit) {
 }
 
 const ScatterPlot = () => {
-  const limit = 4; 
+  const queryLimit = 4; 
 
-  const advertisers2018 = useAdvertisers("2018", limit);
-  const advertisers2019 = useAdvertisers("2019", limit);
-  const advertisers2020 = useAdvertisers("2020", limit);
+  const advertisers2018 = useAdvertisers("2018", queryLimit);
+  const advertisers2019 = useAdvertisers("2019", queryLimit);
+  const advertisers2020 = useAdvertisers("2020", queryLimit);
   
   const advertisers = [...advertisers2018,
                        ...advertisers2019,
                        ...advertisers2020];
 
   const range = getChartRange(advertisers);
-  const chartTitle = `T${limit} Most prolific ad words advertisers/year`;
+  const chartTitle = `T${queryLimit} Most prolific ad words advertisers/year`;
   
   return (
     <VictoryChart
