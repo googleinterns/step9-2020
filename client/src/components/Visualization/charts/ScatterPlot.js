@@ -2,35 +2,65 @@ import { VictoryTheme, VictoryScatter, VictoryChart, VictoryAxis, VictoryTooltip
 import { database } from '../../../firebase/firebase';
 import React, { useState, useEffect } from 'react';
 
-function stringToColour(str) {
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+/**
+ * Creates a hexidecimal color string from a string input. 
+ * Taken from here: `https://stackoverflow.com/a/16348977`.
+ * Loosely cleaned up for style.
+ * This *should* return a valid hash, but if it doesn't,
+ * the browser will just display `#000`.
+ * @param {string} str input string 
+ * @return {string}
+ */
+function stringToColor(str) {
+  let hash = 0;
+  let hexColor = '#';
+
+  // Compute a hash from the input string.
+  for (let index = 0; index < str.length; index++) {
+    hash = str.charCodeAt(index) + ((hash << 5) - hash);
   }
-  var colour = '#';
-  for (var i = 0; i < 3; i++) {
-    var value = (hash >> (i * 8)) & 0xFF;
-    colour += ('00' + value.toString(16)).substr(-2);
+  
+  // Compute a hex string from the hash.
+  for (let index = 0; index < 3; index++) {
+    let value = (hash >> (index * 8)) & 0xFF;
+    hexColor += ('00' + value.toString(16)).substr(-2);
   }
-  return colour;
+
+  return hexColor;
 }
 
+/**
+ * Turn a firestore snap into a victory formatted
+ * json object that can be charted without further alteration.
+ * @param {object} snap a firestore snap object
+ * @param {string} year year corresponding to the relevant year. 
+ * @return {object}
+ */
 function formatAdvertiserCountSnapshot(snap, year) {
   const numberOfAds = snap.data().numberOfAds;
   const advertiser = snap.id;
   const victoryFormattedAdvertiserCount = {x: parseInt(year), 
                                            y: parseInt(numberOfAds), 
-                                           fill: stringToColour(advertiser),
+                                           fill: stringToColor(advertiser),
                                            label: `${advertiser} had ${numberOfAds} ads in ${year}.`};
   return victoryFormattedAdvertiserCount;
 }
 
+/**
+ * Returns the exclusive bounds for the range of all data points being charted.
+ * @param {List[object]} victoryJsonList a list of objects in a victory-ready 
+ *     format.
+ * @returns {object}
+ */
 function getChartRange(victoryJsonList) {
   const ranges = victoryJsonList.map(json => json.y);
 
   return {min: Math.min(...ranges), max: Math.max(...ranges)};
 }
 
+/**
+ * 
+ */
 function useAdvertisers(year) {
   const [advertisers, setAdvertisers] = useState([]);
 
@@ -39,7 +69,7 @@ function useAdvertisers(year) {
             .doc(year)
             .collection("advertisers")
             .orderBy("numberOfAds", "desc")
-            .limit(5)
+            .limit(4)
             .get().then((snapshots) => {
       const newAdvertisers = snapshots.docs.map(snap => {
         return formatAdvertiserCountSnapshot(snap, year);
@@ -70,7 +100,7 @@ const ScatterPlot = () => {
       scale={{ y: "log" }}
     >
       <VictoryLabel
-        text="T5 Most prolific ad words advertisers/year (hover for details)"
+        text="T4 Most prolific ad words advertisers/year (hover for details)"
         x={175} y = {30}
         textAnchor="middle"
       />
