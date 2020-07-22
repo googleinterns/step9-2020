@@ -42,7 +42,6 @@
 const { chai,
         TIMEOUT_2S,
         TIMEOUT_15S,
-        TIMEOUT_MAX,
         DEV_ADS_COLLECTION } = require('../testConfig');
 
 const { deleteCollection } = require('../deleteCollection');
@@ -56,21 +55,7 @@ const { DEV_ADS_INDEX } =
 
 const { makeRandomID } = require('../makeRandomID');
 
-const { promiseTimeout } = require('../promiseTimeout');
-
-const wrap = async function(someFunction, timeout) {
-  try {
-    await someFunction();
-  } catch (err) {
-    if (timeout > TIMEOUT_MAX) {
-        chai.assert.fail(err);
-    } else {
-      await promiseTimeout(timeout);
-      return wrap(someFunction, 2 * timeout);
-    }
-  }
-}
-
+const { retryAssertions } = require('../retryAssertions');
 
 describe("Algolia integrations tests", () => {
   // After every 'describe' block, reset the test environments. 
@@ -89,13 +74,13 @@ describe("Algolia integrations tests", () => {
 
       await DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad);
 
-      const test = async () => {
+      const assertion = async () => {
         const content = await DEV_ADS_INDEX.getObject(ad.advertiser);
 
         chai.expect(content.data).to.deep.equal(ad);
       }
 
-      await wrap(test, TIMEOUT_2S);
+      await retryAssertions(assertion, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
 
     it("should propogate multiple ad documents " + 
@@ -109,7 +94,7 @@ describe("Algolia integrations tests", () => {
           DEV_ADS_COLLECTION.doc(adList[1].advertiser).set(adList[1]),
           DEV_ADS_COLLECTION.doc(adList[2].advertiser).set(adList[2])]);
 
-      const test = async () => {
+      const assertions = async () => {
         const contentList = 
             await DEV_ADS_INDEX.getObjects([adList[0].advertiser, 
                                             adList[1].advertiser, 
@@ -120,7 +105,7 @@ describe("Algolia integrations tests", () => {
         chai.expect(contentList.results[2].data).to.deep.equal(adList[2]);
       }
 
-      await wrap(test, TIMEOUT_2S);
+      await retryAssertions(assertions, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
   });
 
@@ -133,14 +118,14 @@ describe("Algolia integrations tests", () => {
       await DEV_ADS_COLLECTION.doc(ad.advertiser)
                               .update({startDate: "2020-10-15"});
 
-      const test = async () => {
+      const assertion = async () => {
         const content = await DEV_ADS_INDEX.getObject(ad.advertiser);
 
         chai.expect(content.data).to
             .deep.equal({advertiser: ad.advertiser, startDate: "2020-10-15"});
       }
 
-      await wrap(test, TIMEOUT_2S);
+      await retryAssertions(assertion, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
 
     it("should propogate a firestore document update to " + 
@@ -154,7 +139,7 @@ describe("Algolia integrations tests", () => {
       await DEV_ADS_COLLECTION.doc(adOne.advertiser)
                               .update({startDate: "2020-10-15"});
 
-      const test = async () => {
+      const assertions = async () => {
         const adOneContent = await DEV_ADS_INDEX.getObject(adOne.advertiser);
         const adTwoContent = await DEV_ADS_INDEX.getObject(adTwo.advertiser);
 
@@ -163,7 +148,7 @@ describe("Algolia integrations tests", () => {
         chai.expect(adTwoContent.data).to.deep.equal(adTwo);
       }
 
-      await wrap(test, TIMEOUT_2S);
+      await retryAssertions(assertions, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
   });
 
@@ -176,7 +161,7 @@ describe("Algolia integrations tests", () => {
       await DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad);
       await DEV_ADS_COLLECTION.doc(ad.advertiser).delete()
 
-      const test = async () => {
+      const assertions = async () => {
         const content = await DEV_ADS_INDEX.getObjects([ad.advertiser]);
 
         // Checking `ad` is deleted, so verify an error message
@@ -189,7 +174,7 @@ describe("Algolia integrations tests", () => {
         chai.expect(content.results[0]).to.be.null;  
       }
 
-      await wrap(test, TIMEOUT_2S);
+      await retryAssertions(assertions, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
     
     it("should delete the right algolia record when a firestore document " +
@@ -202,7 +187,7 @@ describe("Algolia integrations tests", () => {
           DEV_ADS_COLLECTION.doc(adTwo.advertiser).set(adTwo)]);
       await DEV_ADS_COLLECTION.doc(adOne.advertiser).delete();
 
-      const test = async () => {
+      const assertions = async () => {
         const contentList = 
             await DEV_ADS_INDEX.getObjects([adOne.advertiser, adTwo.advertiser]);
 
@@ -213,7 +198,7 @@ describe("Algolia integrations tests", () => {
         chai.expect(contentList.results[1].data).to.deep.equal(adTwo);
       }
 
-      await wrap(test, TIMEOUT_2S);
+      await retryAssertions(assertions, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
   });
 });

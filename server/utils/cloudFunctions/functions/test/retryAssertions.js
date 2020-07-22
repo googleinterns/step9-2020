@@ -1,0 +1,32 @@
+/**
+ * Description: retry wrapper for testing assertions that require
+ *              time to pass for an effect to propagate across 
+ *              multiple services. 
+ * Date: 7/22/2020
+ * Author: Rob Marcus  
+ */
+
+const { TIMEOUT_MAX } = require('./testConfig');
+const { promiseTimeout } = require('./promiseTimeout');
+
+/**
+ * Wraps an async function/`=> const` with recursive try and catch logic.
+ * If `timeout` grows larger than `TIMEOUT_MAX`, the test will fail
+ * and the error message will be returned as the reason for test failure.
+ * @param {function} assertions some async (lambda/big arrow) function  
+ * @param {integer} timeout number of ms to wait before retrying the assertions
+ */
+const retryAssertions = async function(assertions, timeout) {
+  try {
+    await assertions();
+  } catch (err) {
+    if (timeout > TIMEOUT_MAX) {
+        chai.assert.fail(err);
+    } else {
+      await promiseTimeout(timeout);
+      return retryAssertions(assertions, 2 * timeout);
+    }
+  }
+}
+
+module.exports = { retryAssertions };
