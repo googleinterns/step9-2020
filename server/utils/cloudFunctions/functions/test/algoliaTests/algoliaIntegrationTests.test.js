@@ -67,7 +67,8 @@ describe("Algolia integrations tests", () => {
   
   describe("test_createRecord", () => {
     it("should propogate an ad document into algolia index", async () => {
-      const ad = {advertiser: makeRandomID(), startDate: "2019-10-15"};
+      const adv = makeRandomID();
+      const ad = {advertiser: adv, startDate: "2019-10-15"};
 
       await DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad);
 
@@ -82,20 +83,21 @@ describe("Algolia integrations tests", () => {
 
     it("should propogate multiple ad documents " + 
        "without overwriting", async () => {
-      const adList = [{advertiser: makeRandomID(), startDate: "2019-10-15"},
-                      {advertiser: makeRandomID(), startDate: "2019-10-15"},
-                      {advertiser: makeRandomID(), startDate: "2019-10-16"}];
+      const adv0 = makeRandomID();
+      const adv1 = makeRandomID();
+      const adv2 = makeRandomID();
+      const adList = [{advertiser: adv0, startDate: "2019-10-15"},
+                      {advertiser: adv1, startDate: "2019-10-15"},
+                      {advertiser: adv2, startDate: "2019-10-16"}];
 
       await Promise.allSettled([
-          DEV_ADS_COLLECTION.doc(adList[0].advertiser).set(adList[0]),
-          DEV_ADS_COLLECTION.doc(adList[1].advertiser).set(adList[1]),
-          DEV_ADS_COLLECTION.doc(adList[2].advertiser).set(adList[2])]);
+          DEV_ADS_COLLECTION.doc(adv0).set(adList[0]),
+          DEV_ADS_COLLECTION.doc(adv1).set(adList[1]),
+          DEV_ADS_COLLECTION.doc(adv2).set(adList[2])]);
 
       const assertions = async () => {
         const contentList = 
-            await DEV_ADS_INDEX.getObjects([adList[0].advertiser, 
-                                            adList[1].advertiser, 
-                                            adList[2].advertiser]);
+            await DEV_ADS_INDEX.getObjects([adv0, adv1, adv2]); 
 
         chai.expect(contentList.results[0].data).to.deep.equal(adList[0]);
         chai.expect(contentList.results[1].data).to.deep.equal(adList[1]);
@@ -109,17 +111,17 @@ describe("Algolia integrations tests", () => {
   describe("test_updateRecord", () => {
     it("should propogate a firestore document update to " +
       "an algolia record ", async () => {
-      const ad = {advertiser: makeRandomID(), startDate: "2019-10-15"};
+      const adv = makeRandomID();
+      const ad = {advertiser: adv, startDate: "2019-10-15"};
 
-      await DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad);
-      await DEV_ADS_COLLECTION.doc(ad.advertiser)
-                              .update({startDate: "2020-10-15"});
+      await DEV_ADS_COLLECTION.doc(adv).set(ad);
+      await DEV_ADS_COLLECTION.doc(adv).update({startDate: "2020-10-15"});
 
       const assertion = async () => {
-        const content = await DEV_ADS_INDEX.getObject(ad.advertiser);
+        const content = await DEV_ADS_INDEX.getObject(adv);
 
         chai.expect(content.data).to
-            .deep.equal({advertiser: ad.advertiser, startDate: "2020-10-15"});
+            .deep.equal({advertiser: adv, startDate: "2020-10-15"});
       }
 
       await retryAssertions(assertion, TIMEOUT_2S);
@@ -127,22 +129,24 @@ describe("Algolia integrations tests", () => {
 
     it("should propogate a firestore document update to " + 
       "the proper algolia record", async () => {
-      const adOne = {advertiser: makeRandomID(), startDate: "2019-10-15"};
-      const adTwo = {advertiser: makeRandomID(), startDate: "2019-10-15"};
+      const adv0 = makeRandomID();
+      const adv1 = makeRandomID();
+      const ad0 = {advertiser: adv0, startDate: "2019-10-15"};
+      const ad1 = {advertiser: adv1, startDate: "2019-10-15"};
 
       await Promise.allSettled([
-          DEV_ADS_COLLECTION.doc(adOne.advertiser).set(adOne),
-          DEV_ADS_COLLECTION.doc(adTwo.advertiser).set(adTwo)]);
-      await DEV_ADS_COLLECTION.doc(adOne.advertiser)
+          DEV_ADS_COLLECTION.doc(adv0).set(ad0),
+          DEV_ADS_COLLECTION.doc(adv1).set(ad1)]);
+      await DEV_ADS_COLLECTION.doc(adv0)
                               .update({startDate: "2020-10-15"});
 
       const assertions = async () => {
         const contentList = 
-             await DEV_ADS_INDEX.getObjects([adOne.advertiser, adTwo.advertiser]);
+             await DEV_ADS_INDEX.getObjects([adv0, adv1]);
 
         chai.expect(contentList.results[0].data)
-            .to.deep.equal({advertiser: adOne.advertiser, startDate: "2020-10-15"});
-        chai.expect(contentList.results[1].data).to.deep.equal(adTwo);
+            .to.deep.equal({advertiser: adv0, startDate: "2020-10-15"});
+        chai.expect(contentList.results[1].data).to.deep.equal(ad1);
       }
 
       await retryAssertions(assertions, TIMEOUT_2S);
@@ -152,13 +156,14 @@ describe("Algolia integrations tests", () => {
   describe("test_deleteRecord", () => {
     it("should delete an algolia record when a firestore " + 
       "document is deleted", async () => {
-      const ad = {advertiser: makeRandomID(), startDate: "2019-10-15"};
+      const adv = makeRandomID();
+      const ad = {advertiser: adv, startDate: "2019-10-15"};
 
-      await DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad);
-      await DEV_ADS_COLLECTION.doc(ad.advertiser).delete()
+      await DEV_ADS_COLLECTION.doc(adv).set(ad);
+      await DEV_ADS_COLLECTION.doc(adv).delete()
 
       const assertions = async () => {
-        const contentList = await DEV_ADS_INDEX.getObjects([ad.advertiser]);
+        const contentList = await DEV_ADS_INDEX.getObjects([adv]);
 
         // Checking `ad` is deleted, so verify an error message
         // exists, has the right message, and that index 0
@@ -166,7 +171,7 @@ describe("Algolia integrations tests", () => {
         // will yield an unhelpful error and obfuscate the true error.
         chai.expect(contentList.message).to.exist;
         chai.expect(contentList.message.trim()).to.be
-            .equal(`ObjectID ${ad.advertiser} does not exist.`);
+            .equal(`ObjectID ${adv} does not exist.`);
         chai.expect(contentList.results[0]).to.be.null;  
       }
 
@@ -175,23 +180,25 @@ describe("Algolia integrations tests", () => {
     
     it("should delete the right algolia record when a firestore document " +
       "is deleted", async () => {
-      const adOne = {advertiser: makeRandomID(), startDate: "2019-10-15"};
-      const adTwo = {advertiser: makeRandomID(), startDate: "2019-10-15"};
+      const adv0 = makeRandomID();
+      const adv1 = makeRandomID();
+      const ad0 = {advertiser: adv0, startDate: "2019-10-15"};
+      const ad1 = {advertiser: adv1, startDate: "2019-10-15"};
 
       await Promise.allSettled([
-          DEV_ADS_COLLECTION.doc(adOne.advertiser).set(adOne), 
-          DEV_ADS_COLLECTION.doc(adTwo.advertiser).set(adTwo)]);
-      await DEV_ADS_COLLECTION.doc(adOne.advertiser).delete();
+          DEV_ADS_COLLECTION.doc(adv0).set(ad0), 
+          DEV_ADS_COLLECTION.doc(adv1).set(ad1)]);
+      await DEV_ADS_COLLECTION.doc(adv0).delete();
 
       const assertions = async () => {
         const contentList = 
-            await DEV_ADS_INDEX.getObjects([adOne.advertiser, adTwo.advertiser]);
+            await DEV_ADS_INDEX.getObjects([adv0, adv1]);
 
         chai.expect(contentList.message).to.exist;
         chai.expect(contentList.message.trim()).to.be
-            .equal(`ObjectID ${adOne.advertiser} does not exist.`);
+            .equal(`ObjectID ${adv0} does not exist.`);
         chai.expect(contentList.results[0]).to.be.null;
-        chai.expect(contentList.results[1].data).to.deep.equal(adTwo);
+        chai.expect(contentList.results[1].data).to.deep.equal(ad1);
       }
 
       await retryAssertions(assertions, TIMEOUT_2S);
