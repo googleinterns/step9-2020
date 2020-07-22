@@ -41,9 +41,9 @@ public class StateCollectionBuilder {
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
   private static final String MAIN_COLLECTION = "ads";
   private static final String WRITE_COLLECTION = "dev_states";
-  private static Firestore db; 
+  public static Firestore db; 
 
-  private static void initializeApp() throws Exception {
+  public static Firestore initializeApp() throws Exception {
     // Set account and build options.
     FileInputStream serviceAccount = new FileInputStream(PATH_TO_SERVICE_ACCOUNT);
     FirebaseOptions options = new FirebaseOptions.Builder()
@@ -56,6 +56,7 @@ public class StateCollectionBuilder {
       FirebaseApp.initializeApp(options);
     }
     db = FirestoreClient.getFirestore();
+    return db;
   }
 
   /*

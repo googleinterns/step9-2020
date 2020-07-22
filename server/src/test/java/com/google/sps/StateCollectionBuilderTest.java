@@ -58,25 +58,11 @@ public final class StateCollectionBuilderTest {
   }
 
   public Map<String, ArrayList> getAdvertiserToAdIdsMap(String state) throws Exception {
-    initializeApp();
+    db = StateCollectionBuilder.initializeApp();
     ApiFuture<QuerySnapshot> future = db.collection("states")
                                         .whereArrayContains("geoTarget", state)
                                         .get();
     List<QueryDocumentSnapshot> documents = future.get().getDocuments();
     return StateCollectionBuilder.getAdvertiserToAdIdsMap(state, documents);
-  }
-
-  public static void initializeApp() throws Exception {
-    FileInputStream serviceAccount = new FileInputStream(PATH_TO_SERVICE_ACCOUNT);
-    FirebaseOptions options = new FirebaseOptions.Builder()
-        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-        .setDatabaseUrl(DATABASE_URL)
-        .build();
-    
-    // Initialize app.
-    if (FirebaseApp.getApps().isEmpty()) {
-      FirebaseApp.initializeApp(options);
-    }
-    db = FirestoreClient.getFirestore();
   }
 }
