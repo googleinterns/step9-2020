@@ -24,9 +24,9 @@ const SentimentAnalysis = () => {
     setIsVerified(value !== null);
   };
 
-  const submitForm = e => {
-    e.preventDefault();
-    const form = new FormData(e.target);
+  const submitForm = event => {
+    event.preventDefault();
+    const form = new FormData(event.target);
     const url = 'https://analysis-dot-step9-2020-capstone.appspot.com/analysis';
 
     fetch(url, { method: 'POST', body: form })
