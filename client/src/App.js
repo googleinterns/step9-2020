@@ -2,11 +2,11 @@ import './App.css';
 
 import React, { useState } from 'react';
 
-import { PAGE_MAP } from './constants/header_constants';
+import { HEADERS, PAGE_MAP } from './constants/header_constants';
 import PageNav from './components/PageNav/PageNav';
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('Sentiment Analysis');
+  const [currentPage, setCurrentPage] = useState(HEADERS[0]);
 
   return (
     <div>
