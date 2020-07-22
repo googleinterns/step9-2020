@@ -41,7 +41,6 @@
 // `TIMEOUT_15S` is used when `TIMEOUT_10S` is used twice throughout a test.
 const { chai,
         TIMEOUT_2S,
-        TIMEOUT_10S,
         TIMEOUT_15S,
         TIMEOUT_MAX,
         DEV_ADS_COLLECTION } = require('../testConfig');
@@ -58,6 +57,20 @@ const { DEV_ADS_INDEX } =
 const { makeRandomID } = require('../makeRandomID');
 
 const { promiseTimeout } = require('../promiseTimeout');
+
+const wrap = async function(someFunction, timeout) {
+  try {
+    await someFunction();
+  } catch (err) {
+    if (timeout > TIMEOUT_MAX) {
+        chai.assert.fail(err);
+    } else {
+      await promiseTimeout(timeout);
+      return wrap(someFunction, 2 * timeout);
+    }
+  }
+}
+
 
 describe("Algolia integrations tests", () => {
   // After every 'describe' block, reset the test environments. 
@@ -76,21 +89,13 @@ describe("Algolia integrations tests", () => {
 
       await DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad);
 
-      const repeat = async function(timeout) {
-        try {
-          const content = await DEV_ADS_INDEX.getObject(ad.advertiser);
+      const test = async () => {
+        const content = await DEV_ADS_INDEX.getObject(ad.advertiser);
 
-          chai.expect(content.data).to.deep.equal(ad);
-        } catch (err) {
-          if (timeout > TIMEOUT_MAX) {
-            chai.assert.fail(err);
-          }
-          await promiseTimeout(timeout);
-          return repeat(2 * timeout);
-        }
+        chai.expect(content.data).to.deep.equal(ad);
       }
 
-      await repeat(TIMEOUT_2S);
+      await wrap(test, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
 
     it("should propogate multiple ad documents " + 
@@ -104,26 +109,18 @@ describe("Algolia integrations tests", () => {
           DEV_ADS_COLLECTION.doc(adList[1].advertiser).set(adList[1]),
           DEV_ADS_COLLECTION.doc(adList[2].advertiser).set(adList[2])]);
 
-      const repeat = async function(timeout) {
-        try {
-          const contentList = 
-              await DEV_ADS_INDEX.getObjects([adList[0].advertiser, 
-                                              adList[1].advertiser, 
-                                              adList[2].advertiser]);
+      const test = async () => {
+        const contentList = 
+            await DEV_ADS_INDEX.getObjects([adList[0].advertiser, 
+                                            adList[1].advertiser, 
+                                            adList[2].advertiser]);
 
-          chai.expect(contentList.results[0].data).to.deep.equal(adList[0]);
-          chai.expect(contentList.results[1].data).to.deep.equal(adList[1]);
-          chai.expect(contentList.results[2].data).to.deep.equal(adList[2]);
-        } catch (err) {
-          if (timeout > TIMEOUT_MAX) {
-            chai.assert.fail(err);
-          }
-          await promiseTimeout(timeout);
-          return repeat(2 * timeout);
-        }
+        chai.expect(contentList.results[0].data).to.deep.equal(adList[0]);
+        chai.expect(contentList.results[1].data).to.deep.equal(adList[1]);
+        chai.expect(contentList.results[2].data).to.deep.equal(adList[2]);
       }
 
-      await repeat(TIMEOUT_2S);
+      await wrap(test, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
   });
 
@@ -136,22 +133,14 @@ describe("Algolia integrations tests", () => {
       await DEV_ADS_COLLECTION.doc(ad.advertiser)
                               .update({startDate: "2020-10-15"});
 
-      const repeat = async function(timeout) {
-        try {
-          const content = await DEV_ADS_INDEX.getObject(ad.advertiser);
+      const test = async () => {
+        const content = await DEV_ADS_INDEX.getObject(ad.advertiser);
 
-          chai.expect(content.data).to
-              .deep.equal({advertiser: ad.advertiser, startDate: "2020-10-15"});
-        } catch (err) {
-          if (timeout > TIMEOUT_MAX) {
-            chai.assert.fail(err);
-          }
-          await promiseTimeout(timeout);
-          return repeat(2 * timeout);
-        }
+        chai.expect(content.data).to
+            .deep.equal({advertiser: ad.advertiser, startDate: "2020-10-15"});
       }
 
-      await repeat(TIMEOUT_2S);
+      await wrap(test, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
 
     it("should propogate a firestore document update to " + 
@@ -165,24 +154,16 @@ describe("Algolia integrations tests", () => {
       await DEV_ADS_COLLECTION.doc(adOne.advertiser)
                               .update({startDate: "2020-10-15"});
 
-      const repeat = async function(timeout) {
-        try {
-          const adOneContent = await DEV_ADS_INDEX.getObject(adOne.advertiser);
-          const adTwoContent = await DEV_ADS_INDEX.getObject(adTwo.advertiser);
+      const test = async () => {
+        const adOneContent = await DEV_ADS_INDEX.getObject(adOne.advertiser);
+        const adTwoContent = await DEV_ADS_INDEX.getObject(adTwo.advertiser);
 
-          chai.expect(adOneContent.data)
-              .to.deep.equal({advertiser: adOne.advertiser, startDate: "2020-10-15"});
-          chai.expect(adTwoContent.data).to.deep.equal(adTwo);
-        } catch (err) {
-          if (timeout > TIMEOUT_MAX) {
-            chai.assert.fail(err);
-          }
-          await promiseTimeout(timeout);
-          return repeat(2 * timeout);
-        }
+        chai.expect(adOneContent.data)
+            .to.deep.equal({advertiser: adOne.advertiser, startDate: "2020-10-15"});
+        chai.expect(adTwoContent.data).to.deep.equal(adTwo);
       }
 
-      await repeat(TIMEOUT_2S);
+      await wrap(test, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
   });
 
@@ -195,28 +176,20 @@ describe("Algolia integrations tests", () => {
       await DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad);
       await DEV_ADS_COLLECTION.doc(ad.advertiser).delete()
 
-      const repeat = async function(timeout) {
-        try {
-          const content = await DEV_ADS_INDEX.getObjects([ad.advertiser]);
+      const test = async () => {
+        const content = await DEV_ADS_INDEX.getObjects([ad.advertiser]);
 
-          // Checking `ad` is deleted, so verify an error message
-          // exists, has the right message, and that index 0
-          // is null. Check existence because if doesn't, `.trim()`
-          // will yield an unhelpful error and obfuscate the true error.
-          chai.expect(content.message).to.exist;
-          chai.expect(content.message.trim())
-              .to.be.equal(`ObjectID ${ad.advertiser} does not exist.`);
-          chai.expect(content.results[0]).to.be.null;  
-        } catch (err) {
-          if (timeout > TIMEOUT_MAX) {
-            chai.assert.fail(err);
-          }
-          await promiseTimeout(timeout);
-          return repeat(2 * timeout);
-        }
+        // Checking `ad` is deleted, so verify an error message
+        // exists, has the right message, and that index 0
+        // is null. Check existence because if doesn't, `.trim()`
+        // will yield an unhelpful error and obfuscate the true error.
+        chai.expect(content.message).to.exist;
+        chai.expect(content.message.trim())
+            .to.be.equal(`ObjectID ${ad.advertiser} does not exist.`);
+        chai.expect(content.results[0]).to.be.null;  
       }
 
-      await repeat(TIMEOUT_2S);
+      await wrap(test, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
     
     it("should delete the right algolia record when a firestore document " +
@@ -229,26 +202,18 @@ describe("Algolia integrations tests", () => {
           DEV_ADS_COLLECTION.doc(adTwo.advertiser).set(adTwo)]);
       await DEV_ADS_COLLECTION.doc(adOne.advertiser).delete();
 
-      const repeat = async function(timeout) {
-        try {
-          const contentList = 
-              await DEV_ADS_INDEX.getObjects([adOne.advertiser, adTwo.advertiser]);
+      const test = async () => {
+        const contentList = 
+            await DEV_ADS_INDEX.getObjects([adOne.advertiser, adTwo.advertiser]);
 
-          chai.expect(contentList.message).to.exist;
-          chai.expect(contentList.message.trim())
-              .to.be.equal(`ObjectID ${adOne.advertiser} does not exist.`);
-          chai.expect(contentList.results[0]).to.be.null;
-          chai.expect(contentList.results[1].data).to.deep.equal(adTwo);
-        } catch (err) {
-          if (timeout > TIMEOUT_MAX) {
-            chai.assert.fail(err);
-          }
-          await promiseTimeout(timeout);
-          return repeat(2 * timeout);
-        }
+        chai.expect(contentList.message).to.exist;
+        chai.expect(contentList.message.trim())
+            .to.be.equal(`ObjectID ${adOne.advertiser} does not exist.`);
+        chai.expect(contentList.results[0]).to.be.null;
+        chai.expect(contentList.results[1].data).to.deep.equal(adTwo);
       }
 
-      await repeat(TIMEOUT_2S);
+      await wrap(test, TIMEOUT_2S);
     }).timeout(TIMEOUT_15S);
   });
 });
