@@ -8,12 +8,14 @@ const AnalysisInput = props => {
 
   return (
     <div className="search-header center">
-      <h3 className="analysis-label">{label}</h3>
+      <h3 className="analysis-label">{label.toUpperCase()}</h3>
       <textarea
+        name={label}
         type="text"
         rows={INPUT_ROWS}
         className="ad-input"
         placeholder={placeholder}
+        required
       />
     </div>
   );
