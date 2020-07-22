@@ -7,7 +7,15 @@
  */
 
 const { chai, TIMEOUT_MAX } = require('./testConfig');
-const { promiseTimeout } = require('./promiseTimeout');
+
+/**
+ * Helper function that returns a promise that will resolve
+ * after an alloted amount of time.
+ * @param {integer} ms how many ms the promise should wait before resolving.
+ */
+function promiseTimeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /**
  * Wraps an async function/`=> const` with recursive try and catch logic.
