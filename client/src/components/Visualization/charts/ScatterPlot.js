@@ -18,10 +18,10 @@ import { VictoryTheme,
          VictoryLabel } from 'victory';
 
 // Chart constants. 
-const chartTitleX = 175; 
-const chartTitleY = 30;
-const domainStart = 2017;
-const domainEnd = 2021;
+const CHART_TITLE_X = 175; 
+const CHART_TITLE_Y = 30;
+const DOMAIN_START = 2017;
+const DOMAIN_END = 2021;
 
 /**
  * Turn a firestore snap into a victory formatted
@@ -70,7 +70,7 @@ function useAdvertisers(year, queryLimit) {
   const [advertisers, setAdvertisers] = useState([]);
 
   useEffect(() => {
-      database.collection("dev_aggregates")
+      database.collection("prod_aggregates")
               .doc(year)
               .collection("advertisers")
               .orderBy("numberOfAds", "desc")
@@ -88,9 +88,9 @@ function useAdvertisers(year, queryLimit) {
     return advertisers;
   }
 
-const ScatterPlot = () => {
-  const queryLimit = 4; 
-  
+const ScatterPlot = () => {  
+  const queryLimit = 4;
+
   const advertisers2018 = useAdvertisers("2018", queryLimit);
   const advertisers2019 = useAdvertisers("2019", queryLimit);
   const advertisers2020 = useAdvertisers("2020", queryLimit);
@@ -104,13 +104,13 @@ const ScatterPlot = () => {
   
   return (
     <VictoryChart
-      theme={ VictoryTheme.material }
-      domain={{ x: [domainStart, domainEnd], y: [range.min*.5, range.max*2] }}
+      theme={VictoryTheme.material}
+      domain={{ x: [DOMAIN_START, DOMAIN_END], y: [range.min*.5, range.max*2] }}
       scale={{ y: "log" }}
     >
       <VictoryLabel
-        text={ chartTitle }
-        x={chartTitleX} y = {chartTitleY}
+        text={chartTitle}
+        x={CHART_TITLE_X} y = {CHART_TITLE_Y}
         textAnchor="middle"
       />
 
