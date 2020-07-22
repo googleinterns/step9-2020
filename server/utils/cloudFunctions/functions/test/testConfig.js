@@ -31,10 +31,18 @@ const test = require('firebase-functions-test')({
 const firestoreMock = test.firestore;   
 const firestoreWrap = test.wrap;
 
+// Sleep times for integration tests. 
+const TIMEOUT_2S = 2000;
+const TIMEOUT_15S = 15000;
+const TIMEOUT_MAX = 10000;
+
 const snapFromJson = test.firestore.makeDocumentSnapshot;
 
 // Path to `dev_ads` collection. 
 const DEV_ADS_PATH = "dev_ads";
+
+const { DB } = require("../firebaseConfig");
+const DEV_ADS_COLLECTION = DB.collection(DEV_ADS_PATH);
 
 /**
  * Initialize chai, and sinon. Mocha should be downloaded with npm.  
@@ -65,6 +73,10 @@ module.exports = { test,
                    sinon,
                    chai,
                    firestoreMock, 
-                   firestoreWrap, 
+                   firestoreWrap,
+                   TIMEOUT_2S,
+                   TIMEOUT_15S, 
+                   TIMEOUT_MAX,
                    snapFromJson,
-                   DEV_ADS_PATH };
+                   DEV_ADS_PATH,
+                   DEV_ADS_COLLECTION };
