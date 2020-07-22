@@ -24,30 +24,6 @@
  *       and a string equality match is alternatively much easier. 
  *     - For the above reason, `getObjects` is used with singleton lists
  *       to verify that a record has been deleted instead of `getObject`. 
- * - `setTimeout` is used to allow firebase changes to propogate to algolia. 
- *   - `setTimeout` requires that `done()` be called at the end of the 
- *     inner function body. It is not equivalent to `return`. 
- *   - Due to the use of `done()` at the end of `setTimeout`, promises
- *     are not returned as they are in `countAdvertisersFunction` test suite.
- *   - This is because it will make the test `overspecified`
- *   - Read more here: `https://medium.com/@durja/mocha-tests-with-async-await-2aead4afeca1`
- *   - This does not impact testing at all, but is a notable style difference.
- * - `TIMEOUT_10S` was chosen because this is the maximum amount of latency 
- *   for firebase to execute a function. 
- * - `TIMEOUT_15S` is used to extend the default TIMEOUT_2Stimeout test limit set by 
- *   mocha.
- * - The overall test timeout limit must be longer than the `setTimeout`
- *   method to allow time for the algolia api call.    
- * Tests are structured with promise nesting. 
- * - There is a debate about nesting vs chaining promises. In this case, 
- *     nesting is advantageous because it easily keeps everything in scope
- *     without much fuss. Thus, nesting is fine to use. 
- * - Also this is how the official docs do it. 
- * - `Promise.allSettled` is used to avoid nesting hell where possible. 
- *   Sometimes not possible if their is some sequential order that
- *   must be obeyed (e.g., create and then delete.)  
- * - Looked into using `await/async` but ran into more flakiness for some
- *   reason. 
  * Errors are handled directly by firebase, so their is no need to validate
  * how errors are handled/resolved.   
  * Author: Robert Marcus
@@ -58,11 +34,11 @@
 // Import the testing environment configuration.
 // `TIMEOUT_10S` is the maximum amount of latency for firebase 
 // to execute a function. 
-// `TIMEOUT_15S` and `TIMEOUT_25S` is used to extend the default TIMEOUT_2Stimeout test 
+// `TIMEOUT_15S` and `TIMEOUT_15S` is used to extend the default TIMEOUT_2Stimeout test 
 // limit set by mocha. This gives a 5000timeout latency period for the algolia api 
 // call and corresponding tests to resolve and execute.
 // `TIMEOUT_15S` is used when `TIMEOUT_10S` is used once throughout a test.
-// `TIMEOUT_25S` is used when `TIMEOUT_10S` is used twice throughout a test.
+// `TIMEOUT_15S` is used when `TIMEOUT_10S` is used twice throughout a test.
 const { chai,
         TIMEOUT_2S,
         TIMEOUT_10S,
@@ -208,7 +184,7 @@ describe("Algolia integrations tests", () => {
       }
 
       await repeat(TIMEOUT_2S);
-    }).timeout(TIMEOUT_25S);
+    }).timeout(TIMEOUT_15S);
   });
 
   describe("test_deleteRecord", () => {
@@ -275,6 +251,6 @@ describe("Algolia integrations tests", () => {
       }
 
       await repeat(TIMEOUT_2S);
-    }).timeout(TIMEOUT_25S);
+    }).timeout(TIMEOUT_15S);
   });
 });
