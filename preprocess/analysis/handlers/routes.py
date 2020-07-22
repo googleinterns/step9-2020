@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, abort
+from flask_cors import cross_origin
 # When run pytest, remove the `handlers.` initial to stop the error
 from handlers.language_analysis import analyze_entities, analyze_sentiment
 
@@ -20,6 +21,7 @@ def configure_routes(app):
     return "Hello World!"
 
   @app.route('/analysis', methods=['POST'])
+  @cross_origin()
   def analyze():
     result_dict = dict()
     header = request.form.get('header')
