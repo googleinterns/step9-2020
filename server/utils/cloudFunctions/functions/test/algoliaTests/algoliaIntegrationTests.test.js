@@ -64,6 +64,7 @@
 const { chai,
         TIMEOUT_10S,
         TIMEOUT_15S,
+        TIMEOUT_25S,
         DEV_ADS_COLLECTION } = require('../testConfig');
 
 const { deleteCollection } = require('../deleteCollection');
@@ -77,6 +78,10 @@ const { DEV_ADS_INDEX } =
 
 const { makeRandomID } = require('../makeRandomID');
 
+function promiseTimeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 describe("Algolia integrations tests", () => {
   // After every 'describe' block, reset the test environments. 
   // Since these are live dev DBs, this process can be very flaky.
@@ -87,144 +92,126 @@ describe("Algolia integrations tests", () => {
   after(() => {
     deleteCollection(DB, 'dev_ads');
   });
-
+  
   describe("test_createRecord", () => {
-    it("should propogate an ad document into algolia index", function(done) {
+    it("should propogate an ad document into algolia index", async () => {
       const ad = {advertiser: makeRandomID(), startDate: "2019-10-15"};
 
-      DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad).then(() => {
-        setTimeout(function(){
-          DEV_ADS_INDEX.getObject(ad.advertiser).then(content => {
-            chai.expect(content.data).to.deep.equal(ad);
-          }).catch(err => console.log(err));
+      await Promise.allSettled([DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad),
+                                promiseTimeout(TIMEOUT_10S)])
 
-          done();
-        }, TIMEOUT_10S);
-      });
+      const content = await DEV_ADS_INDEX.getObject(ad.advertiser);
+
+      chai.expect(content.data).to.deep.equal(ad);
     }).timeout(TIMEOUT_15S);
-    
-    it("should propogate multiple ad documents without overwriting", function(done) {
+    it("should propogate multiple ad documents " + 
+       "without overwriting", async () => {
       const adList = [{advertiser: makeRandomID(), startDate: "2019-10-15"},
                       {advertiser: makeRandomID(), startDate: "2019-10-15"},
                       {advertiser: makeRandomID(), startDate: "2019-10-16"}];
 
-      Promise.allSettled([DEV_ADS_COLLECTION.doc(adList[0].advertiser).set(adList[0]),
-                          DEV_ADS_COLLECTION.doc(adList[1].advertiser).set(adList[1]),
-                          DEV_ADS_COLLECTION.doc(adList[2].advertiser).set(adList[2])]).then(() => {
-        setTimeout(function(){
-          DEV_ADS_INDEX.getObjects([adList[0].advertiser, adList[1].advertiser, adList[2].advertiser]).then(content => {
-            chai.expect(content.results[0].data).to.deep.equal(adList[0]);
-            chai.expect(content.results[1].data).to.deep.equal(adList[1]);
-            chai.expect(content.results[2].data).to.deep.equal(adList[2]);
-          }).catch(err => console.log(err));
+      await Promise.allSettled([
+          DEV_ADS_COLLECTION.doc(adList[0].advertiser).set(adList[0]),
+          DEV_ADS_COLLECTION.doc(adList[1].advertiser).set(adList[1]),
+          DEV_ADS_COLLECTION.doc(adList[2].advertiser).set(adList[2]),
+          promiseTimeout(TIMEOUT_10S)]);
 
-          done();
-        }, TIMEOUT_10S);
-      });
+      const contentList = await DEV_ADS_INDEX.getObjects([adList[0].advertiser, 
+                                                          adList[1].advertiser, 
+                                                          adList[2].advertiser]);
+
+      chai.expect(contentList.results[0].data).to.deep.equal(adList[0]);
+      chai.expect(contentList.results[1].data).to.deep.equal(adList[1]);
+      chai.expect(contentList.results[2].data).to.deep.equal(adList[2]);
+        
     }).timeout(TIMEOUT_15S);
   });
 
   describe("test_updateRecord", () => {
     it("should propogate a firestore document update to " +
-       "an algolia record ", function(done) {
+      "an algolia record ", async () => {
       const ad = {advertiser: makeRandomID(), startDate: "2019-10-15"};
 
-      DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad).then(() => {
-        DEV_ADS_COLLECTION.doc(ad.advertiser).update({startDate: "2020-10-15"}).then(() => {
-          setTimeout(function() {
+      await DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad);
+      await Promise.allSettled([
+          DEV_ADS_COLLECTION.doc(ad.advertiser).update({startDate: "2020-10-15"}),
+          promiseTimeout(TIMEOUT_10S)]);
 
-            // Verify that `ad` was updated.
-            DEV_ADS_INDEX.getObject(ad.advertiser).then(content => {
-              chai.expect(content.data)
-                  .to.deep.equal({advertiser: ad.advertiser, startDate: "2020-10-15"});
-            }).catch(err => console.log(err));
-            
-            done(); 
-          }, TIMEOUT_10S);
-        });
-      });
+      const content = await DEV_ADS_INDEX.getObject(ad.advertiser);
+
+      chai.expect(content.data)
+          .to.deep.equal({advertiser: ad.advertiser, startDate: "2020-10-15"});
     }).timeout(TIMEOUT_15S);
 
     it("should propogate a firestore document update to " + 
-       "the proper algolia record", function(done) {
+      "the proper algolia record", async () => {
       const adOne = {advertiser: makeRandomID(), startDate: "2019-10-15"};
       const adTwo = {advertiser: makeRandomID(), startDate: "2019-10-15"};
+
+      await Promise.allSettled([
+          DEV_ADS_COLLECTION.doc(adOne.advertiser).set(adOne),
+          DEV_ADS_COLLECTION.doc(adTwo.advertiser).set(adTwo)],
+          promiseTimeout(TIMEOUT_10S));
+
+      // For whatever reason, using Promise.all works a lot 
+      // more consistently for this second round. Unclear why.
+      await Promise.all([
+          DEV_ADS_COLLECTION.doc(adOne.advertiser).update({startDate: "2020-10-15"}),
+          promiseTimeout(TIMEOUT_10S)]);
     
-      Promise.allSettled([DEV_ADS_COLLECTION.doc(adOne.advertiser).set(adOne),
-                          DEV_ADS_COLLECTION.doc(adTwo.advertiser).set(adTwo)]).then(() => {
-        DEV_ADS_COLLECTION.doc(adOne.advertiser).update({startDate: "2020-10-15"})
-                          .then(() => {
-          setTimeout(function(){
+      const adOneContent = await DEV_ADS_INDEX.getObject(adOne.advertiser);
+      const adTwoContent = await DEV_ADS_INDEX.getObject(adTwo.advertiser);
 
-              // Verify that `adOne` was updated, `adTwo` was not. 
-              DEV_ADS_INDEX.getObject(adOne.advertiser).then(content => {
-                chai.expect(content.data)
-                    .to.deep.equal({advertiser: adOne.advertiser, startDate: "2020-10-15"});
-              }).catch(err => console.log(err));
-              
-              DEV_ADS_INDEX.getObject(adTwo.advertiser).then(content => {
-                chai.expect(content.data).to.deep.equal(adTwo);                
-              }).catch(err => console.log(err));
-
-              done(); 
-            }, TIMEOUT_10S);
-        });
-      });
-    }).timeout(TIMEOUT_15S);
+      chai.expect(adOneContent.data)
+          .to.deep.equal({advertiser: adOne.advertiser, startDate: "2020-10-15"});
+      chai.expect(adTwoContent.data).to.deep.equal(adTwo);
+    }).timeout(TIMEOUT_25S);
   });
-
   describe("test_deleteRecord", () => {
+    
     it("should delete an algolia record when a firestore " + 
-       "document is deleted", function(done) {
+      "document is deleted", async () => {
       const ad = {advertiser: makeRandomID(), startDate: "2019-10-15"};
 
-      DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad).then(() => {
-        DEV_ADS_COLLECTION.doc(ad.advertiser).delete().then(() => {
-          setTimeout(function(){
-            DEV_ADS_INDEX.getObjects([ad.advertiser]).then(content => {
+      await DEV_ADS_COLLECTION.doc(ad.advertiser).set(ad);
+      await Promise.allSettled([
+          DEV_ADS_COLLECTION.doc(ad.advertiser).delete(),
+          promiseTimeout(TIMEOUT_10S)]);
 
-              // Checking `ad` is deleted, so verify an error message
-              // exists, has the right message, and that index 0
-              // is null. Check existence because if doesn't, `.trim()`
-              // will yield an unhelpful error and obfuscate the true error.
-              chai.expect(content.message).to.exist;
-              chai.expect(content.message.trim())
-                  .to.be.equal(`ObjectID ${ad.advertiser} does not exist.`);
-              chai.expect(content.results[0]).to.be.null;
-            }).catch(err => console.log(err));
+      const content = await DEV_ADS_INDEX.getObjects([ad.advertiser]);
 
-            done();
-          }, TIMEOUT_10S);
-        });
-      });
-    }).timeout(TIMEOUT_15S); 
-
-    it("should delete the right algolia record when a firestore document is deleted", function(done) {
+      // Checking `ad` is deleted, so verify an error message
+      // exists, has the right message, and that index 0
+      // is null. Check existence because if doesn't, `.trim()`
+      // will yield an unhelpful error and obfuscate the true error.
+      chai.expect(content.message).to.exist;
+      chai.expect(content.message.trim())
+          .to.be.equal(`ObjectID ${ad.advertiser} does not exist.`);
+      chai.expect(content.results[0]).to.be.null;  
+    }).timeout(TIMEOUT_15S);
+    
+    it("should delete the right algolia record when a firestore document " +
+      "is deleted", async () => {
       const adOne = {advertiser: makeRandomID(), startDate: "2019-10-15"};
       const adTwo = {advertiser: makeRandomID(), startDate: "2019-10-15"};
 
-      Promise.allSettled([DEV_ADS_COLLECTION.doc(adOne.advertiser).set(adOne), 
-                          DEV_ADS_COLLECTION.doc(adTwo.advertiser).set(adTwo)]).then(() => {
-        DEV_ADS_COLLECTION.doc(adOne.advertiser).delete().then(() => {
-          setTimeout(function(){
-            DEV_ADS_INDEX.getObjects([adOne.advertiser, adTwo.advertiser]).then(content => {
+      await Promise.allSettled([
+          DEV_ADS_COLLECTION.doc(adOne.advertiser).set(adOne), 
+          DEV_ADS_COLLECTION.doc(adTwo.advertiser).set(adTwo),
+          promiseTimeout(TIMEOUT_10S)]);
 
-              // Checking `adOne` is deleted, so verify an error message
-              // exists, has the right message, and that index 0
-              // is null, while `adTwo` still exists. Check existence 
-              // because if doesn't, `.trim()` will yield an unhelpful error
-              // and obfuscate the true error.
-              chai.expect(content.message).to.exist;
-              chai.expect(content.message.trim())
-                  .to.be.equal(`ObjectID ${adOne.advertiser} does not exist.`);
-              chai.expect(content.results[0]).to.be.null;
-              chai.expect(content.results[1].data).to.deep.equal(adTwo);   
-            }).catch(err => console.log(err));
+      await Promise.allSettled([
+          DEV_ADS_COLLECTION.doc(adOne.advertiser).delete(),
+          promiseTimeout(TIMEOUT_10S)]);
 
-            done();
-          }, TIMEOUT_10S);        
-        });
-      });
-    }).timeout(TIMEOUT_15S); 
+      const contentList = 
+          await DEV_ADS_INDEX.getObjects([adOne.advertiser, adTwo.advertiser]);
+
+      chai.expect(contentList.message).to.exist;
+      chai.expect(contentList.message.trim())
+          .to.be.equal(`ObjectID ${adOne.advertiser} does not exist.`);
+      chai.expect(contentList.results[0]).to.be.null;
+      chai.expect(contentList.results[1].data).to.deep.equal(adTwo);
+    }).timeout(TIMEOUT_25S);
   });
 });

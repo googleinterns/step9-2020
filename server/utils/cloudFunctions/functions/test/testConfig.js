@@ -35,6 +35,7 @@ const firestoreWrap = test.wrap;
 // so 10s (10000ms) is used as the default sleep time for integration tests.
 const TIMEOUT_10S = 10000;
 const TIMEOUT_15S = 15000;
+const TIMEOUT_25S = 25000;
 
 const snapFromJson = test.firestore.makeDocumentSnapshot;
 
@@ -76,6 +77,7 @@ module.exports = { test,
                    firestoreWrap,
                    TIMEOUT_10S,
                    TIMEOUT_15S, 
+                   TIMEOUT_25S,
                    snapFromJson,
                    DEV_ADS_PATH,
                    DEV_ADS_COLLECTION };
