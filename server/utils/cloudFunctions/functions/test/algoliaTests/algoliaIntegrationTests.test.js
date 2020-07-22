@@ -89,6 +89,8 @@ const { DB } = require('../../firebaseConfig');
 const { DEV_ADS_INDEX } = 
     require('../../algoliaCloudFunctions/algoliaConfig');
 
+const { makeRandomID } = require('../makeRandomID');
+
 describe("Algolia integrations tests", () => {
   // After every 'describe' block, reset the test environments. 
   // Since these are live dev DBs, this process can be very flaky.
