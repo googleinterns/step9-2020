@@ -27,15 +27,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Description: StateCollectionBuilder reads in advertisements from the "ads" collection in Firestore.
- *              Ad documents that are geo-targeted at the same state are grouped together in a state
- *              subcollection. These subcollections are populated with advertiser documents. Each 
- *              document contains a ads field, which is an ArrayList of primary keys for advertisement
- *              documents in the "ads" collection.
+ * Description: 
  * Author: Kira Toal
  * Date: July 20, 2020
  */ 
-public class StateCollectionBuilder {
+public class StateSubcollectionBuilder {
 
   private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
@@ -59,44 +55,46 @@ public class StateCollectionBuilder {
     return db;
   }
 
-  /*
-   * Sorts advertisments into groups by advertiser. 
-   */
-  public static Map<String, ArrayList> getAdvertiserToAdIdsMap(String state, 
-      List<QueryDocumentSnapshot> documents) 
-      throws Exception {
-    
-    // Initialize a HashMap to organize ad data into documents.
-    Map<String, ArrayList> advertiserToAdIds = new HashMap<>();
-
-    // Create a document for every advertiser.
-    for (QueryDocumentSnapshot document : documents) {
-
-      // Convert document to Ad to use methods like .getAdvertiser().
-      Ad ad = document.toObject(Ad.class); 
-      String advertiser = ad.getAdvertiser();
-      ArrayList<String> ids = new ArrayList<String>(); 
-      if (advertiserToAdIds.containsKey(advertiser)) {
-        ids = advertiserToAdIds.get(advertiser);
+  public static Map<String, Long> getAdvertiserToTotalSpend(List<QueryDocumentSnapshot> documentsInState) {
+    Map<String, Long> advertiserToTotalSpend = new HashMap<>();
+    for (QueryDocumentSnapshot document: documentsInState) {
+      String advertiser = document.getString("advertiser");
+      long spendMax = document.getLong("spendMax");
+      if (advertiserToTotalSpend.containsKey(advertiser)) {
+        advertiserToTotalSpend.put(advertiser, advertiserToTotalSpend.get(advertiser) + spendMax);
+      } else {
+        advertiserToTotalSpend.put(advertiser, spendMax);
       }
-      ids.add(ad.getId());
-      advertiserToAdIds.put(advertiser, ids);
     }
-    return advertiserToAdIds;
+    return advertiserToTotalSpend;
   }
 
+  public static void updateTotalStateSpend(String state, long totalStateSpend) {
+    Map<String, Object> data = new HashMap<>();
+    data.put("totalStateSpend", totalStateSpend);
+    db
+      .collection(WRITE_COLLECTION).document(state.toLowerCase())
+      .collection("stateData").document("spendData")
+      .set(data, SetOptions.merge());    
+  }
 
-  public static void updateStateCollection(String state, 
-      Map<String, ArrayList> advertiserToAdIds) throws Exception {
-    // Add advertiser documents to the corresponding state collection.
-    for (String key : advertiserToAdIds.keySet()) {
+  public static void updateStateSubcollection(String state,
+      Map<String, Long> advertiserToTotalSpend) {
+
+    long totalStateSpend = 0;
+
+    for (String key : advertiserToTotalSpend.keySet()) {
       Map<String, Object> data = new HashMap<>();
-      data.put("ads", advertiserToAdIds.get(key));
+      long totalAdvertiserSpend = advertiserToTotalSpend.get(key);
+      totalStateSpend += totalAdvertiserSpend;
+      data.put("totalAdvertiserSpend", totalAdvertiserSpend);
       db
         .collection(WRITE_COLLECTION).document(state.toLowerCase())
-        .collection("ads").document(key)
+        .collection("advertisers").document(key)
         .set(data, SetOptions.merge());
     }
+    
+    updateTotalStateSpend(state, totalStateSpend);
   }
 
   public static void main(String[] args) throws Exception {
@@ -107,8 +105,10 @@ public class StateCollectionBuilder {
       ApiFuture<QuerySnapshot> future = db.collection(MAIN_COLLECTION)
                                           .whereArrayContains("geoTarget", state)
                                           .get();
-      List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-      updateStateCollection(state, getAdvertiserToAdIdsMap(state, documents));
+      List<QueryDocumentSnapshot> documentsInState = future.get().getDocuments();
+      Map<String, Long> advertiserToTotalSpend = getAdvertiserToTotalSpend(documentsInState);
+
+      updateStateSubcollection(state, advertiserToTotalSpend);
     }
   }
 }
