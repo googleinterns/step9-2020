@@ -79,6 +79,7 @@ describe("Algolia integrations tests", () => {
       const repeat = async function(timeout) {
         try {
           const content = await DEV_ADS_INDEX.getObject(ad.advertiser);
+
           chai.expect(content.data).to.deep.equal(ad);
         } catch (err) {
           if (timeout > TIMEOUT_MAX) {
@@ -90,7 +91,6 @@ describe("Algolia integrations tests", () => {
       }
 
       await repeat(TIMEOUT_2S);
-
     }).timeout(TIMEOUT_15S);
 
     it("should propogate multiple ad documents " + 
@@ -162,7 +162,6 @@ describe("Algolia integrations tests", () => {
       await Promise.allSettled([
           DEV_ADS_COLLECTION.doc(adOne.advertiser).set(adOne),
           DEV_ADS_COLLECTION.doc(adTwo.advertiser).set(adTwo)]);
-
       await DEV_ADS_COLLECTION.doc(adOne.advertiser)
                               .update({startDate: "2020-10-15"});
 
@@ -228,7 +227,6 @@ describe("Algolia integrations tests", () => {
       await Promise.allSettled([
           DEV_ADS_COLLECTION.doc(adOne.advertiser).set(adOne), 
           DEV_ADS_COLLECTION.doc(adTwo.advertiser).set(adTwo)]);
-
       await DEV_ADS_COLLECTION.doc(adOne.advertiser).delete();
 
       const repeat = async function(timeout) {

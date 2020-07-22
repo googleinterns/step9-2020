@@ -19,6 +19,7 @@ function makeRandomID(length = 5) {
    for (let index = 0; index < length; index++ ) {
       randomID += characters.charAt(Math.floor(Math.random() * charactersLength));
    }
+   
    return randomID;
 }
 
