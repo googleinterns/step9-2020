@@ -89,7 +89,7 @@ function useAdvertisers(year, queryLimit) {
   }
 
 const ScatterPlot = () => {  
-  const queryLimit = 4;
+  const queryLimit = 10;
 
   const advertisers2018 = useAdvertisers("2018", queryLimit);
   const advertisers2019 = useAdvertisers("2019", queryLimit);
