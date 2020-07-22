@@ -26,8 +26,20 @@ import java.util.List;
  */ 
 public final class FirebaseAdReader {
 
-  public static List<Ad> readAds(String collection, String databaseURL, String pathToServiceAccount,
-    int limit, int timeoutAllowance) throws Exception {
+  /**
+   * Reads in all documents from a collection.
+   * @param collection The collection to read documents from.
+   * @param databaseURL The database from which to read documents.
+   * @param limit Maximum number of documents to read from the collection.
+   * @param timeoutSecs Time in seconds to wait for the future before
+   *                    timing out.
+   */
+  public static List<Ad> readAds(String collection, 
+      String databaseURL, 
+      String pathToServiceAccount,
+      int limit, 
+      int timeoutSecs) 
+      throws Exception {
     FileInputStream serviceAccount = new FileInputStream(pathToServiceAccount);
     FirebaseOptions options = new FirebaseOptions.Builder()
         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -42,7 +54,7 @@ public final class FirebaseAdReader {
 
     // Retrieve all documents from the collection.
     ApiFuture<QuerySnapshot> future = db.collection(collection).limit(limit).get();
-    List<QueryDocumentSnapshot> documents = future.get(timeoutAllowance, TimeUnit.SECONDS).getDocuments();
+    List<QueryDocumentSnapshot> documents = future.get(timeoutSecs, TimeUnit.SECONDS).getDocuments();
     List<Ad> ads = new ArrayList<Ad>(); 
     for (QueryDocumentSnapshot document : documents) {
       ads.add(document.toObject(Ad.class));

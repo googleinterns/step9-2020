@@ -42,7 +42,7 @@ public final class StateCollectionBuilderTest {
   }
 
   @Test
-  public void getSortedAds_invalidState_emptyMap() throws Exception {
+  public void getAdvertiserToAdIdsMap_invalidState_emptyMap() throws Exception {
     String state = "Cauliflower";
     Map<String, ArrayList> advertiserToAdIds = getAdvertiserToAdIdsMap(state);
     Assert.assertEquals(advertiserToAdIds.isEmpty(), true);

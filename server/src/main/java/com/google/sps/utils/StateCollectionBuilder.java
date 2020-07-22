@@ -50,7 +50,7 @@ public class StateCollectionBuilder {
   private static final String MAIN_COLLECTION = "ads";
   private static Firestore db; 
 
-  public static void initializeApp() throws Exception {
+  private static void initializeApp() throws Exception {
     // Set account and build options.
     FileInputStream serviceAccount = new FileInputStream(PATH_TO_SERVICE_ACCOUNT);
     FirebaseOptions options = new FirebaseOptions.Builder()
@@ -68,14 +68,18 @@ public class StateCollectionBuilder {
   /*
    * Sorts advertisments into groups by advertiser. 
    */
-  public static Map<String, ArrayList> getSortedAds(String state, List<QueryDocumentSnapshot> documents) 
-    throws Exception {
+  public static Map<String, ArrayList> getAdvertiserToAdIdsMap(String state, 
+      List<QueryDocumentSnapshot> documents) 
+      throws Exception {
+    
     // Initialize a HashMap to organize ad data into documents.
     Map<String, ArrayList> advertiserToAdIds = new HashMap<>();
 
     // Create a document for every advertiser.
     for (QueryDocumentSnapshot document : documents) {
-      Ad ad = document.toObject(Ad.class); // Convert document to Ad to use methods like .getAdvertiser().
+
+      // Convert document to Ad to use methods like .getAdvertiser().
+      Ad ad = document.toObject(Ad.class); 
       String advertiser = ad.getAdvertiser();
       ArrayList<String> ids = new ArrayList<String>(); 
       if (advertiserToAdIds.containsKey(advertiser)) {
@@ -88,8 +92,8 @@ public class StateCollectionBuilder {
   }
 
 
-  public static void updateStateCollection(String state, Map<String, ArrayList> advertiserToAdIds) 
-    throws Exception {
+  public static void updateStateCollection(String state, 
+      Map<String, ArrayList> advertiserToAdIds) throws Exception {
     // Add advertiser documents to the corresponding state collection.
     for (String key : advertiserToAdIds.keySet()) {
       Map<String, Object> data = new HashMap<>();
@@ -110,7 +114,7 @@ public class StateCollectionBuilder {
                                           .whereArrayContains("geoTarget", state)
                                           .get();
       List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-      updateStateCollection(state, getSortedAds(state, documents));
+      updateStateCollection(state, getAdvertiserToAdIdsMap(state, documents));
     }
   }
 }
