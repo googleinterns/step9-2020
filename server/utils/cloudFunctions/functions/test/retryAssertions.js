@@ -6,7 +6,7 @@
  * Author: Rob Marcus  
  */
 
-const { TIMEOUT_MAX } = require('./testConfig');
+const { chai, TIMEOUT_MAX } = require('./testConfig');
 const { promiseTimeout } = require('./promiseTimeout');
 
 /**

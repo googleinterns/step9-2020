@@ -36,7 +36,6 @@ const TIMEOUT_2S = 2000;
 const TIMEOUT_15S = 15000;
 const TIMEOUT_MAX = 10000;
 
-
 const snapFromJson = test.firestore.makeDocumentSnapshot;
 
 // Path to `dev_ads` collection. 
