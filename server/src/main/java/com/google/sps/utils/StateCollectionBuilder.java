@@ -15,6 +15,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.sps.utils.Ad;
+import com.google.sps.utils.Constants;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -36,21 +37,13 @@ import java.util.Set;
  */ 
 public class StateCollectionBuilder {
 
-  private static final Set<String> VALID_GEO_TARGETS = new HashSet<>(Arrays.asList("Alabama", "Alaska", 
-          "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", 
-          "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", 
-          "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", 
-          "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", 
-          "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", 
-          "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", 
-          "Wisconsin", "Wyoming", "United States"));
-  private static final Set<String> MOCK_DATA = new HashSet<>(Arrays.asList("Utah", "California"));  
   private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
   private static final String MAIN_COLLECTION = "ads";
-  private static Firestore db; 
+  private static final String WRITE_COLLECTION = "dev_states";
+  public static Firestore db; 
 
-  public static void initializeApp() throws Exception {
+  public static Firestore initializeApp() throws Exception {
     // Set account and build options.
     FileInputStream serviceAccount = new FileInputStream(PATH_TO_SERVICE_ACCOUNT);
     FirebaseOptions options = new FirebaseOptions.Builder()
@@ -63,19 +56,24 @@ public class StateCollectionBuilder {
       FirebaseApp.initializeApp(options);
     }
     db = FirestoreClient.getFirestore();
+    return db;
   }
 
   /*
    * Sorts advertisments into groups by advertiser. 
    */
-  public static Map<String, ArrayList> getSortedAds(String state, List<QueryDocumentSnapshot> documents) 
-    throws Exception {
+  public static Map<String, ArrayList> getAdvertiserToAdIdsMap(String state, 
+      List<QueryDocumentSnapshot> documents) 
+      throws Exception {
+    
     // Initialize a HashMap to organize ad data into documents.
     Map<String, ArrayList> advertiserToAdIds = new HashMap<>();
 
     // Create a document for every advertiser.
     for (QueryDocumentSnapshot document : documents) {
-      Ad ad = document.toObject(Ad.class); // Convert document to Ad to use methods like .getAdvertiser().
+
+      // Convert document to Ad to use methods like .getAdvertiser().
+      Ad ad = document.toObject(Ad.class); 
       String advertiser = ad.getAdvertiser();
       ArrayList<String> ids = new ArrayList<String>(); 
       if (advertiserToAdIds.containsKey(advertiser)) {
@@ -88,14 +86,14 @@ public class StateCollectionBuilder {
   }
 
 
-  public static void updateStateCollection(String state, Map<String, ArrayList> advertiserToAdIds) 
-    throws Exception {
+  public static void updateStateCollection(String state, 
+      Map<String, ArrayList> advertiserToAdIds) throws Exception {
     // Add advertiser documents to the corresponding state collection.
     for (String key : advertiserToAdIds.keySet()) {
       Map<String, Object> data = new HashMap<>();
       data.put("ads", advertiserToAdIds.get(key));
       db
-        .collection("states").document(state.toLowerCase())
+        .collection(WRITE_COLLECTION).document(state.toLowerCase())
         .collection("ads").document(key)
         .set(data, SetOptions.merge());
     }
@@ -105,12 +103,12 @@ public class StateCollectionBuilder {
     initializeApp();
 
     // Sort ads into groups by geotarget.
-    for (String state: MOCK_DATA) {      
+    for (String state: Constants.TEST_GEO_TARGETS) {      
       ApiFuture<QuerySnapshot> future = db.collection(MAIN_COLLECTION)
                                           .whereArrayContains("geoTarget", state)
                                           .get();
       List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-      updateStateCollection(state, getSortedAds(state, documents));
+      updateStateCollection(state, getAdvertiserToAdIdsMap(state, documents));
     }
   }
 }

@@ -4,7 +4,6 @@
  * Date: 2020/07/13
  */
 
-import { ads } from '../../../firebase/FirestoreDocumentReader';
 import { Chart } from "react-google-charts";
 import firebase from '../../../firebase/firebase';
 import React, { useState, useEffect } from 'react';
@@ -14,8 +13,8 @@ import { app, database } from '../../../firebase/firebase';
 const Geochart = () => {
 
   const [adTotal, setAdTotal] = useState(0);
-  const width = "700px";
-  const height = "400px";
+  const width = "700";
+  const height = "400";
 
   class GeochartAd {
     constructor(id) {
@@ -55,14 +54,15 @@ const Geochart = () => {
   }
   doStuff();
 
+  // useEffect makes a Firestore query for the total number of ads targeted at each state.
   useEffect(() => {
     async function fetchData() {
       let data = [["State", "Total Number of Ads"]];
       for (let state in states) {
         const documentRef = database.collection('ads');
         const query = await documentRef.where("geoTarget", "array-contains", state)
-                                    .withConverter(adConverter)
-                                    .get();
+                                       .withConverter(adConverter)
+                                       .get();
         data.push([state, query.docs.length]); // Update data table.
       }
       setAdTotal(data)
@@ -83,7 +83,7 @@ const Geochart = () => {
   return (
     <div className="search-header center">
       <p>Impressions Geochart</p>
-      <Chart chartType="GeoChart" width={ width } height={ height } data={ adTotal } options={ options } />
+      <Chart chartType="GeoChart" width={width} height={height} data={adTotal} options={options} />
     </div>
   );
 };
