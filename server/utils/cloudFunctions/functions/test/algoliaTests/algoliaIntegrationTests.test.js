@@ -1,25 +1,11 @@
 /**
  * Description: Integration tests for algolia cloud functions.
- *              Can be flaky. If an error like `ObjectID` does not exist, 
- *              it is probably a problem with algolia flaking. When in doubt,
- *              re-run the tests. Compile with `npm run test`.
+ *              These tests require Node 12.9.0 or greater.
+ *              Update with `nvm install {version}`. 
+ *              Compile with `npm run test`.
  * Notes:
- * - For simplicity, advertisment JSONs are denoted as `ad`, and 
- *   the advertiser is used as the documents `primary key`. 
- *   - In practice, primary key is a random string.
- *   - If used something like `adOne` as `primary key`, would probably
- *     run into a lot of collisions with other `adOne`'s not deleted
- *     fast enough between tests (see note about `after` cleanup below.)
- *   - Advertiser naming convention for this test suite is alphabetical 
- *     enumeration. This is in contrast to the `countAdvertisersFunction`
- *     test suite, which used alphabetical `ad_x` enumeration. 
- *     - Done to avoid collisions with slow record deletions. 
- *     - Underlying code implementation doesn't rely on advertiser naming
- *       or ObjectID convention at all, just dumps the document data into 
- *       an algolia record so this naming scheme doesn't impact testing.  
- *     - Consistency would be nice with the other tests... 
- *       - But not worth the effort to figure out how to delete faster etc. 
- *       - This works and is simple :)
+ * - For simplicity, advertisement JSONs are denoted as `ad`, and 
+ *   a pseudorandom string id is generated for each document ID. 
  * - Two methods are used to retrieve algolia records, `getObject` and 
  *   `getObjects`. 
  *   - `getObject` takes a string `objectID` returns a json object. 
