@@ -1,4 +1,6 @@
 *.iml
 target/
 node_modules/
+test.txt
+serviceAccountKey.json
 .idea

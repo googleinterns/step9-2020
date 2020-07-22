@@ -23,6 +23,7 @@ public final class FirebaseAdWriter {
         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
         .setDatabaseUrl(databaseURL)
         .build();
+    
     // Initialize app.
     if(FirebaseApp.getApps().isEmpty()) {
       FirebaseApp.initializeApp(options);

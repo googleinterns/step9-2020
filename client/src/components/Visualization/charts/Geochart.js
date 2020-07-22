@@ -4,45 +4,68 @@
  * Date: 2020/07/13
  */
 
-import { Chart } from 'react-google-charts';
-import React from 'react';
 import { ads } from '../../../firebase/FirestoreDocumentReader';
+import { Chart } from "react-google-charts";
 import firebase from '../../../firebase/firebase';
+import React, { useState, useEffect } from 'react';
 import { states } from './StateDataParser';
+import { app, database } from '../../../firebase/firebase';
 
 const Geochart = () => {
-  /*
-   * Currently, getData assigns a meaningless random number to each state.
-   * In the future, once the states dictionary contains ad information, getData will
-   *    retrieve information such as minimum ad impressions and maximum ad spend.
-   */
 
-  function getData() {
-    const data = [['State', 'Random Number']];
-    for (const state in states) {
-      data.push([state, Math.floor(Math.random() * Math.floor(1000))]);
+  const [adTotal, setAdTotal] = useState(0);
+  const WIDTH = "700";
+  const HEIGHT = "400";
+
+  class GeochartAd {
+    constructor(id) {
+    /**
+    * @param {string} id
+    */
+      this.id = id;
     }
-    return data;
+    toString() {
+      return this.id;
+    }
   }
+
+  // Firestore data converter converts snapshots to custom objects.
+  const adConverter = {
+    toFirestore: function(ad) {
+      return {
+        id: ad.id,
+      }
+    },
+    fromFirestore: function(snapshot, options){
+      const data = snapshot.data(options);
+      return new GeochartAd(data.id)
+    }
+  }
+    
+  useEffect(async () => {
+    let data = [["State", "Total Number of Ads"]];
+    for (let state in states) {
+      const documentRef = database.collection('ads');
+      const query = await documentRef.where("geoTarget", "array-contains", state)
+                                  .withConverter(adConverter)
+                                  .get();
+      data.push([state, query.docs.length]); // Update data table.
+    }
+    setAdTotal(data)
+  }, [])
 
   const options = {
     enableRegionInteractivity: true,
-    legend: { textStyle: { color: 'black', fontSize: 10 } },
+    legend: {textStyle: {color: 'black', fontSize: 10}},     
     resolution: 'provinces',
-    region: 'US',
-    tooltip: { trigger: 'focus' }, // Trigger info box on mouse hover over state.
+    region:'US',
+    tooltip: {trigger:'focus'} // Trigger info box on mouse hover over state.
   };
 
   return (
     <div className="search-header center">
       <p>Impressions Geochart</p>
-      <Chart
-        chartType="GeoChart"
-        width="700px"
-        height="400px"
-        data={getData()}
-        options={options}
-      />
+      <Chart chartType="GeoChart" width={WIDTH} height={HEIGHT} data={adTotal} options={options} />
     </div>
   );
 };
