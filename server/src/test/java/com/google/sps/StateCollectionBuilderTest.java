@@ -63,7 +63,7 @@ public final class StateCollectionBuilderTest {
                                         .whereArrayContains("geoTarget", state)
                                         .get();
     List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-    return StateCollectionBuilder.getSortedAds(state, documents);
+    return StateCollectionBuilder.getAdvertiserToAdIdsMap(state, documents);
   }
 
   public static void initializeApp() throws Exception {
