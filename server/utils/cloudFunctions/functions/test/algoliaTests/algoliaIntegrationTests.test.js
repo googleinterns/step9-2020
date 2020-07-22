@@ -59,9 +59,6 @@ const { retryAssertions } = require('../retryAssertions');
 
 describe("Algolia integrations tests", () => {
   // After every 'describe' block, reset the test environments. 
-  // Since these are live dev DBs, this process can be very flaky.
-  // In general, don't expect an 'advertiser' will be reset from 
-  // test to test. 
   // Note: this will also delete ad records in the corresponding 
   // algolia index. 
   after(() => {
@@ -140,12 +137,12 @@ describe("Algolia integrations tests", () => {
                               .update({startDate: "2020-10-15"});
 
       const assertions = async () => {
-        const adOneContent = await DEV_ADS_INDEX.getObject(adOne.advertiser);
-        const adTwoContent = await DEV_ADS_INDEX.getObject(adTwo.advertiser);
+        const contentList = 
+             await DEV_ADS_INDEX.getObjects([adOne.advertiser, adTwo.advertiser]);
 
-        chai.expect(adOneContent.data)
+        chai.expect(contentList.results[0].data)
             .to.deep.equal({advertiser: adOne.advertiser, startDate: "2020-10-15"});
-        chai.expect(adTwoContent.data).to.deep.equal(adTwo);
+        chai.expect(contentList.results[1].data).to.deep.equal(adTwo);
       }
 
       await retryAssertions(assertions, TIMEOUT_2S);
@@ -153,7 +150,6 @@ describe("Algolia integrations tests", () => {
   });
 
   describe("test_deleteRecord", () => {
-    
     it("should delete an algolia record when a firestore " + 
       "document is deleted", async () => {
       const ad = {advertiser: makeRandomID(), startDate: "2019-10-15"};
@@ -162,16 +158,16 @@ describe("Algolia integrations tests", () => {
       await DEV_ADS_COLLECTION.doc(ad.advertiser).delete()
 
       const assertions = async () => {
-        const content = await DEV_ADS_INDEX.getObjects([ad.advertiser]);
+        const contentList = await DEV_ADS_INDEX.getObjects([ad.advertiser]);
 
         // Checking `ad` is deleted, so verify an error message
         // exists, has the right message, and that index 0
         // is null. Check existence because if doesn't, `.trim()`
         // will yield an unhelpful error and obfuscate the true error.
-        chai.expect(content.message).to.exist;
-        chai.expect(content.message.trim())
-            .to.be.equal(`ObjectID ${ad.advertiser} does not exist.`);
-        chai.expect(content.results[0]).to.be.null;  
+        chai.expect(contentList.message).to.exist;
+        chai.expect(contentList.message.trim()).to.be
+            .equal(`ObjectID ${ad.advertiser} does not exist.`);
+        chai.expect(contentList.results[0]).to.be.null;  
       }
 
       await retryAssertions(assertions, TIMEOUT_2S);
@@ -192,8 +188,8 @@ describe("Algolia integrations tests", () => {
             await DEV_ADS_INDEX.getObjects([adOne.advertiser, adTwo.advertiser]);
 
         chai.expect(contentList.message).to.exist;
-        chai.expect(contentList.message.trim())
-            .to.be.equal(`ObjectID ${adOne.advertiser} does not exist.`);
+        chai.expect(contentList.message.trim()).to.be
+            .equal(`ObjectID ${adOne.advertiser} does not exist.`);
         chai.expect(contentList.results[0]).to.be.null;
         chai.expect(contentList.results[1].data).to.deep.equal(adTwo);
       }

@@ -31,10 +31,8 @@ const test = require('firebase-functions-test')({
 const firestoreMock = test.firestore;   
 const firestoreWrap = test.wrap;
 
-// Firebase guarantees a function will execute within 10s of being called,
-// so 10s (10000ms) is used as the default sleep time for integration tests.
+// Sleep times for integration tests. 
 const TIMEOUT_2S = 2000;
-const TIMEOUT_10S = 10000;
 const TIMEOUT_15S = 15000;
 const TIMEOUT_MAX = 10000;
 
@@ -78,7 +76,6 @@ module.exports = { test,
                    firestoreMock, 
                    firestoreWrap,
                    TIMEOUT_2S,
-                   TIMEOUT_10S,
                    TIMEOUT_15S, 
                    TIMEOUT_MAX,
                    snapFromJson,

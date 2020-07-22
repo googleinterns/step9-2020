@@ -9,7 +9,7 @@
 
 /**
  * Generate a random alphanumeric string ID. 
- * @param {int} length size of output string. 
+ * @param {integer} length size of output string. 
  */
 function makeRandomID(length = 5) {
    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
