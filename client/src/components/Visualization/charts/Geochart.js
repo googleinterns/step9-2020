@@ -30,8 +30,6 @@ const Geochart = () => {
         let stateTotal = 0;
         let stateSpendData = await database.collection(STATES_COLLECTION)
                                            .doc(state.toLowerCase())
-                                           .collection('stateData')
-                                           .doc('spendData')
                                            .get();
         
         // Only add to total if present.

@@ -40,6 +40,7 @@ public class StateSubcollectionBuilder {
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
   private static final String MAIN_COLLECTION = "ads";
   private static final String WRITE_COLLECTION = "dev_states";
+  private static final Set<String> GEO_TARGETS = Constants.TEST_GEO_TARGETS;
   public static Firestore db; 
 
   public static Firestore initializeApp() throws Exception {
@@ -118,16 +119,15 @@ public class StateSubcollectionBuilder {
   public static void updateTotalStateSpend(String state, long totalStateSpend) {
     Map<String, Object> data = new HashMap<>();
     data.put("totalStateSpend", totalStateSpend);
-    db
-      .collection(WRITE_COLLECTION).document(state.toLowerCase())
-      .collection("stateData").document("spendData")
+    db.collection(WRITE_COLLECTION)
+      .document(state.toLowerCase())
       .set(data, SetOptions.merge());    
   }
 
   public static void main(String[] args) throws Exception {
     initializeApp();
 
-    for (String state: Constants.VALID_GEO_TARGETS) {      
+    for (String state: GEO_TARGETS) {      
       ApiFuture<QuerySnapshot> future = db.collection(MAIN_COLLECTION)
                                           .whereArrayContains("geoTarget", state)
                                           .get();
