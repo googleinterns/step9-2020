@@ -17,11 +17,11 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.google.sps.utils.Ad;
 import com.google.sps.utils.Constants;
 import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
+// import java.io.InputStream;
+// import java.util.ArrayList;
+// import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+// import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,44 +63,46 @@ public class StateSubcollectionBuilder {
    * @param documentsInState list of all document snapshots targeted
    *                         at a particular state 
    */
-  public static Map<String, Long> getAdvertiserToTotalSpend(
+    public static Map<String, Long> getAdvertiserToSpend(
       List<QueryDocumentSnapshot> documentsInState) {
+    Map<String, Long> advertiserToSpend = new HashMap<>();
 
-    Map<String, Long> advertiserToTotalSpend = new HashMap<>();
     for (QueryDocumentSnapshot document: documentsInState) {
       String advertiser = document.getString("advertiser");
       long spendMax = document.getLong("spendMax");
-      if (advertiserToTotalSpend.containsKey(advertiser)) {
-        advertiserToTotalSpend.put(advertiser, 
-          advertiserToTotalSpend.get(advertiser) + spendMax);
-      } else {
-        advertiserToTotalSpend.put(advertiser, spendMax);
+
+      if (advertiserToSpend.containsKey(advertiser)) {
+        spendMax += advertiserToSpend.get(advertiser); 
       }
+      
+      advertiserToSpend.put(advertiser, spendMax);
     }
-    return advertiserToTotalSpend;
+    
+    return advertiserToSpend;
   }
 
   /**
    * Writes advertiser documents to Firestore
    * @param state the current state subcollection (tells Firestore
    *              where to write the advertiser documents)
-   * @param advertiserToTotalSpend maps that relates every advertiser
-   *              to their total ad spend in a particular stateit bran              
+   * @param advertiserToSpend map that relates every advertiser
+   *              to their total ad spend in a particular state              
    */
   public static void updateStateSubcollection(String state,
-      Map<String, Long> advertiserToTotalSpend) {
+      Map<String, Long> advertiserToSpend) {
 
     long totalStateSpend = 0;
 
-    for (String key : advertiserToTotalSpend.keySet()) {
+    for (String key : advertiserToSpend.keySet()) {
       Map<String, Object> data = new HashMap<>();
-      long totalAdvertiserSpend = advertiserToTotalSpend.get(key);
+      long totalAdvertiserSpend = advertiserToSpend.get(key);
       totalStateSpend += totalAdvertiserSpend;
       data.put("totalAdvertiserSpend", totalAdvertiserSpend);
-      db
-        .collection(WRITE_COLLECTION).document(state.toLowerCase())
-        .collection("advertisers").document(key)
-        .set(data, SetOptions.merge());
+      db.collection(WRITE_COLLECTION)
+        .document(state.toLowerCase())
+        .collection("advertisers")
+        .document(key)
+        .set(data, SetOptions.merge()); // Granular merge instead of overwrite.
     }  
     updateTotalStateSpend(state, totalStateSpend);
   }
@@ -130,9 +132,9 @@ public class StateSubcollectionBuilder {
                                           .whereArrayContains("geoTarget", state)
                                           .get();
       List<QueryDocumentSnapshot> documentsInState = future.get().getDocuments();
-      Map<String, Long> advertiserToTotalSpend = getAdvertiserToTotalSpend(documentsInState);
+      Map<String, Long> advertiserToSpend = getAdvertiserToSpend(documentsInState);
 
-      updateStateSubcollection(state, advertiserToTotalSpend);
+      updateStateSubcollection(state, advertiserToSpend);
     }
   }
 }
