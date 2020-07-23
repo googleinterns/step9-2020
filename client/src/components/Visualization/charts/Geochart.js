@@ -1,7 +1,7 @@
 /**
  * Description: Geochart implements a Google geochart component.
  * Author: Kira Toal
- * Date: 2020/21/13
+ * Date: 2020/07/21
  */
 import { Chart } from "react-google-charts";
 import React, { useState, useEffect } from 'react';

@@ -17,11 +17,7 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.google.sps.utils.Ad;
 import com.google.sps.utils.Constants;
 import java.io.FileInputStream;
-// import java.io.InputStream;
-// import java.util.ArrayList;
-// import java.util.Arrays;
 import java.util.HashMap;
-// import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +36,7 @@ public class StateSubcollectionBuilder {
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
   private static final String MAIN_COLLECTION = "ads";
   private static final String WRITE_COLLECTION = "dev_states";
-  private static final Set<String> GEO_TARGETS = Constants.TEST_GEO_TARGETS;
+  private static final Set<String> GEO_TARGETS = Constants.VALID_GEO_TARGETS;
   public static Firestore db; 
 
   public static Firestore initializeApp() throws Exception {
@@ -64,39 +60,39 @@ public class StateSubcollectionBuilder {
    * @param documentsInState list of all document snapshots targeted
    *                         at a particular state 
    */
-    public static Map<String, Long> getAdvertiserToSpend(
+    public static Map<String, Long> getAdvertiserSpend(
       List<QueryDocumentSnapshot> documentsInState) {
-    Map<String, Long> advertiserToSpend = new HashMap<>();
+    Map<String, Long> advertiserSpendMap = new HashMap<>();
 
     for (QueryDocumentSnapshot document: documentsInState) {
       String advertiser = document.getString("advertiser");
-      long spendMax = document.getLong("spendMax");
+      long maxSpend = document.getLong("spendMax");
 
-      if (advertiserToSpend.containsKey(advertiser)) {
-        spendMax += advertiserToSpend.get(advertiser); 
+      if (advertiserSpendMap.containsKey(advertiser)) {
+        maxSpend += advertiserSpendMap.get(advertiser); 
       }
       
-      advertiserToSpend.put(advertiser, spendMax);
+      advertiserSpendMap.put(advertiser, maxSpend);
     }
     
-    return advertiserToSpend;
+    return advertiserSpendMap;
   }
 
   /**
    * Writes advertiser documents to Firestore
    * @param state the current state subcollection (tells Firestore
    *              where to write the advertiser documents)
-   * @param advertiserToSpend map that relates every advertiser
+   * @param advertiserSpendMap map that relates every advertiser
    *              to their total ad spend in a particular state              
    */
   public static void updateStateSubcollection(String state,
-      Map<String, Long> advertiserToSpend) {
+      Map<String, Long> advertiserSpendMap) {
 
     long totalStateSpend = 0;
 
-    for (String key : advertiserToSpend.keySet()) {
+    for (String key : advertiserSpendMap.keySet()) {
       Map<String, Object> data = new HashMap<>();
-      long totalAdvertiserSpend = advertiserToSpend.get(key);
+      long totalAdvertiserSpend = advertiserSpendMap.get(key);
       totalStateSpend += totalAdvertiserSpend;
       data.put("totalAdvertiserSpend", totalAdvertiserSpend);
       db.collection(WRITE_COLLECTION)
@@ -132,9 +128,9 @@ public class StateSubcollectionBuilder {
                                           .whereArrayContains("geoTarget", state)
                                           .get();
       List<QueryDocumentSnapshot> documentsInState = future.get().getDocuments();
-      Map<String, Long> advertiserToSpend = getAdvertiserToSpend(documentsInState);
+      Map<String, Long> advertiserSpendMap = getAdvertiserSpend(documentsInState);
 
-      updateStateSubcollection(state, advertiserToSpend);
+      updateStateSubcollection(state, advertiserSpendMap);
     }
   }
 }
