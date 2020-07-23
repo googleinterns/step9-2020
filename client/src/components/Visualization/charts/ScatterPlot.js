@@ -70,23 +70,24 @@ function useAdvertisers(year, queryLimit) {
   const [advertisers, setAdvertisers] = useState([]);
 
   useEffect(() => {
-      database.collection("aggregates")
-              .doc(year)
-              .collection("advertisers")
-              .orderBy("numberOfAds", "desc")
-              .limit(queryLimit)
-              .get()
-              .then((snapshots) => {
-        const newAdvertisers = snapshots.docs.map(snap => {
-          return formatAdvertiserCountSnapshot(snap, year);
-        });
+    async function getNumberOfAds(year, queryLimit) {
+      let snapshots = await database.collection("aggregates")
+                                    .doc(year)
+                                    .collection("advertisers")
+                                    .orderBy("numberOfAds", "desc")
+                                    .limit(queryLimit)
+                                    .get();
+      let newAdvertisers = 
+          snapshots.docs.map(snap => formatAdvertiserCountSnapshot(snap, year));
+      
+      setAdvertisers(newAdvertisers);
+    }
+    
+    getNumberOfAds(year, queryLimit);
+  }, [year, queryLimit]);
 
-        setAdvertisers(newAdvertisers);
-      });
-    }, [year, queryLimit]);
-
-    return advertisers;
-  }
+  return advertisers;
+}
 
 const ScatterPlot = () => {  
   const queryLimit = 10;
@@ -94,14 +95,23 @@ const ScatterPlot = () => {
   const advertisers2018 = useAdvertisers("2018", queryLimit);
   const advertisers2019 = useAdvertisers("2019", queryLimit);
   const advertisers2020 = useAdvertisers("2020", queryLimit);
-  
-  const advertisers = [...advertisers2018,
-                       ...advertisers2019,
-                       ...advertisers2020];
+
+  let advertisers = [...advertisers2018,
+                     ...advertisers2019,
+                     ...advertisers2020];
+
+  // If the advertisers list is empty upon the initial render
+  // It will cause many errors with the pattern `Error: <line> attribute y1: Expected length, "NaN"`
+  // This will check if advertisers is empty, in which case it will push 
+  // An invisible (white) bubble to coordinates (1, 1).  
+  if (advertisers.length === 0) {
+    advertisers.push({ x: 1, y: 1, fill: '#fff', label: '' })
+  }
+
+  console.log(advertisers);
 
   const range = getChartRange(advertisers);
   const chartTitle = `T${queryLimit} Most prolific ad words advertisers/year`;
-  
   return (
     <VictoryChart
       theme={VictoryTheme.material}
