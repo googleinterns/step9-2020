@@ -12,6 +12,10 @@ const DEV_AGGREGATES_COLLECTION_NAME = "dev_aggregates";
 const DEV_AGGREGATES_COLLECTION = 
     DB.collection(DEV_AGGREGATES_COLLECTION_NAME);
 
+const PROD_AGGREGATES_COLLECTION_NAME = "aggregates";
+const PROD_AGGREGATES_COLLECTION = 
+    DB.collection(PROD_AGGREGATES_COLLECTION_NAME);
+
 // `FieldValue` is a method that allows atomic operations on int/long fields.
 // i.e., `firestoreFieldValue.increment(change)` will atomically increment the 
 // field value by `change`. 
@@ -37,6 +41,7 @@ class AdvertiserDocumentNotFound extends Error {
 }
 
 module.exports = { DEV_AGGREGATES_COLLECTION, 
+                   PROD_AGGREGATES_COLLECTION,
                    firestoreFieldValue, 
                    IllegalAdCountDecrement, 
                    AdvertiserDocumentNotFound }
