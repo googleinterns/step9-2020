@@ -70,7 +70,7 @@ function useAdvertisers(year, queryLimit) {
   const [advertisers, setAdvertisers] = useState([]);
 
   useEffect(() => {
-      database.collection("prod_aggregates")
+      database.collection("aggregates")
               .doc(year)
               .collection("advertisers")
               .orderBy("numberOfAds", "desc")
@@ -125,7 +125,7 @@ const ScatterPlot = () => {
         labelComponent={ <VictoryTooltip/> }
         labels={({ datum }) => datum.y }
         style={{ data: { fill: ({ datum }) => datum.fill }}}
-        size={10}
+        size={5}
         data={advertisers}
       />
 

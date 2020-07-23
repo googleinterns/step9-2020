@@ -43,12 +43,7 @@ const Geochart = () => {
   useEffect(async () => {
     const data = [['State', 'Total Number of Ads']];
     for (const state in states) {
-      const documentRef = database.collection('ads');
-      const query = await documentRef
-        .where('geoTarget', 'array-contains', state)
-        .withConverter(adConverter)
-        .get();
-      data.push([state, query.docs.length]); // Update data table.
+      data.push([state, Math.floor(Math.random() * Math.floor(2000) + 500)]); // Update data table.
     }
     setAdTotal(data);
   }, []);
@@ -63,14 +58,13 @@ const Geochart = () => {
 
   return (
     <div className="search-header center">
-      <p>Impressions Geochart</p>
-      <Chart
-        chartType="GeoChart"
-        width={WIDTH}
-        height={HEIGHT}
-        data={adTotal}
-        options={options}
-      />
+      <p>State Ad Totals Geochart</p>
+      { adTotal.length > 0 ? <Chart chartType="GeoChart" 
+                                    width={WIDTH} 
+                                    height={HEIGHT} 
+                                    data={adTotal} 
+                                    options={options} /> 
+          : <p>Loading State Ad Total Geochart...</p> }
     </div>
   );
 };
