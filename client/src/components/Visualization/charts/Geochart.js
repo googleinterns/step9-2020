@@ -3,18 +3,15 @@
  * Author: Kira Toal
  * Date: 2020/07/13
  */
-
-import { ads } from '../../../firebase/FirestoreDocumentReader';
 import { Chart } from "react-google-charts";
 import React, { useState, useEffect } from 'react';
 import { STATES } from '../../../constants/geochart_constants';
 import { database } from '../../../firebase/firebase';
 
 const Geochart = () => {
-
   const [adTotal, setAdTotal] = useState(0);
-  const WIDTH = "700";
-  const HEIGHT = "400";
+  const WIDTH = '700';
+  const HEIGHT = '400';
 
   useEffect(() => {
     async function fetchStateTotals() {
@@ -60,8 +57,8 @@ const Geochart = () => {
   const options = {
     legend: {textStyle: {color: 'black', fontSize: 10}},     
     resolution: 'provinces',
-    region:'US',
-    tooltip: {trigger:'focus'} // Trigger info box on mouse hover over state.
+    region: 'US',
+    tooltip: { trigger: 'focus' }, // Trigger info box on mouse hover over state.
   };
 
   return (

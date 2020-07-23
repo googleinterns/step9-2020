@@ -85,7 +85,7 @@ public class StateSubcollectionBuilder {
    * @param state the current state subcollection (tells Firestore
    *              where to write the advertiser documents)
    * @param advertiserToTotalSpend maps that relates every advertiser
-   *              to their total ad spend in a particular state              
+   *              to their total ad spend in a particular stateit bran              
    */
   public static void updateStateSubcollection(String state,
       Map<String, Long> advertiserToTotalSpend) {

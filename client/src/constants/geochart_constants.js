@@ -1,7 +1,6 @@
 /**
  * Defines set of states. 
  * Used for Geochart queries.
- * @returns {Set} state set
  */
 const STATES = new Set(["Alabama", "Alaska", "Arizona", "Arkansas", "California",
     "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii",
