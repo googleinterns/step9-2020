@@ -49,6 +49,7 @@ function formatAdvertiserCountSnapshot(snap, year) {
  * Returns the exclusive bounds for the range of all data points being charted.
  * Uses the spread `...` operator.
  * `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax` 
+ * If the list is empty a range [0,1] will be returned. 
  * @param {List[object]} victoryJsonList a list of objects in a victory-ready 
  *     format.
  * @returns {object}
@@ -103,11 +104,6 @@ const ScatterPlot = () => {
   const advertisers = [...advertisers2018,
                        ...advertisers2019,
                        ...advertisers2020];
-
-  // If the advertisers list is empty upon the initial render
-  // It will cause many errors with the pattern `Error: <line> attribute y1: Expected length, "NaN"`
-  // This will check if advertisers is empty, in which case it will push 
-  // An invisible (white) bubble to coordinates (1, 1).  
 
   const range = getChartRange(advertisers);
   const chartTitle = `T${queryLimit} Most prolific ad words advertisers/year`;
