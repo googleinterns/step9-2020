@@ -83,7 +83,7 @@ function useAdvertisers(year, queryLimit) {
 
         setAdvertisers(newAdvertisers);
       });
-    }, [advertisers, year, queryLimit]);
+    }, [year, queryLimit]);
 
     return advertisers;
   }
