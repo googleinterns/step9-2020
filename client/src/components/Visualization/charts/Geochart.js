@@ -68,13 +68,18 @@ const Geochart = () => {
 
   return (
     <div className="search-header center">
-      <p>Ad Spend Geochart</p>
+      <h2>State Ad Spend Geochart</h2>
+      <p>
+        Hover over a state to view how much was spent 
+        on Google Political Ads in that state from 2018-
+        2020.
+      </p>
       { adTotal.length > 0 ? <Chart chartType="GeoChart" 
                                     width={WIDTH} 
                                     height={HEIGHT} 
                                     data={adTotal} 
                                     options={options} /> 
-          : <p>Loading Ad Spend Geochart...</p> }
+          : <p>Loading State Ad Spend Geochart...</p> }
     </div>
   );
 };

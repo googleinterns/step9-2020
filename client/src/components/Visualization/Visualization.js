@@ -12,15 +12,12 @@ import tardigrade from '../../images/tardigrade.png';
 
 // Charts are presented as a grid, with each row containing one or many charts
 const CHARTS_TABLE = [
-  ['Zoomable Line'], // first row, 1 column
-  ['Interpolation', 'Scatter Plot'], // second row, 2 columns
+  ['Scatter Plot'],
   ['Geochart'],
 ];
 
 const Visualization = () => {
   const chartMap = {
-    'Zoomable Line': <ZoomLine />,
-    'Interpolation': <Interpolation />,
     'Scatter Plot': <ScatterPlot />,
     'Geochart': <Geochart />,
   };

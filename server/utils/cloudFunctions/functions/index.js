@@ -27,3 +27,5 @@ exports.prodAlgolia = require('./algoliaCloudFunctions/prodAlgoliaFunctions');
 
 exports.devCountAdvertisers = 
     require('./countAdvertisersCloudFunctions/devCountAdvertisersFunctions');
+exports.prodCountAdvertisers = 
+    require('./countAdvertisersCloudFunctions/prodCountAdvertisersFunctions');
