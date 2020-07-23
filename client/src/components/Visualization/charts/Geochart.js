@@ -13,37 +13,45 @@ import { app, database } from '../../../firebase/firebase';
 const Geochart = () => {
 
   const [adTotal, setAdTotal] = useState(0);
+  const [state, setState] = useState('');
   const width = "700";
   const height = "400";
 
-  /**
-   * Get all of the IDs for a state
-   */ 
-  // async function doStuff() {
-  //   let stateDataCollectionRef = database.collection('dev_states')
-  //                                        .doc('california')
-  //                                        .collection('stateData');
-  //   let stateDataCollection = await stateDataCollectionRef.limit(1).get();
-  //   for(const doc of stateDataCollection.docs){
-  //     console.log(doc.id, '=>', doc.data().totalStateSpend);
-  //   }
-  // }
-  // doStuff();
-
-  // useEffect makes a Firestore query for the total number of ads targeted at each state.
   useEffect(() => {
     async function fetchStateTotals() {
-      let data = [["State", "Total Ad Spend (USD)"]];
-      //for (let state in STATES) {
+
+      let data = [["State", "Total Ad Spend (USD)", {type: 'string', role: 'tooltip'}]];
+
+      for (let state of STATES) {
+        const stateTotal = 0;
         let stateDataCollectionRef = database.collection('dev_states')
-                                              .doc('virginia')
+                                              .doc(state.toLowerCase())
                                               .collection('stateData');
         let stateDataCollection = await stateDataCollectionRef.get();
-        for(const doc of stateDataCollection.docs){
-          data.push(['Virginia', doc.data().totalStateSpend]); // Update data table.
+        for (const doc of stateDataCollection.docs){
+          stateTotal = doc.data().totalStateSpend;
         }
-      //}
-      setAdTotal(data);
+
+        let topAdvertiser = '';
+        let topAdvertiserSpend = 0;
+        let advertiserCollectionRef = database.collection('dev_states')
+                                              .doc(state.toLowerCase())
+                                              .collection('advertisers')
+                                              .orderBy('totalAdvertiserSpend')
+                                              .limit(1);
+        let topAdvertiserCollection = await advertiserCollectionRef.get();
+        for (const doc of topAdvertiserCollection.docs){
+          topAdvertiser = doc.id;
+          topAdvertiserSpend = doc.data().totalAdvertiserSpend;
+        }
+
+        data.push([state, stateTotal, 
+            "Total Ad Spend (USD): " + stateTotal +
+            "\nTop Advertiser: " + topAdvertiser +
+            "\nTop Advertiser Total Spend: " + topAdvertiserSpend]); 
+      }
+
+      setAdTotal(data); // Update data table.
     }
     fetchStateTotals();
   }, [])
@@ -58,8 +66,15 @@ const Geochart = () => {
 
   return (
     <div className="search-header center">
-      <p>Impressions Geochart</p>
-      <Chart chartType="GeoChart" width={width} height={height} data={adTotal} options={options} />
+      <p>Ad Spend Geochart</p>
+      { adTotal.length > 0 ? <Chart chartType="GeoChart" 
+                                    width={width} 
+                                    height={height} 
+                                    data={adTotal} 
+                                    options={options} /> 
+      : <p>Loading Ad Spend Geochart...</p> }
+      <p>Click on a state to view the top advertisers by total ad spend.</p>   
+
     </div>
   );
 };

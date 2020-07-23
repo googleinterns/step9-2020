@@ -27,7 +27,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Description: 
+ * Description: Class creates collection by state. Each state collection contains
+ *              two subcollections: 'advertisers', which contains information about
+ *              each advertiser's total ad spend, and 'stateData', which contains
+ *              information about each state's total ad spend.
  * Author: Kira Toal
  * Date: July 20, 2020
  */ 
@@ -55,13 +58,21 @@ public class StateSubcollectionBuilder {
     return db;
   }
 
-  public static Map<String, Long> getAdvertiserToTotalSpend(List<QueryDocumentSnapshot> documentsInState) {
+  /**
+   * Maps advertisers to their total ad spend in a particular state
+   * @param documentsInState list of all document snapshots targeted
+   *                         at a particular state 
+   */
+  public static Map<String, Long> getAdvertiserToTotalSpend(
+      List<QueryDocumentSnapshot> documentsInState) {
+
     Map<String, Long> advertiserToTotalSpend = new HashMap<>();
     for (QueryDocumentSnapshot document: documentsInState) {
       String advertiser = document.getString("advertiser");
       long spendMax = document.getLong("spendMax");
       if (advertiserToTotalSpend.containsKey(advertiser)) {
-        advertiserToTotalSpend.put(advertiser, advertiserToTotalSpend.get(advertiser) + spendMax);
+        advertiserToTotalSpend.put(advertiser, 
+          advertiserToTotalSpend.get(advertiser) + spendMax);
       } else {
         advertiserToTotalSpend.put(advertiser, spendMax);
       }
@@ -69,15 +80,13 @@ public class StateSubcollectionBuilder {
     return advertiserToTotalSpend;
   }
 
-  public static void updateTotalStateSpend(String state, long totalStateSpend) {
-    Map<String, Object> data = new HashMap<>();
-    data.put("totalStateSpend", totalStateSpend);
-    db
-      .collection(WRITE_COLLECTION).document(state.toLowerCase())
-      .collection("stateData").document("spendData")
-      .set(data, SetOptions.merge());    
-  }
-
+  /**
+   * Writes advertiser documents to Firestore
+   * @param state the current state subcollection (tells Firestore
+   *              where to write the advertiser documents)
+   * @param advertiserToTotalSpend maps that relates every advertiser
+   *              to their total ad spend in a particular state              
+   */
   public static void updateStateSubcollection(String state,
       Map<String, Long> advertiserToTotalSpend) {
 
@@ -92,16 +101,31 @@ public class StateSubcollectionBuilder {
         .collection(WRITE_COLLECTION).document(state.toLowerCase())
         .collection("advertisers").document(key)
         .set(data, SetOptions.merge());
-    }
-    
+    }  
     updateTotalStateSpend(state, totalStateSpend);
+  }
+
+ /**
+  * Writes stateData documents, which contain information on each state's
+  * total ad spend across all advertisers, to Firestore
+  * @param state the current state subcollection (tells Firestore where to
+  *              write the advertiser documents)
+  * @param totalStateSpend how much money (USD) has been spent in a particular
+  *              state across all advertisers
+  */
+  public static void updateTotalStateSpend(String state, long totalStateSpend) {
+    Map<String, Object> data = new HashMap<>();
+    data.put("totalStateSpend", totalStateSpend);
+    db
+      .collection(WRITE_COLLECTION).document(state.toLowerCase())
+      .collection("stateData").document("spendData")
+      .set(data, SetOptions.merge());    
   }
 
   public static void main(String[] args) throws Exception {
     initializeApp();
 
-    // Sort ads into groups by geotarget.
-    for (String state: Constants.TEST_GEO_TARGETS) {      
+    for (String state: Constants.VALID_GEO_TARGETS) {      
       ApiFuture<QuerySnapshot> future = db.collection(MAIN_COLLECTION)
                                           .whereArrayContains("geoTarget", state)
                                           .get();

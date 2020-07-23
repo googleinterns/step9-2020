@@ -23,5 +23,5 @@ public final class Constants {
       "West Virginia", "Wisconsin", "Wyoming", "United States"));
 
   public static final Set<String> TEST_GEO_TARGETS = new HashSet<>
-      (Arrays.asList("California"));
+      (Arrays.asList("California", "Virginia", "Alabama"));
 }
