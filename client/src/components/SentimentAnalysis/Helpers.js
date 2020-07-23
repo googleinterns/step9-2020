@@ -3,17 +3,23 @@ import { COLOR_MAP, INPUT_ROWS } from '../../constants/analysis_constants';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+/**
+ * Component that display a user-input textarea for Sentiment Analysis.
+ */
+
 const AnalysisInput = props => {
   const { label, placeholder } = props;
 
   return (
     <div className="search-header center">
-      <h3 className="analysis-label">{label}</h3>
+      <h3 className="analysis-label">{label.toUpperCase()}</h3>
       <textarea
+        name={label}
         type="text"
         rows={INPUT_ROWS}
         className="ad-input"
         placeholder={placeholder}
+        required
       />
     </div>
   );
@@ -23,6 +29,11 @@ AnalysisInput.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
 };
+
+/**
+ * Component that changes color based on the given score and magnitude
+ * i.e. Negative is red, Positive is green and Neutral is gray
+ */
 
 const ColorBar = props => {
   const { score, magnitude } = props;
@@ -52,6 +63,10 @@ ColorBar.propTypes = {
   score: PropTypes.number,
   magnitude: PropTypes.number,
 };
+
+/**
+ * Component that displays each of the entity's term as tags
+ */
 
 const TermsDisplay = props => {
   const { termList } = props;
