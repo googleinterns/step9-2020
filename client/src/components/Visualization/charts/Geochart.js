@@ -4,6 +4,7 @@
  * Date: 2020/07/13
  */
 
+import { ads } from '../../../firebase/FirestoreDocumentReader';
 import { Chart } from "react-google-charts";
 import React, { useState, useEffect } from 'react';
 import { STATES } from '../../../constants/geochart_constants';

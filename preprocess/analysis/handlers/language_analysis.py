@@ -14,7 +14,7 @@ from google.cloud.language import types
 import json
 
 # See readme about how to setup mykey.json
-CLIENT = language.LanguageServiceClient.from_service_account_json("mykey.json")
+CLIENT = language.LanguageServiceClient.from_service_account_json("analysis-key.json")
 ENCODING_TYPE = enums.EncodingType.UTF8
 
 

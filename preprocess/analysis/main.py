@@ -1,7 +1,10 @@
 from flask import Flask
+from flask_cors import CORS
 from handlers.routes import configure_routes
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADER'] = 'Content-Type'
 
 configure_routes(app)
 
