@@ -54,9 +54,13 @@ function formatAdvertiserCountSnapshot(snap, year) {
  * @returns {object}
  */
 function getChartRange(victoryJsonList) {
-  const ranges = victoryJsonList.map(json => json.y);
+  if (victoryJsonList.length === 0) {
+    return {min: 0, max: 1};
+  } else {
+    const ranges = victoryJsonList.map(json => json.y);
 
-  return {min: Math.min(...ranges), max: Math.max(...ranges)};
+    return {min: Math.min(...ranges), max: Math.max(...ranges)};
+  }
 }
 
 /**
@@ -104,9 +108,6 @@ const ScatterPlot = () => {
   // It will cause many errors with the pattern `Error: <line> attribute y1: Expected length, "NaN"`
   // This will check if advertisers is empty, in which case it will push 
   // An invisible (white) bubble to coordinates (1, 1).  
-  if (advertisers.length === 0) {
-    advertisers.push({ x: 1, y: 1, fill: '#fff', label: '' });
-  }
 
   const range = getChartRange(advertisers);
   const chartTitle = `T${queryLimit} Most prolific ad words advertisers/year`;
