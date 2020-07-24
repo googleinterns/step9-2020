@@ -74,12 +74,17 @@ const Geochart = () => {
         Hover over a state to view how much was spent on
         Google Political Ads in that state from 2018-2020.
       </p>
-      { adTotal.length > 0 ? <Chart chartType="GeoChart" 
-                                    width={WIDTH} 
-                                    height={HEIGHT} 
-                                    data={adTotal} 
-                                    options={options} /> 
-          : <p>Loading State Ad Spend Geochart...</p> }
+      {adTotal.length > 0 ? (
+        <Chart
+          chartType="GeoChart"
+          width={WIDTH}
+          height={HEIGHT}
+          data={adTotal}
+          options={options}
+        />
+      ) : (
+        <p>Loading State Ad Spend Geochart...</p>
+      )}
     </div>
   );
 };

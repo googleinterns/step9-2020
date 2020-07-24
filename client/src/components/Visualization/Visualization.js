@@ -3,15 +3,12 @@ import './Visualization.css';
 import { Col, Container, Row } from 'react-grid-system';
 
 import Geochart from './charts/Geochart';
-import ScatterPlot from './charts/ScatterPlot';
 import React from 'react';
+import ScatterPlot from './charts/ScatterPlot';
 import tardigrade from '../../images/tardigrade.png';
 
 // Charts are presented as a grid, with each row containing one or many charts
-const CHARTS_TABLE = [
-  ['Scatter Plot'],
-  ['Geochart'],
-];
+const CHARTS_TABLE = [['Scatter Plot'], ['Geochart']];
 
 const Visualization = () => {
   const chartMap = {
