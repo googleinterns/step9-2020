@@ -1,5 +1,11 @@
 @import url("../../styles/colors.css");
 
+.result-item-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .highlight-header {
   color: var(--primary-color);
   font-weight: 600;
@@ -13,4 +19,10 @@
 
 .ais-Hits-item {
   padding: 25px;
+}
+
+.item-analysis {
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  border: 1px solid var(--primary-color) !important;
 }

@@ -4,7 +4,7 @@ const CONTENT_PLACEHOLDER =
   "e.g. Climate change is a life and death issue for our generation. It's time for bold action.";
 
 const INPUT_LIST = [
-  { label: 'header', placeholder: HEADLINE_PLACEHOLDER },
+  { label: 'headline', placeholder: HEADLINE_PLACEHOLDER },
   { label: 'content', placeholder: CONTENT_PLACEHOLDER },
 ];
 

@@ -8,17 +8,25 @@ import { INPUT_LIST } from '../../constants/analysis_constants';
 import ReCAPTCHA from 'react-google-recaptcha';
 import tardigrade from '../../images/tardigrade.png';
 
-const SentimentAnalysis = () => {
-  const [isVerified, setIsVerified] = useState(false);
-  const [header, setHeader] = useState({
-    entities: [],
-    sentiment: { score: 0.0, magnitude: 0.0 },
-  });
+const DEFAULT_ANALYSIS = {
+  entities: [],
+  sentiment: { score: 0.0, magnitude: 0.0 },
+};
 
-  const [content, setContent] = useState({
-    entities: [],
-    sentiment: { score: 0.0, magnitude: 0.0 },
-  });
+const SentimentAnalysis = props => {
+  const locationState = props.location.state;
+  const [isVerified, setIsVerified] = useState(false);
+  const [header, setHeader] = useState(
+    locationState !== undefined
+      ? locationState.ad.headlineAnalysis
+      : DEFAULT_ANALYSIS
+  );
+
+  const [content, setContent] = useState(
+    locationState !== undefined
+      ? locationState.ad.contentAnalysis
+      : DEFAULT_ANALYSIS
+  );
 
   const onChange = value => {
     setIsVerified(value !== null);
@@ -42,6 +50,19 @@ const SentimentAnalysis = () => {
       });
   };
 
+  const handleInputValue = label => {
+    if (locationState !== undefined) {
+      const { headline, content } = locationState.ad;
+      if (label === "headline") {
+        return headline;
+      } else {
+        return content;
+      }
+    } else {
+      return "";
+    }
+  }
+
   return (
     <div className="search-container">
       <form
@@ -55,6 +76,7 @@ const SentimentAnalysis = () => {
               key={index}
               label={input.label}
               placeholder={input.placeholder}
+              value={handleInputValue(input.label)}
             />
           ))}
         </div>

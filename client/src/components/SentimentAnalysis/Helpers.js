@@ -8,7 +8,7 @@ import React from 'react';
  */
 
 const AnalysisInput = props => {
-  const { label, placeholder } = props;
+  const { label, placeholder, value = '' } = props;
 
   return (
     <div className="search-header center">
@@ -20,7 +20,9 @@ const AnalysisInput = props => {
         className="ad-input"
         placeholder={placeholder}
         required
-      />
+      >
+        {value}
+      </textarea>
     </div>
   );
 };
@@ -28,6 +30,7 @@ const AnalysisInput = props => {
 AnalysisInput.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
+  value: PropTypes.string,
 };
 
 /**
