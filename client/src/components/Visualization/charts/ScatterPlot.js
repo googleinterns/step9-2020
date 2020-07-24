@@ -56,11 +56,11 @@ function formatAdvertiserCountSnapshot(snap, year) {
  */
 function getChartRange(victoryJsonList) {
   if (victoryJsonList.length === 0) {
-    return {min: 0, max: 1};
+    return { min: 0, max: 1 };
   } else {
     const ranges = victoryJsonList.map(json => json.y);
 
-    return {min: Math.min(...ranges), max: Math.max(...ranges)};
+    return { min: Math.min(...ranges), max: Math.max(...ranges) };
   }
 }
 
