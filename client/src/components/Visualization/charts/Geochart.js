@@ -24,35 +24,36 @@ const Geochart = () => {
         spend and top advertiser) are shown in the tooltip.
       */ 
       let dataTable = [["State", "Total Ad Spend (USD)", {type: 'string', role: 'tooltip'}]];
+
+      let stateSpendPromises = [];
+      let topAdvertiserPromises = [];
+
       for (let state of STATES) {
-        
-        // Calculate state spend totals.
-        let stateTotal = 0;
-        let stateSpendData = await database.collection(STATES_COLLECTION)
-                                           .doc(state.toLowerCase())
-                                           .get();
-        
-        // Only add to total if present.
-        if (stateSpendData.data() !== undefined) {
-          stateTotal = stateSpendData.data().totalStateSpend;
-        }
+        stateSpendPromises.push(database.collection(STATES_COLLECTION)
+            .doc(state.toLowerCase())
+            .get()
+        );
+        topAdvertiserPromises.push(database.collection(STATES_COLLECTION)
+            .doc(state.toLowerCase())
+            .collection('advertisers')
+            .orderBy('totalAdvertiserSpend')
+            .limit(1)
+            .get()
+        );
+      }
 
-        // Calculate top advertiser per state.
-        let topAdvertiser = '';
-        let advertiserCollectionRef = database.collection(STATES_COLLECTION)
-                                              .doc(state.toLowerCase())
-                                              .collection('advertisers')
-                                              .orderBy('totalAdvertiserSpend')
-                                              .limit(1);
-        let topAdvertiserCollection = await advertiserCollectionRef.get();
-        
-        // Only add to total if present.
-        if (topAdvertiserCollection.docs[0] !== undefined) {
-          topAdvertiser = topAdvertiserCollection.docs[0].id;   
-        }
+      let stateResults = await Promise.all(stateSpendPromises);
+      let advertiserResults = await Promise.all(topAdvertiserPromises);
+      const zippedResults = stateResults.map((e, i) => [e,advertiserResults[i]]);
 
-        const tooltip = `Total Ad Spend (USD): ${stateTotal} \nTop Advertiser: ${topAdvertiser}`;
-        dataTable.push([state, stateTotal, tooltip]); 
+      for (let result of zippedResults) {
+        let stateTotal = result[0];
+        let topAdvertiser = result[1];
+        if (stateTotal.data() !== undefined) {  
+          const tooltip = `Total Ad Spend (USD): ${stateTotal.data().totalStateSpend}
+              Top Advertiser: ${topAdvertiser.docs[0].id}`;
+          dataTable.push([stateTotal.id.toUpperCase(), stateTotal.data().totalStateSpend, tooltip]); 
+        }
       }
       setAdTotal(dataTable); // Update data table.
     }
@@ -70,9 +71,8 @@ const Geochart = () => {
     <div className="search-header center">
       <h2>State Ad Spend Geochart</h2>
       <p>
-        Hover over a state to view how much was spent 
-        on Google Political Ads in that state from 2018-
-        2020.
+        Hover over a state to view how much was spent on
+        Google Political Ads in that state from 2018-2020.
       </p>
       { adTotal.length > 0 ? <Chart chartType="GeoChart" 
                                     width={WIDTH} 

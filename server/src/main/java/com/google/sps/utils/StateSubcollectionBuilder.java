@@ -88,7 +88,7 @@ public class StateSubcollectionBuilder {
    * @param advertiserSpendMap map that relates every advertiser
    *              to their total ad spend in a particular state              
    */
-  public static void updateStateSubcollection(String state,
+  public static void updateAdvertiserSpendSubCollection(String state,
       Map<String, Long> advertiserSpendMap) {
 
     long totalStateSpend = 0;
@@ -129,7 +129,7 @@ public class StateSubcollectionBuilder {
       List<QueryDocumentSnapshot> documentsInState = future.get().getDocuments();
       Map<String, Long> advertiserSpendMap = getAdvertiserSpend(documentsInState);
 
-      updateStateSubcollection(state.toLowerCase(), advertiserSpendMap);
+      updateAdvertiserSpendSubCollection(state.toLowerCase(), advertiserSpendMap);
     }
   }
 }
