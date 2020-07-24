@@ -51,7 +51,10 @@ function formatAdvertiserCountSnapshot(snap, year) {
  * Returns the exclusive bounds for the range of all data points being charted.
  * Uses the spread `...` operator.
  * `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax` 
- * If the list is empty a range [0,1] will be returned. 
+ * If the list is empty the range [0,1] will be returned. 
+ * Empty list input is expected behavior due to how react renders the page
+ * once upon load while `advertisers` is still being asynchronously populated,
+ * so `advertisers` is the empty list on initial loading.  
  * @param {List[object]} victoryJsonList a list of objects in a victory-ready 
  *     format.
  * @returns {object}
