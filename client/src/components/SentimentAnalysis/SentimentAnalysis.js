@@ -1,32 +1,24 @@
 import './SentimentAnalysis.css';
 
 import { AnalysisInput, ColorBar, TermsDisplay } from './Helpers';
+import {
+  DEFAULT_ANALYSIS,
+  INPUT_LIST,
+} from '../../constants/analysis_constants';
 import React, { useState } from 'react';
 
 import { CLIENT_KEY } from '../../constants/capcha_config';
-import { INPUT_LIST } from '../../constants/analysis_constants';
+import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import tardigrade from '../../images/tardigrade.png';
 
-const DEFAULT_ANALYSIS = {
-  entities: [],
-  sentiment: { score: 0.0, magnitude: 0.0 },
-};
-
 const SentimentAnalysis = props => {
   const locationState = props.location.state;
-  const [isVerified, setIsVerified] = useState(false);
-  const [header, setHeader] = useState(
-    locationState !== undefined
-      ? locationState.ad.headlineAnalysis
-      : DEFAULT_ANALYSIS
-  );
+  const ad = locationState !== undefined ? locationState.ad : DEFAULT_ANALYSIS;
 
-  const [content, setContent] = useState(
-    locationState !== undefined
-      ? locationState.ad.contentAnalysis
-      : DEFAULT_ANALYSIS
-  );
+  const [isVerified, setIsVerified] = useState(false);
+  const [headline, setHeadline] = useState(ad.headlineAnalysis);
+  const [content, setContent] = useState(ad.contentAnalysis);
 
   const onChange = value => {
     setIsVerified(value !== null);
@@ -40,9 +32,12 @@ const SentimentAnalysis = props => {
     fetch(url, { method: 'POST', body: form })
       .then(response => response.json())
       .then(data => {
-        const headerEntities = data.header_entities;
-        const headerSentiment = JSON.parse(data.header_sentiment);
-        setHeader({ entities: headerEntities, sentiment: headerSentiment });
+        const headlineEntities = data.headline_entities;
+        const headlineSentiment = JSON.parse(data.headline_sentiment);
+        setHeadline({
+          entities: headlineEntities,
+          sentiment: headlineSentiment,
+        });
 
         const contentEntities = data.content_entities;
         const contentSentiment = JSON.parse(data.content_sentiment);
@@ -50,18 +45,17 @@ const SentimentAnalysis = props => {
       });
   };
 
-  const handleInputValue = label => {
+  const displayTextareaValue = label => {
     if (locationState !== undefined) {
-      const { headline, content } = locationState.ad;
-      if (label === "headline") {
-        return headline;
+      if (label === 'headline') {
+        return locationState.ad.headline;
       } else {
-        return content;
+        return locationState.ad.content;
       }
     } else {
-      return "";
+      return '';
     }
-  }
+  };
 
   return (
     <div className="search-container">
@@ -76,7 +70,7 @@ const SentimentAnalysis = props => {
               key={index}
               label={input.label}
               placeholder={input.placeholder}
-              value={handleInputValue(input.label)}
+              value={displayTextareaValue(input.label)}
             />
           ))}
         </div>
@@ -88,12 +82,12 @@ const SentimentAnalysis = props => {
       </form>
       <div className="analysis-result-container center">
         <div className="analysis-card center">
-          <h4>Header Analysis</h4>
+          <h4>Headline Analysis</h4>
           <ColorBar
-            score={header.sentiment.score}
-            magnitude={header.sentiment.magnitude}
+            score={headline.sentiment.score}
+            magnitude={headline.sentiment.magnitude}
           />
-          <TermsDisplay termList={header.entities} />
+          <TermsDisplay termList={headline.entities} />
         </div>
         <div className="analysis-card center">
           <h4>Content Analysis</h4>
@@ -106,6 +100,11 @@ const SentimentAnalysis = props => {
       </div>
     </div>
   );
+};
+
+SentimentAnalysis.propTypes = {
+  props: PropTypes.object,
+  location: PropTypes.object,
 };
 
 export default SentimentAnalysis;

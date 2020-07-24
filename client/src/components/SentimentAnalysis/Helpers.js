@@ -19,10 +19,9 @@ const AnalysisInput = props => {
         rows={INPUT_ROWS}
         className="ad-input"
         placeholder={placeholder}
+        defaultValue={value}
         required
-      >
-        {value}
-      </textarea>
+      />
     </div>
   );
 };
@@ -76,8 +75,8 @@ const TermsDisplay = props => {
 
   return (
     <div className="analysis-text-container">
-      {termList.map((termString, index) => {
-        const termObject = JSON.parse(termString);
+      {termList.map((term, index) => {
+        const termObject = typeof term === 'string' ? JSON.parse(term) : term;
         return (
           <div key={index} className="center">
             <div className="analysis-text special-text">{termObject.name}</div>

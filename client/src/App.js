@@ -1,6 +1,5 @@
 import './App.css';
 
-import { HEADERS, PAGE_MAP } from './constants/header_constants';
 import {
   Redirect,
   Route,

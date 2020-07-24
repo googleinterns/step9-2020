@@ -6,8 +6,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
+const removeSingleQuote = str => str.replace(/'/g, '');
+
 /* Algolia's Hit: display a result item from search */
-function ResultItem(props) {
+const ResultItem = props => {
   // a hit (result) object that contains all info about a result item
   const { hit } = props;
   const history = useHistory();
@@ -18,13 +20,12 @@ function ResultItem(props) {
       headline: data.headline,
       headlineAnalysis: {
         sentiment: JSON.parse(data.headlineSentiment),
-        // use eval() due to single-quote appearances in JSON
-        entities: eval(data.headlineTerms),
+        entities: JSON.parse(removeSingleQuote(data.headlineTerms)),
       },
       content: data.content,
       contentAnalysis: {
         sentiment: JSON.parse(data.contentSentiment),
-        entities: eval(data.contentTerms),
+        entities: JSON.parse(removeSingleQuote(data.contentTerms)),
       },
     };
     history.push({ pathname: '/analysis', state: { ad } });
@@ -51,7 +52,7 @@ function ResultItem(props) {
       </button>
     </div>
   );
-}
+};
 
 ResultItem.propTypes = {
   hit: PropTypes.object.isRequired,
