@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.cloud.firestore.WriteBatch;
+
+
 /**
  * Description: Class creates collection by state. Each state collection contains
  *              two subcollections: 'advertisers', which contains information about
@@ -90,34 +93,30 @@ public class StateSubcollectionBuilder {
 
     long totalStateSpend = 0;
 
+    WriteBatch batch = db.batch();
+
+    // Set the advertiser subcollections.
     for (String key : advertiserSpendMap.keySet()) {
       Map<String, Object> data = new HashMap<>();
-      long totalAdvertiserSpend = advertiserSpendMap.get(key);
-      totalStateSpend += totalAdvertiserSpend;
-      data.put("totalAdvertiserSpend", totalAdvertiserSpend);
-      db.collection(WRITE_COLLECTION)
-        .document(state.toLowerCase())
-        .collection("advertisers")
-        .document(key)
-        .set(data, SetOptions.merge()); // Granular merge instead of overwrite.
-    }  
-    updateTotalStateSpend(state, totalStateSpend);
-  }
+      long totalAdSpend = advertiserSpendMap.get(key);
+      data.put("totalAdvertiserSpend", totalAdSpend);
+      DocumentReference advertiser = db.collection(WRITE_COLLECTION)
+          .document(state)
+          .collection("advertisers")
+          .document(key);
+      batch.set(advertiser, data);
+      totalStateSpend += advertiserSpendMap.get(key);
+    }
+    
+    // Set state spend.
+    DocumentReference stateRef = db.collection(WRITE_COLLECTION)
+        .document(state);
+    Map<String, Object> stateSpendMap = new HashMap<>();
+    stateSpendMap.put("totalStateSpend", totalStateSpend);
+    batch.set(stateRef, stateSpendMap);
 
- /**
-  * Writes stateData documents, which contain information on each state's
-  * total ad spend across all advertisers, to Firestore
-  * @param state the current state subcollection (tells Firestore where to
-  *              write the advertiser documents)
-  * @param totalStateSpend how much money (USD) has been spent in a particular
-  *              state across all advertisers
-  */
-  public static void updateTotalStateSpend(String state, long totalStateSpend) {
-    Map<String, Object> data = new HashMap<>();
-    data.put("totalStateSpend", totalStateSpend);
-    db.collection(WRITE_COLLECTION)
-      .document(state.toLowerCase())
-      .set(data, SetOptions.merge());    
+    // Commit the batch.
+    batch.commit();
   }
 
   public static void main(String[] args) throws Exception {
@@ -130,7 +129,7 @@ public class StateSubcollectionBuilder {
       List<QueryDocumentSnapshot> documentsInState = future.get().getDocuments();
       Map<String, Long> advertiserSpendMap = getAdvertiserSpend(documentsInState);
 
-      updateStateSubcollection(state, advertiserSpendMap);
+      updateStateSubcollection(state.toLowerCase(), advertiserSpendMap);
     }
   }
 }
