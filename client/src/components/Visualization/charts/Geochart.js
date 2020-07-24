@@ -43,7 +43,10 @@ const Geochart = () => {
   useEffect(async () => {
     const data = [['State', 'Total Ad Spend Across All Advertisers']];
     for (const state in states) {
-      data.push([state, Math.floor(Math.random() * Math.floor(250000) + 10000)]); // Update data table.
+      data.push([
+        state,
+        Math.floor(Math.random() * Math.floor(250000) + 10000),
+      ]); // Update data table.
     }
     setAdTotal(data);
   }, []);
@@ -60,16 +63,20 @@ const Geochart = () => {
     <div className="search-header center">
       <h2>State Ad Spend Geochart</h2>
       <p>
-        Hover over a state to view how much was spent 
-        on Google Political Ads in that state from 2018-
-        2020.
+        Hover over a state to view how much was spent on Google Political Ads in
+        that state from 2018- 2020.
       </p>
-      { adTotal.length > 0 ? <Chart chartType="GeoChart" 
-                                    width={WIDTH} 
-                                    height={HEIGHT} 
-                                    data={adTotal} 
-                                    options={options} /> 
-          : <p>Loading State Ad Spend Geochart...</p> }
+      {adTotal.length > 0 ? (
+        <Chart
+          chartType="GeoChart"
+          width={WIDTH}
+          height={HEIGHT}
+          data={adTotal}
+          options={options}
+        />
+      ) : (
+        <p>Loading State Ad Spend Geochart...</p>
+      )}
     </div>
   );
 };
