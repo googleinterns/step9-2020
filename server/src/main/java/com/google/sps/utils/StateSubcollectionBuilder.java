@@ -89,7 +89,7 @@ public class StateSubcollectionBuilder {
    *              to their total ad spend in a particular state              
    */
   public static void updateAdvertiserSpendSubCollection(String state,
-      Map<String, Long> advertiserSpendMap) {
+      Map<String,Long> advertiserSpendMap) {
 
     long totalStateSpend = 0;
 

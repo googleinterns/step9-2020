@@ -44,11 +44,9 @@ const Geochart = () => {
 
       let stateResults = await Promise.all(stateSpendPromises);
       let advertiserResults = await Promise.all(topAdvertiserPromises);
-      const zippedResults = stateResults.map((e, i) => [e,advertiserResults[i]]);
+      const zippedResults = stateResults.map((e, i) => [e, advertiserResults[i]]);
 
-      for (let result of zippedResults) {
-        let stateTotal = result[0];
-        let topAdvertiser = result[1];
+      for (let [stateTotal, topAdvertiser] of zippedResults) {
         if (stateTotal.data() !== undefined) {  
           const tooltip = `Total Ad Spend (USD): ${stateTotal.data().totalStateSpend}
               Top Advertiser: ${topAdvertiser.docs[0].id}`;
