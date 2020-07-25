@@ -21,7 +21,4 @@ public final class Constants {
       "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
       "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", 
       "West Virginia", "Wisconsin", "Wyoming", "United States"));
-
-  public static final Set<String> TEST_GEO_TARGETS = new HashSet<>
-      (Arrays.asList("California", "New York", "Utah"));
 }
