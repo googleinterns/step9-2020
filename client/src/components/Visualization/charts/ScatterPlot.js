@@ -50,15 +50,23 @@ function formatAdvertiserCountSnapshot(snap, year) {
 /**
  * Returns the exclusive bounds for the range of all data points being charted.
  * Uses the spread `...` operator.
- * `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax`
- * @param {List[object]} victoryJsonList a list of objects in a victory-ready
+ * `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax` 
+ * If the list is empty the range [0,1] will be returned. 
+ * Empty list input is expected behavior due to how react renders the page
+ * once upon load while `advertisers` is still being asynchronously populated,
+ * so `advertisers` is the empty list on initial loading.  
+ * @param {List[object]} victoryJsonList a list of objects in a victory-ready 
  *     format.
  * @returns {object}
  */
 function getChartRange(victoryJsonList) {
-  const ranges = victoryJsonList.map(json => json.y);
+  if (victoryJsonList.length === 0) {
+    return { min: 0, max: 1 };
+  } else {
+    const ranges = victoryJsonList.map(json => json.y);
 
-  return { min: Math.min(...ranges), max: Math.max(...ranges) };
+    return { min: Math.min(...ranges), max: Math.max(...ranges) };
+  }
 }
 
 /**
@@ -72,21 +80,21 @@ function useAdvertisers(year, queryLimit) {
   const [advertisers, setAdvertisers] = useState([]);
 
   useEffect(() => {
-    database
-      .collection('aggregates')
-      .doc(year)
-      .collection('advertisers')
-      .orderBy('numberOfAds', 'desc')
-      .limit(queryLimit)
-      .get()
-      .then(snapshots => {
-        const newAdvertisers = snapshots.docs.map(snap =>
-          formatAdvertiserCountSnapshot(snap, year)
-        );
-
-        setAdvertisers(newAdvertisers);
-      });
-  }, [advertisers, year, queryLimit]);
+    async function getNumberOfAds(year, queryLimit) {
+      let snapshots = await database.collection("aggregates")
+                                    .doc(year)
+                                    .collection("advertisers")
+                                    .orderBy("numberOfAds", "desc")
+                                    .limit(queryLimit)
+                                    .get();
+      let newAdvertisers = 
+          snapshots.docs.map(snap => formatAdvertiserCountSnapshot(snap, year));
+      
+      setAdvertisers(newAdvertisers);
+    }
+    
+    getNumberOfAds(year, queryLimit);
+  }, [year, queryLimit]);
 
   return advertisers;
 }
@@ -94,15 +102,13 @@ function useAdvertisers(year, queryLimit) {
 const ScatterPlot = () => {
   const queryLimit = 10;
 
-  const advertisers2018 = useAdvertisers('2018', queryLimit);
-  const advertisers2019 = useAdvertisers('2019', queryLimit);
-  const advertisers2020 = useAdvertisers('2020', queryLimit);
+  const advertisers2018 = useAdvertisers("2018", queryLimit);
+  const advertisers2019 = useAdvertisers("2019", queryLimit);
+  const advertisers2020 = useAdvertisers("2020", queryLimit);
 
-  const advertisers = [
-    ...advertisers2018,
-    ...advertisers2019,
-    ...advertisers2020,
-  ];
+  const advertisers = [...advertisers2018,
+                       ...advertisers2019,
+                       ...advertisers2020];
 
   const range = getChartRange(advertisers);
   const chartTitle = `T${queryLimit} Most prolific ad words advertisers/year`;
