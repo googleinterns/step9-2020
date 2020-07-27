@@ -44,6 +44,11 @@ const SentimentAnalysis = () => {
       });
   };
 
+  /**
+   * Generates a PNG image of the current result page and
+   * automatically saves it to user's local machine
+   * @returns {Void} doesn't return anything
+   */
   const handleDownload = () => {
     const input = document.getElementById('analysis-container');
     html2canvas(input).then(canvas => {
