@@ -6,6 +6,7 @@ import {
   INPUT_LIST,
 } from '../../constants/analysis_constants';
 import { AnalysisInput, ColorBar, TermsDisplay } from './Helpers';
+import SimilarAds from './SimilarAds';
 import React, { useState } from 'react';
 
 import { CLIENT_KEY } from '../../constants/capcha_config';
@@ -124,6 +125,7 @@ const SentimentAnalysis = props => {
           <TermsDisplay termList={content.entities} />
         </div>
       </div>
+      <SimilarAds />
     </div>
   );
 };
