@@ -44,6 +44,7 @@ const SentimentAnalysis = () => {
 
   return (
     <div className="search-container">
+      <h3 className="filter-header">⤓ DOWNLOAD</h3>
       <form
         className="search-header center bottom-padding"
         onSubmit={submitForm}
