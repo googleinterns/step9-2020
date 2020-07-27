@@ -11,14 +11,25 @@
 
 .filter-header {
   position: absolute;
-  left: 20px;
   top: 80px;
   cursor: pointer;
   user-select: none;
   color: white;
 }
 
+#button-left {
+  left: 20px;
+}
+
+.button-right {
+  right: 20px;
+}
+
 .search-body {
   display: flex;
   flex-direction: row;
+}
+
+.black-text {
+  color: black;
 }
