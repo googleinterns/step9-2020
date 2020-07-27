@@ -8,7 +8,7 @@ const INPUT_LIST = [
   { label: 'content', placeholder: CONTENT_PLACEHOLDER },
 ];
 
-const INPUT_ROWS = 3;
+const INPUT_ROWS = 5;
 
 const LIGHT_RED = '#ffbbc6';
 const LIGHT_GRAY = '#e8e8e8';

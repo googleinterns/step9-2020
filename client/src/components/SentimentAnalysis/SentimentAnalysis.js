@@ -11,7 +11,7 @@ import React, { useState } from 'react';
 import { CLIENT_KEY } from '../../constants/capcha_config';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
-import html2canvas from 'html2canvas';
+import html2canvas from '@nidi/html2canvas';
 import { saveAs } from 'file-saver';
 import tardigrade from '../../images/tardigrade.png';
 
@@ -97,7 +97,7 @@ const SentimentAnalysis = props => {
 
   return (
     <div className="search-container" id="analysis-container">
-      <h3 className="filter-header" onClick={handleDownload}>
+      <h3 className="filter-header" id="position-left" onClick={handleDownload}>
         ⤓ DOWNLOAD
       </h3>
       <form
