@@ -1,19 +1,30 @@
 import './App.css';
 
-import React, { useState } from 'react';
+import {
+  Redirect,
+  Route,
+  BrowserRouter as Router,
+  Switch,
+} from 'react-router-dom';
 
-import { HEADERS, PAGE_MAP } from './constants/header_constants';
 import PageNav from './components/PageNav/PageNav';
+import React from 'react';
+import Search from './components/Search/Search';
+import SentimentAnalysis from './components/SentimentAnalysis/SentimentAnalysis';
+import Visualization from './components/Visualization/Visualization';
 
-const App = () => {
-  const [currentPage, setCurrentPage] = useState(HEADERS[0]);
-
-  return (
+const App = () => (
+  <Router>
     <div>
-      <PageNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
-      {PAGE_MAP[currentPage]}
+      <PageNav />
+      <Switch>
+        <Route path="/visualization" component={Visualization} />
+        <Route path="/analysis" component={SentimentAnalysis} />
+        <Route path="/search" component={Search} />
+        <Redirect exact from="/" to="search" />
+      </Switch>
     </div>
-  );
-};
+  </Router>
+);
 
 export default App;

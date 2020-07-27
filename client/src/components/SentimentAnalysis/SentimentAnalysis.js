@@ -1,47 +1,85 @@
 import './SentimentAnalysis.css';
 
+import {
+  API_URL,
+  DEFAULT_ANALYSIS,
+  INPUT_LIST,
+} from '../../constants/analysis_constants';
 import { AnalysisInput, ColorBar, TermsDisplay } from './Helpers';
 import React, { useState } from 'react';
 
 import { CLIENT_KEY } from '../../constants/capcha_config';
-import { INPUT_LIST } from '../../constants/analysis_constants';
+import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver';
 import tardigrade from '../../images/tardigrade.png';
 
-const SentimentAnalysis = () => {
+const SentimentAnalysis = props => {
+  const locationState = props.location.state;
+  const ad = locationState !== undefined ? locationState.ad : DEFAULT_ANALYSIS;
+
   const [isVerified, setIsVerified] = useState(false);
-  const [header, setHeader] = useState({
-    entities: [],
-    sentiment: { score: 0.0, magnitude: 0.0 },
-  });
+  const [headline, setHeadline] = useState(ad.headlineAnalysis);
+  const [content, setContent] = useState(ad.contentAnalysis);
 
-  const [content, setContent] = useState({
-    entities: [],
-    sentiment: { score: 0.0, magnitude: 0.0 },
-  });
-
+  /**
+   * Creates an Ad Analysis object and passes it to
+   * the /analysis route (SentimentAnalysis component)
+   * @param {Boolean} value - whether the user has been
+   * verified by the capcha
+   * @returns {Void} doesn't return anything
+   */
   const onChange = value => {
     setIsVerified(value !== null);
   };
 
+  /**
+   * Set the current headline and content analysis of
+   * the component with new data
+   * @param {Boolean} data - new data returned from API
+   * @returns {Void} doesn't return anything
+   */
+  const updatePage = data => {
+    setHeadline({
+      entities: data.headline_entities,
+      sentiment: JSON.parse(data.headline_sentiment),
+    });
+    setContent({
+      entities: data.content_entities,
+      sentiment: JSON.parse(data.content_sentiment),
+    });
+  };
+
+  /**
+   * Send user-input form to API and get back data
+   * @param {FormSubmitEvent} event - event that targets
+   * the whole form
+   * @returns {Void} doesn't return anything
+   */
   const submitForm = event => {
     event.preventDefault();
     const form = new FormData(event.target);
-    const url = 'https://analysis-dot-step9-2020-capstone.appspot.com/analysis';
-
-    fetch(url, { method: 'POST', body: form })
+    fetch(API_URL, { method: 'POST', body: form })
       .then(response => response.json())
-      .then(data => {
-        const headerEntities = data.header_entities;
-        const headerSentiment = JSON.parse(data.header_sentiment);
-        setHeader({ entities: headerEntities, sentiment: headerSentiment });
+      .then(data => updatePage(data));
+  };
 
-        const contentEntities = data.content_entities;
-        const contentSentiment = JSON.parse(data.content_sentiment);
-        setContent({ entities: contentEntities, sentiment: contentSentiment });
-      });
+  /**
+   * Pick the appropriate value for textarea based on
+   * the given label
+   * @param {String} label - the label of textarea
+   * @returns {String} the appropriate value for textarea
+   * - If there's params passed from Search route, display those values
+   * - If not, show empty textarea so user can filled in themselves
+   */
+  const displayTextareaValue = label => {
+    if (locationState === undefined) {
+      return '';
+    }
+    return label === 'headline'
+      ? locationState.ad.headline
+      : locationState.ad.content;
   };
 
   /**
@@ -73,6 +111,7 @@ const SentimentAnalysis = () => {
               key={index}
               label={input.label}
               placeholder={input.placeholder}
+              value={displayTextareaValue(input.label)}
             />
           ))}
         </div>
@@ -84,12 +123,12 @@ const SentimentAnalysis = () => {
       </form>
       <div className="analysis-result-container center">
         <div className="analysis-card center">
-          <h4>Header Analysis</h4>
+          <h4>Headline Analysis</h4>
           <ColorBar
-            score={header.sentiment.score}
-            magnitude={header.sentiment.magnitude}
+            score={headline.sentiment.score}
+            magnitude={headline.sentiment.magnitude}
           />
-          <TermsDisplay termList={header.entities} />
+          <TermsDisplay termList={headline.entities} />
         </div>
         <div className="analysis-card center">
           <h4>Content Analysis</h4>
@@ -102,6 +141,11 @@ const SentimentAnalysis = () => {
       </div>
     </div>
   );
+};
+
+SentimentAnalysis.propTypes = {
+  props: PropTypes.object,
+  location: PropTypes.object,
 };
 
 export default SentimentAnalysis;
