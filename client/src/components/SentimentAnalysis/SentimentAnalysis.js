@@ -6,6 +6,8 @@ import React, { useState } from 'react';
 import { CLIENT_KEY } from '../../constants/capcha_config';
 import { INPUT_LIST } from '../../constants/analysis_constants';
 import ReCAPTCHA from 'react-google-recaptcha';
+import html2canvas from 'html2canvas';
+import { saveAs } from 'file-saver';
 import tardigrade from '../../images/tardigrade.png';
 
 const SentimentAnalysis = () => {
@@ -42,9 +44,19 @@ const SentimentAnalysis = () => {
       });
   };
 
+  const handleDownload = () => {
+    const input = document.getElementById('analysis-container');
+    html2canvas(input).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      saveAs(imgData, 'tardigrade-analysis.png');
+    });
+  };
+
   return (
-    <div className="search-container">
-      <h3 className="filter-header">⤓ DOWNLOAD</h3>
+    <div className="search-container" id="analysis-container">
+      <h3 className="filter-header" onClick={handleDownload}>
+        ⤓ DOWNLOAD
+      </h3>
       <form
         className="search-header center bottom-padding"
         onSubmit={submitForm}
