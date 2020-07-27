@@ -14,6 +14,11 @@ const ResultItem = props => {
   const { hit } = props;
   const history = useHistory();
 
+  /**
+   * Creates an Ad Analysis object and passes it to
+   * the /analysis route (SentimentAnalysis component)
+   * @returns {Void} doesn't return anything
+   */
   const handleAnalysis = () => {
     const { data } = hit;
     const ad = {

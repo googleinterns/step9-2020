@@ -1,10 +1,11 @@
 import './SentimentAnalysis.css';
 
-import { AnalysisInput, ColorBar, TermsDisplay } from './Helpers';
 import {
+  API_URL,
   DEFAULT_ANALYSIS,
   INPUT_LIST,
 } from '../../constants/analysis_constants';
+import { AnalysisInput, ColorBar, TermsDisplay } from './Helpers';
 import React, { useState } from 'react';
 
 import { CLIENT_KEY } from '../../constants/capcha_config';
@@ -20,31 +21,56 @@ const SentimentAnalysis = props => {
   const [headline, setHeadline] = useState(ad.headlineAnalysis);
   const [content, setContent] = useState(ad.contentAnalysis);
 
+  /**
+   * Creates an Ad Analysis object and passes it to
+   * the /analysis route (SentimentAnalysis component)
+   * @param {Boolean} value - whether the user has been
+   * verified by the capcha
+   * @returns {Void} doesn't return anything
+   */
   const onChange = value => {
     setIsVerified(value !== null);
   };
 
+  /**
+   * Set the current headline and content analysis of
+   * the component with new data
+   * @param {Boolean} data - new data returned from API
+   * @returns {Void} doesn't return anything
+   */
+  const updatePage = data => {
+    setHeadline({
+      entities: data.headline_entities,
+      sentiment: JSON.parse(data.headline_sentiment),
+    });
+    setContent({
+      entities: data.content_entities,
+      sentiment: JSON.parse(data.content_sentiment),
+    });
+  };
+
+  /**
+   * Send user-input form to API and get back data
+   * @param {FormSubmitEvent} event - event that targets
+   * the whole form
+   * @returns {Void} doesn't return anything
+   */
   const submitForm = event => {
     event.preventDefault();
     const form = new FormData(event.target);
-    const url = 'https://analysis-dot-step9-2020-capstone.appspot.com/analysis';
-
-    fetch(url, { method: 'POST', body: form })
+    fetch(API_URL, { method: 'POST', body: form })
       .then(response => response.json())
-      .then(data => {
-        const headlineEntities = data.headline_entities;
-        const headlineSentiment = JSON.parse(data.headline_sentiment);
-        setHeadline({
-          entities: headlineEntities,
-          sentiment: headlineSentiment,
-        });
-
-        const contentEntities = data.content_entities;
-        const contentSentiment = JSON.parse(data.content_sentiment);
-        setContent({ entities: contentEntities, sentiment: contentSentiment });
-      });
+      .then(data => updatePage(data));
   };
 
+  /**
+   * Pick the appropriate value for textarea based on
+   * the given label
+   * @param {String} label - the label of textarea
+   * @returns {String} the appropriate value for textarea
+   * - If there's params passed from Search route, display those values
+   * - If not, show empty textarea so user can filled in themselves
+   */
   const displayTextareaValue = label => {
     if (locationState !== undefined) {
       if (label === 'headline') {

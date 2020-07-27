@@ -30,4 +30,6 @@ const DEFAULT_ANALYSIS = {
   contentAnalysis: DEFAULT_VALUE,
 };
 
-export { COLOR_MAP, DEFAULT_ANALYSIS, INPUT_LIST, INPUT_ROWS };
+const API_URL = 'https://analysis-dot-step9-2020-capstone.appspot.com/analysis';
+
+export { API_URL, COLOR_MAP, DEFAULT_ANALYSIS, INPUT_LIST, INPUT_ROWS };
