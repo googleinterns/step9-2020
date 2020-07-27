@@ -19,7 +19,11 @@ const Search = () => {
     <div className="search-container">
       <div className="container">
         <InstantSearch searchClient={searchClient} indexName={algoliaIndex}>
-          <h3 className="filter-header" onClick={handleFilterToggle}>
+          <h3
+            className="filter-header"
+            id="position-left"
+            onClick={handleFilterToggle}
+          >
             {`(${showFilter ? '-' : '+'}) FILTERS`}
           </h3>
           <SearchBar />

@@ -9,13 +9,16 @@
   flex-direction: column;
 }
 
-.filter-header {
-  position: absolute;
-  left: 20px;
-  top: 80px;
-  cursor: pointer;
-  user-select: none;
+.filter-header {  
   color: white;
+  cursor: pointer;
+  position: absolute;
+  top: 80px;
+  user-select: none;
+}
+
+#position-left {
+  left: 20px;
 }
 
 .search-body {

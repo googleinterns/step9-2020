@@ -8,7 +8,7 @@ import React from 'react';
  */
 
 const AnalysisInput = props => {
-  const { label, placeholder } = props;
+  const { label, placeholder, value = '' } = props;
 
   return (
     <div className="search-header center">
@@ -19,6 +19,7 @@ const AnalysisInput = props => {
         rows={INPUT_ROWS}
         className="ad-input"
         placeholder={placeholder}
+        defaultValue={value}
         required
       />
     </div>
@@ -28,6 +29,7 @@ const AnalysisInput = props => {
 AnalysisInput.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
+  value: PropTypes.string,
 };
 
 /**
@@ -73,8 +75,8 @@ const TermsDisplay = props => {
 
   return (
     <div className="analysis-text-container">
-      {termList.map((termString, index) => {
-        const termObject = JSON.parse(termString);
+      {termList.map((term, index) => {
+        const termObject = typeof term === 'string' ? JSON.parse(term) : term;
         return (
           <div key={index} className="center">
             <div className="analysis-text special-text">{termObject.name}</div>

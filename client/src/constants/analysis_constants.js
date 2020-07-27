@@ -4,7 +4,7 @@ const CONTENT_PLACEHOLDER =
   "e.g. Climate change is a life and death issue for our generation. It's time for bold action.";
 
 const INPUT_LIST = [
-  { label: 'header', placeholder: HEADLINE_PLACEHOLDER },
+  { label: 'headline', placeholder: HEADLINE_PLACEHOLDER },
   { label: 'content', placeholder: CONTENT_PLACEHOLDER },
 ];
 
@@ -20,4 +20,16 @@ const COLOR_MAP = {
   positive: { label: 'Positive', color: 'green', background: LIGHT_GREEN },
 };
 
-export { COLOR_MAP, INPUT_LIST, INPUT_ROWS };
+const DEFAULT_VALUE = {
+  entities: [],
+  sentiment: { score: 0.0, magnitude: 0.0 },
+};
+
+const DEFAULT_ANALYSIS = {
+  headlineAnalysis: DEFAULT_VALUE,
+  contentAnalysis: DEFAULT_VALUE,
+};
+
+const API_URL = 'https://analysis-dot-step9-2020-capstone.appspot.com/analysis';
+
+export { API_URL, COLOR_MAP, DEFAULT_ANALYSIS, INPUT_LIST, INPUT_ROWS };
