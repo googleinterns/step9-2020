@@ -8,9 +8,18 @@ import React from 'react';
 
 const SimilarAds = props => {
 
+  // console.log(headline);
+
   return (
-    <div>
-      <h4>Similar Advertisements By Sentiment</h4>
+    <div className="similar-container">
+      <div className="similar-card">
+        <h4>Similar Advertisements By Sentiment</h4>
+        <p>
+          Here are other ads with a headline sentiment score 
+          of {props.headlineScore} and a content sentiment score 
+          of {props.contentScore}.
+        </p> 
+      </div>
     </div>
   );
 };

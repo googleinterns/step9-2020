@@ -125,7 +125,10 @@ const SentimentAnalysis = props => {
           <TermsDisplay termList={content.entities} />
         </div>
       </div>
-      <SimilarAds />
+      <SimilarAds 
+        headlineScore={headline.sentiment.score}
+        contentScore={content.sentiment.score}
+      />
     </div>
   );
 };

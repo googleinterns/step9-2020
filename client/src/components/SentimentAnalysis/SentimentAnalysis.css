@@ -80,3 +80,20 @@
 .bottom-padding {
   padding-bottom: 40px;
 }
+
+.similar-container {
+  width: 90%;
+  margin-right: 5%;
+  margin-left: 5%;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  padding-bottom: 40px;
+  border-radius: 10px;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.similar-card {
+  padding: 10px;
+}
