@@ -72,15 +72,12 @@ const SentimentAnalysis = props => {
    * - If not, show empty textarea so user can filled in themselves
    */
   const displayTextareaValue = label => {
-    if (locationState !== undefined) {
-      if (label === 'headline') {
-        return locationState.ad.headline;
-      } else {
-        return locationState.ad.content;
-      }
-    } else {
+    if (locationState === undefined) {
       return '';
     }
+    return label === 'headline'
+      ? locationState.ad.headline
+      : locationState.ad.content;
   };
 
   return (
