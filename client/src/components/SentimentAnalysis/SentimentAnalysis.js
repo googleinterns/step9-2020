@@ -84,6 +84,11 @@ const SentimentAnalysis = props => {
     }
   };
 
+  function toString(sentimentValue) {
+    let str = sentimentValue.toString();
+    return (str.includes('.') ? str : str + '.0');
+  }
+
   return (
     <div className="search-container">
       <form
@@ -126,8 +131,10 @@ const SentimentAnalysis = props => {
         </div>
       </div>
       <SimilarAds 
-        headlineScore={headline.sentiment.score}
-        contentScore={content.sentiment.score}
+        headlineScore={toString(headline.sentiment.score)}
+        headlineMagnitude={toString(headline.sentiment.magnitude)}
+        contentScore={toString(content.sentiment.score)}
+        contentMagnitude={toString(content.sentiment.magnitude)}
       />
     </div>
   );
