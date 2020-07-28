@@ -1,6 +1,7 @@
 import './Search.css';
 
 import React, { useState } from 'react';
+import ReactWordcloud from 'react-wordcloud';
 import Modal from 'react-modal';
 import { algoliaIndex, searchClient } from '../../constants/algolia_config';
 
@@ -9,12 +10,30 @@ import { InstantSearch } from 'react-instantsearch-dom';
 import ResultList from '../ResultList/ResultList';
 import SearchBar from '../SearchBar/SearchBar';
 
+import things from './words';
+
 const Search = () => {
   const [showFilter, setShowFilter] = useState(true);
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const handleFilterToggle = () => {
     setShowFilter(!showFilter);
+  };
+
+  const options = {
+    colors: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'],
+    enableTooltip: true,
+    deterministic: false,
+    fontFamily: 'impact',
+    fontSizes: [5, 60],
+    fontStyle: 'normal',
+    fontWeight: 'normal',
+    padding: 1,
+    rotations: 3,
+    rotationAngles: [0, 90],
+    scale: 'sqrt',
+    spiral: 'archimedean',
+    transitionDuration: 1000,
   };
 
   return (
@@ -45,10 +64,9 @@ const Search = () => {
             className="filter-header button-right black-text"
             onClick={() => setModalIsOpen(false)}
           >
-            Close
+            ReactDOM.
           </h3>
-          <h2>{'Modal title'}</h2>
-          <p>{'Modal Body'}</p>
+          <ReactWordcloud options={options} words={things.formatWordsJson(things.wordJson)} />
         </Modal>
       </div>
     </div>

@@ -7,7 +7,8 @@ import ResultItem from '../ResultItem/ResultItem';
 
 const ResultList = () => (
   <div className="search-panel-results center">
-    <Hits hitComponent={ResultItem} />
+    <Hits hitComponent={ResultItem}/>
+    
     <div className="pagination">
       <Pagination />
     </div>
