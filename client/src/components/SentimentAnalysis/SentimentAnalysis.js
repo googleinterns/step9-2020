@@ -83,11 +83,12 @@ const SentimentAnalysis = props => {
   };
 
   /**
-   * Generates a PNG image of the current result page and
+   * Generates a PNG screenshot of the current result page and
    * automatically saves it to user's local machine
+   * Note: download as PNG because of its flexibility in dimensions
    * @returns {Void} doesn't return anything
    */
-  const handleDownload = () => {
+  const downloadScreenshot = () => {
     const input = document.getElementById('analysis-container');
     html2canvas(input).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
@@ -97,7 +98,11 @@ const SentimentAnalysis = props => {
 
   return (
     <div className="search-container" id="analysis-container">
-      <h3 className="filter-header" id="position-left" onClick={handleDownload}>
+      <h3
+        className="filter-header"
+        id="position-left"
+        onClick={downloadScreenshot}
+      >
         ⤓ DOWNLOAD
       </h3>
       <form
