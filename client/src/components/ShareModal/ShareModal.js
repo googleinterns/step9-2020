@@ -16,18 +16,18 @@ import React from 'react';
 
 const customStyles = {
   content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    transform: 'translate(-50%, -50%)',
-    borderRadius: '4px',
-    padding: '20px',
-    border: '3px dashed gray',
-    display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
+    border: '3px dashed gray',
+    borderRadius: '4px',
+    bottom: 'auto',
+    display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
+    left: '50%',
+    padding: '20px',
+    right: 'auto',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
   },
 };
 
