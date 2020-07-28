@@ -6,22 +6,39 @@ import {
   INPUT_LIST,
 } from '../../constants/analysis_constants';
 import { AnalysisInput, ColorBar, TermsDisplay } from './Helpers';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { CLIENT_KEY } from '../../constants/capcha_config';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
+import ShareModal from '../ShareModal/ShareModal';
+import TinyURL from 'tinyurl';
+import { database } from '../../firebase/firebase';
 import html2canvas from '@nidi/html2canvas';
 import { saveAs } from 'file-saver';
 import tardigrade from '../../images/tardigrade.png';
+import { useParams } from 'react-router-dom';
 
-const SentimentAnalysis = props => {
-  const locationState = props.location.state;
-  const ad = locationState !== undefined ? locationState.ad : DEFAULT_ANALYSIS;
+const removeSingleQuote = str => str.replace(/'/g, '');
+
+const SentimentAnalysis = () => {
+  const { id } = useParams();
 
   const [isVerified, setIsVerified] = useState(false);
-  const [headline, setHeadline] = useState(ad.headlineAnalysis);
-  const [content, setContent] = useState(ad.contentAnalysis);
+  const [headline, setHeadline] = useState(DEFAULT_ANALYSIS);
+  const [content, setContent] = useState(DEFAULT_ANALYSIS);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [shareLink, setShareLink] = useState(undefined);
+  const [copyContent, setCopyContent] = useState('Copy');
+
+  const shortenLink = () => {
+    const originalUrl = window.location.href;
+    if (shareLink === undefined) {
+      TinyURL.shorten(originalUrl).then((res, err) => {
+        setShareLink(err ? originalUrl : res);
+      });
+    }
+  };
 
   /**
    * Creates an Ad Analysis object and passes it to
@@ -42,13 +59,16 @@ const SentimentAnalysis = props => {
    */
   const updatePage = data => {
     setHeadline({
-      entities: data.headline_entities,
-      sentiment: JSON.parse(data.headline_sentiment),
+      text: data.headline,
+      entities: JSON.parse(removeSingleQuote(data.headlineTerms)),
+      sentiment: JSON.parse(data.headlineSentiment),
     });
     setContent({
-      entities: data.content_entities,
-      sentiment: JSON.parse(data.content_sentiment),
+      text: data.content,
+      entities: JSON.parse(removeSingleQuote(data.contentTerms)),
+      sentiment: JSON.parse(data.contentSentiment),
     });
+    shortenLink();
   };
 
   /**
@@ -74,12 +94,10 @@ const SentimentAnalysis = props => {
    * - If not, show empty textarea so user can filled in themselves
    */
   const displayTextareaValue = label => {
-    if (locationState === undefined) {
+    if (id === undefined) {
       return '';
     }
-    return label === 'headline'
-      ? locationState.ad.headline
-      : locationState.ad.content;
+    return label === 'headline' ? headline.text : content.text;
   };
 
   /**
@@ -96,6 +114,23 @@ const SentimentAnalysis = props => {
     });
   };
 
+  useEffect(() => {
+    if (id === undefined) {
+      setShareLink(undefined);
+      return;
+    }
+    database
+      .collection('ads')
+      .doc(id)
+      .get()
+      .then(doc => updatePage(doc.data()))
+      .catch(error => console.log('Error getting documents: ', error));
+  }, [id, headline, content, shareLink]);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="search-container" id="analysis-container">
       <h3
@@ -105,6 +140,18 @@ const SentimentAnalysis = props => {
       >
         ⤓ DOWNLOAD
       </h3>
+      {shareLink && (
+        <h3 className="filter-header" id="position-right" onClick={openModal}>
+          SHARE ⤒
+        </h3>
+      )}
+      <ShareModal
+        shareLink={shareLink}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        copyContent={copyContent}
+        setCopyContent={setCopyContent}
+      />
       <form
         className="search-header center bottom-padding"
         onSubmit={submitForm}

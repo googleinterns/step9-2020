@@ -20,14 +20,10 @@ const COLOR_MAP = {
   positive: { label: 'Positive', color: 'green', background: LIGHT_GREEN },
 };
 
-const DEFAULT_VALUE = {
+const DEFAULT_ANALYSIS = {
+  text: '',
   entities: [],
   sentiment: { score: 0.0, magnitude: 0.0 },
-};
-
-const DEFAULT_ANALYSIS = {
-  headlineAnalysis: DEFAULT_VALUE,
-  contentAnalysis: DEFAULT_VALUE,
 };
 
 const API_URL = 'https://analysis-dot-step9-2020-capstone.appspot.com/analysis';

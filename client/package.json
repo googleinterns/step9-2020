@@ -12,21 +12,25 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "dependencies": {
+    "@nidi/html2canvas": "1.0.0-rc.8",
     "algoliasearch": "3.35.1",
     "express": "^4.17.1",
     "file-saver": "^2.0.2",
     "firebase": "^7.16.0",
-    "@nidi/html2canvas": "1.0.0-rc.8",
     "path": "^0.12.7",
     "react": "16.12.0",
+    "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "16.12.0",
     "react-google-charts": "^3.0.15",
     "react-google-recaptcha": "^2.1.0",
     "react-grid-system": "^7.0.3",
     "react-input-range": "^1.3.0",
     "react-instantsearch-dom": "6.6.0",
+    "react-modal": "^3.11.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.1",
+    "react-share": "^4.2.1",
+    "tinyurl": "^1.1.6",
     "victory": "^35.0.2"
   },
   "devDependencies": {
