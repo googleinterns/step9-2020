@@ -19,7 +19,7 @@ const App = () => (
       <PageNav />
       <Switch>
         <Route path="/visualization" component={Visualization} />
-        <Route path="/analysis" component={SentimentAnalysis} />
+        <Route path="/analysis/:id?" component={SentimentAnalysis} />
         <Route path="/search" component={Search} />
         <Redirect exact from="/" to="search" />
       </Switch>
