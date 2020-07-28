@@ -11,6 +11,7 @@ import ResultList from '../ResultList/ResultList';
 import SearchBar from '../SearchBar/SearchBar';
 
 import things from './words';
+import getHtmlStuff from './words_v2';
 
 const Search = () => {
   const [showFilter, setShowFilter] = useState(true);
@@ -59,16 +60,16 @@ const Search = () => {
             {'SEARCH RESULTS WORD CLOUD'}
           </h3>
         </InstantSearch>
-        <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
+      </div>
+      <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={{ backgroundColor: 'none'}}>
           <h3
             className="filter-header button-right black-text"
             onClick={() => setModalIsOpen(false)}
           >
-            ReactDOM.
+            Close.
           </h3>
-          <ReactWordcloud options={options} words={things.formatWordsJson(things.wordJson)} />
+          <ReactWordcloud options={options} words={getHtmlStuff()} />
         </Modal>
-      </div>
     </div>
   );
 };

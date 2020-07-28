@@ -19,6 +19,8 @@ function formatWordsJson(wordsJson) {
     formattedWordsList.push({text: key, value: wordsJson[key]});
   };
   
+
+  //results.forEach(result => console.log(result.innerText));
   return formattedWordsList; 
 }
 
