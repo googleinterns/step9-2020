@@ -3,10 +3,12 @@ import React, { useState, useEffect } from 'react';
 
 const SimilarAds = props => {
 
-  const COLLECTION = 'ads';
-  
+  const COLLECTION = 'ads';  
   const headlineSentiment = `{"score": ${props.headlineScore}, "magnitude": ${props.headlineMagnitude}}`;
   const contentSentiment = `{"score": ${props.contentScore}, "magnitude": ${props.contentMagnitude}}`;
+
+  const [results, setResults] = useState([]);
+  let resultItems = [];
 
   useEffect(() => {
     async function fetchSimilarAds() {
@@ -21,8 +23,16 @@ const SimilarAds = props => {
       let similarAds = await Promise.all(similarAdsPromises);
 
       for (let ad of similarAds[0].docs) {
-        console.log(ad.data());
+        resultItems.push(
+          <div className="similar-ad">
+            <li>Headline: {ad.data().headline}</li>
+            <li>Content: {ad.data().content}</li>
+            <li>Advertiser: {ad.data().advertiser}</li>
+            <li><a href={ad.data().link} target="_blank">{ad.data().link}</a></li>
+          </div>
+        );
       }
+      setResults(resultItems);
     } 
     fetchSimilarAds();
   }, [])
@@ -36,6 +46,7 @@ const SimilarAds = props => {
           of {props.headlineScore} and a content sentiment score 
           of {props.contentScore}.
         </p> 
+        <div>{results}</div>
       </div>
     </div>
   );
