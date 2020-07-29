@@ -11,7 +11,7 @@ import ResultList from '../ResultList/ResultList';
 import SearchBar from '../SearchBar/SearchBar';
 
 import things from './words';
-import getHtmlStuff from './words_v2';
+import generateWordCloudValues from './words_v2';
 
 const Search = () => {
   const [showFilter, setShowFilter] = useState(true);
@@ -26,13 +26,13 @@ const Search = () => {
     enableTooltip: true,
     deterministic: false,
     fontFamily: 'impact',
-    fontSizes: [5, 60],
+    fontSizes: [10, 60],
     fontStyle: 'normal',
     fontWeight: 'normal',
     padding: 1,
     rotations: 3,
     rotationAngles: [0, 90],
-    scale: 'sqrt',
+    scale: 'log',
     spiral: 'archimedean',
     transitionDuration: 1000,
   };
@@ -60,16 +60,16 @@ const Search = () => {
             {'SEARCH RESULTS WORD CLOUD'}
           </h3>
         </InstantSearch>
-      </div>
-      <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={{ backgroundColor: 'none'}}>
+        <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
           <h3
             className="filter-header button-right black-text"
             onClick={() => setModalIsOpen(false)}
           >
-            Close.
+            Close
           </h3>
-          <ReactWordcloud options={options} words={getHtmlStuff()} />
+          <ReactWordcloud options={options} words={generateWordCloudValues()} />
         </Modal>
+      </div>
     </div>
   );
 };
