@@ -10,7 +10,7 @@ const PageNav = props => {
   return (
     <div className="header">
       <h2 className="logo-text" onClick={() => setCurrentPage(HEADERS[0])}>
-        Tardigrade
+        Political Tardigrade
       </h2>
       <div className="search-body">
         {HEADERS.map((item, index) => (
