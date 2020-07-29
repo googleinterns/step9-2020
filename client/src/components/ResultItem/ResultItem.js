@@ -3,13 +3,12 @@ import './ResultItem.css';
 import { Highlight } from 'react-instantsearch-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
-import things  from '../Search/words';
 
 /* Algolia's Hit: display a result item from search */
 function ResultItem(props) {
   // a hit (result) object that contains all info about a result item
   const { hit } = props;
-  things.addToWords(hit);
+
   return (
     <div className="result-item-container">
       <a
