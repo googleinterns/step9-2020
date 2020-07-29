@@ -30,6 +30,7 @@ const SentimentAnalysis = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [shareLink, setShareLink] = useState(undefined);
   const [copyContent, setCopyContent] = useState('Copy');
+  const [downloadStatus, setDownloadStatus] = useState('download');
 
   const shortenLink = () => {
     const originalUrl = window.location.href;
@@ -50,13 +51,19 @@ const SentimentAnalysis = () => {
     setIsVerifiedByCapcha(value !== null);
   };
 
-  /**
-   * Set the current headline and content analysis of
-   * the component with new data
-   * @param {Boolean} data - new data returned from API
-   * @returns {Void} doesn't return anything
-   */
-  const updatePage = data => {
+  const handleDataFromFirestore = data => {
+    setHeadline({
+      entities: data.headline_entities,
+      sentiment: JSON.parse(data.headline_sentiment),
+    });
+
+    setContent({
+      entities: data.content_entities,
+      sentiment: JSON.parse(data.content_sentiment),
+    });
+  };
+
+  const handleDataFromApi = data => {
     setHeadline({
       text: data.headline,
       entities: JSON.parse(removeSingleQuote(data.headlineTerms)),
@@ -69,6 +76,15 @@ const SentimentAnalysis = () => {
     });
     shortenLink();
   };
+
+  /**
+   * Set the current headline and content analysis of
+   * the component with new data
+   * @param {Boolean} data - new data returned from API or Firestore
+   * @returns {Void} doesn't return anything
+   */
+  const updatePage = data =>
+    id === undefined ? handleDataFromFirestore(data) : handleDataFromApi(data);
 
   /**
    * Send user-input form to API and get back data
@@ -106,10 +122,12 @@ const SentimentAnalysis = () => {
    * @returns {Void} doesn't return anything
    */
   const downloadScreenshot = () => {
+    setDownloadStatus('downloading...');
     const input = document.getElementById('analysis-container');
     html2canvas(input).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
       saveAs(imgData, 'tardigrade-analysis.png');
+      setTimeout(() => setDownloadStatus('downloaded'), 2000);
     });
   };
 
@@ -137,7 +155,7 @@ const SentimentAnalysis = () => {
         id="position-left"
         onClick={downloadScreenshot}
       >
-        ⤓ DOWNLOAD
+        ⤓ {downloadStatus.toUpperCase()}
       </h3>
       {shareLink && (
         <h3 className="filter-header" id="position-right" onClick={openModal}>
@@ -166,11 +184,12 @@ const SentimentAnalysis = () => {
             />
           ))}
         </div>
-        {isVerifiedByCapcha ? (
-          <button className="analysis-button">Analyze</button>
-        ) : (
-          <ReCAPTCHA sitekey={CLIENT_KEY} onChange={onChange} />
-        )}
+        {shareLink === undefined &&
+          (isVerifiedByCapcha ? (
+            <button className="analysis-button">Analyze</button>
+          ) : (
+            <ReCAPTCHA sitekey={CLIENT_KEY} onChange={onChange} />
+          ))}
       </form>
       <div className="analysis-result-container center">
         <div className="analysis-card center">
