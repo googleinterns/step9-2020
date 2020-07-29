@@ -25,10 +25,12 @@ const SimilarAds = props => {
       for (let ad of similarAds[0].docs) {
         resultItems.push(
           <div className="similar-ad">
-            <li>Headline: {ad.data().headline}</li>
-            <li>Content: {ad.data().content}</li>
-            <li>Advertiser: {ad.data().advertiser}</li>
-            <li><a href={ad.data().link} target="_blank">{ad.data().link}</a></li>
+            <p><b>Headline</b>: {ad.data().headline}</p>
+            <p><b>Content</b>: {ad.data().content}</p>
+            <p><b>Advertiser</b>: {ad.data().advertiser}</p>
+            <p><b>Link</b>: <a href={ad.data().link} target="_blank" rel="noopener noreferrer">
+              {ad.data().link}</a>
+            </p>
           </div>
         );
       }
@@ -41,10 +43,12 @@ const SimilarAds = props => {
     <div className="similar-container">
       <div className="similar-card">
         <h4>Similar Advertisements By Sentiment</h4>
-        <p>
+        <p id="card-description">
           Here are other ads with a headline sentiment score 
-          of {props.headlineScore} and a content sentiment score 
-          of {props.contentScore}.
+          of {props.headlineScore}, headline magnitude 
+          of {props.headlineMagnitude}, content sentiment score 
+          of {props.contentScore}, and content magnitude 
+          of {props.contentMagnitude}:
         </p> 
         <div>{results}</div>
       </div>

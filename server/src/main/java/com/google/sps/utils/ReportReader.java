@@ -24,9 +24,9 @@ public class ReportReader {
   private static final String CSV_FILE_PATH = "/output.csv";
   // NUMBER_CSV_HEADER_ROWS helps the parser know what rows to skip when reading the CSV.
   private static final int NUMBER_CSV_HEADER_ROWS = 2;
-  private static final String COLLECTION = "ads";
-  private static final int START_ROW_INDEX = 20001;  // First row sent to processor (inclusive).
-  private static final int END_ROW_INDEX = 25000; // Last row sent to processor (inclusive).
+  private static final String COLLECTION = "dev_ads";
+  private static final int START_ROW_INDEX = 200;  // First row sent to processor (inclusive).
+  private static final int END_ROW_INDEX = 300; // Last row sent to processor (inclusive).
   private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
 
