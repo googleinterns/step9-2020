@@ -11,7 +11,6 @@ import WordCloudModal from '../WordCloudModal/WordCloudModal';
 
 const Search = () => {
   const [showFilter, setShowFilter] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleFilterToggle = () => {
     setShowFilter(!showFilter);
@@ -33,17 +32,8 @@ const Search = () => {
             {showFilter && <FilterList />}
             <ResultList />
           </div>
-          <h3
-             className="filter-header button-right"
-             onClick={() => setIsModalOpen(true)}
-          >
-            WORD CLOUD
-          </h3>
         </InstantSearch>
-        <WordCloudModal 
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-        />
+        <WordCloudModal />
       </div>
     </div>
   );

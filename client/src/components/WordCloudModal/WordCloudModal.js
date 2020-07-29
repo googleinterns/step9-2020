@@ -1,6 +1,5 @@
 import Modal from 'react-modal';
-import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import ReactWordcloud from 'react-wordcloud';
 
 import generateWordCloudValues from './GenerateWordCloudValues';
@@ -23,33 +22,37 @@ const wordCloudOptions = {
   transitionDuration: 1000,
 };
 
-const WordCloudModal = props => {
-  const { isModalOpen, setIsModalOpen } = props;
+const WordCloudModal = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
   return (
-    <Modal 
-      isOpen={isModalOpen} 
-      onRequestClose={handleCloseModal}
-    >
+    <div>
       <h3
-        className="filter-header button-right black-text"
-        onClick={handleCloseModal}
+        className="filter-header button-right"
+        onClick={handleOpenModal}
       >
-        Close
+        WORD CLOUD
       </h3>
-      <ReactWordcloud 
-        options={wordCloudOptions} 
-        words={generateWordCloudValues()} 
-      />
-    </Modal>
+      <Modal 
+        isOpen={isModalOpen} 
+        onRequestClose={handleCloseModal}
+      >
+        <h3
+          className="filter-header button-right black-text"
+          onClick={handleCloseModal}
+        >
+          Close
+        </h3>
+        <ReactWordcloud 
+          options={wordCloudOptions} 
+          words={generateWordCloudValues()} 
+        />
+      </Modal>
+    </div>
   );
-};
-
-WordCloudModal.propTypes = {
-  isModalOpen: PropTypes.bool,
-  setIsModalOpen: PropTypes.func
 };
 
 export default WordCloudModal;
