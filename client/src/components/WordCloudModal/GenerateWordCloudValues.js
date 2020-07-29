@@ -56,7 +56,7 @@ function makeWordMap(wordList) {
     if(wordMap.hasOwnProperty(filteredWord)) {
       wordMap[filteredWord].value += 1;
     } else {
-      wordMap[filteredWord] = { text: filteredWord, value: 1};
+      wordMap[filteredWord] = { text: filteredWord, value: 1 };
     }
   });
 
