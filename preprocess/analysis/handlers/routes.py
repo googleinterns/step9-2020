@@ -24,20 +24,22 @@ def configure_routes(app):
   @cross_origin()
   def analyze():
     result_dict = dict()
-    header = request.form.get('header')
-    content = request.form.get('content')
+    field_1 = 'headline'
+    field_2 = 'content'
+    headline = request.form.get(field_1)
+    content = request.form.get(field_2)
 
-    if is_valid('header', header):
-      header_sentiment = analyze_sentiment(header)
-      header_entities = analyze_entities(header)
+    if is_valid(field_1, headline):
+      headline_sentiment = analyze_sentiment(headline)
+      headline_entities = analyze_entities(headline)
     
-    if is_valid('content', content):
+    if is_valid(field_2, content):
       content_sentiment = analyze_sentiment(content)
       content_entities = analyze_entities(content)
 
     return jsonify(
-      header_sentiment=header_sentiment, 
-      header_entities=header_entities, 
+      headline_sentiment=headline_sentiment, 
+      headline_entities=headline_entities, 
       content_sentiment=content_sentiment, 
       content_entities=content_entities
     )

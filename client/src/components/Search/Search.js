@@ -21,8 +21,7 @@ const Search = () => {
       <div className="container">
         <InstantSearch searchClient={searchClient} indexName={algoliaIndex}>
           <h3
-             className="filter-header"
-             id="button-left"
+             className="filter-header button-left"
              onClick={handleFilterToggle}
           >
             {`(${showFilter ? '-' : '+'}) FILTERS`}

@@ -1,24 +1,27 @@
 /**
- * Description: exports a react/victory object of 
+ * Description: exports a react/victory object of
  *              a scatterplot with the top X most prolific advertisers
  *              across 2018, 2019, 2020, as computed in `aggregates`
- *              firestore collection. 
+ *              firestore collection.
  * Date: 7/21/2020
  * Author: Robbie Marcus
  */
 
-import { database } from '../../../firebase/firebase';
-import React, { useState, useEffect } from 'react';
-import { stringToHexColor } from '../../../utils/Utils';
-import { VictoryTheme, 
-         VictoryScatter, 
-         VictoryChart, 
-         VictoryAxis, 
-         VictoryTooltip, 
-         VictoryLabel } from 'victory';
+import React, { useEffect, useState } from 'react';
+import {
+  VictoryAxis,
+  VictoryChart,
+  VictoryLabel,
+  VictoryScatter,
+  VictoryTheme,
+  VictoryTooltip,
+} from 'victory';
 
-// Chart constants. 
-const CHART_TITLE_X = 175; 
+import { database } from '../../../firebase/firebase';
+import { stringToHexColor } from '../../../utils/Utils';
+
+// Chart constants.
+const CHART_TITLE_X = 175;
 const CHART_TITLE_Y = 30;
 const DOMAIN_START = 2017;
 const DOMAIN_END = 2021;
@@ -27,20 +30,19 @@ const DOMAIN_END = 2021;
  * Turn a firestore snap into a victory formatted
  * json object that can be charted without further alteration.
  * @param {object} snap a firestore snap object
- * @param {string} year year corresponding to the relevant year. 
+ * @param {string} year year corresponding to the relevant year.
  * @return {object}
  */
 function formatAdvertiserCountSnapshot(snap, year) {
   const numberOfAds = snap.data().numberOfAds;
   const advertiser = snap.id;
 
-  const victoryFormattedAdvertiserCount = 
-      {
-        x: parseInt(year), 
-        y: parseInt(numberOfAds), 
-        fill: stringToHexColor(advertiser),
-        label: `${advertiser} had ${numberOfAds} ads in ${year}.`
-      };
+  const victoryFormattedAdvertiserCount = {
+    x: parseInt(year),
+    y: parseInt(numberOfAds),
+    fill: stringToHexColor(advertiser),
+    label: `${advertiser} had ${numberOfAds} ads in ${year}.`,
+  };
 
   return victoryFormattedAdvertiserCount;
 }
@@ -49,7 +51,10 @@ function formatAdvertiserCountSnapshot(snap, year) {
  * Returns the exclusive bounds for the range of all data points being charted.
  * Uses the spread `...` operator.
  * `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax` 
- * If the list is empty a range [0,1] will be returned. 
+ * If the list is empty the range [0,1] will be returned. 
+ * Empty list input is expected behavior due to how react renders the page
+ * once upon load while `advertisers` is still being asynchronously populated,
+ * so `advertisers` is the empty list on initial loading.  
  * @param {List[object]} victoryJsonList a list of objects in a victory-ready 
  *     format.
  * @returns {object}
@@ -94,7 +99,7 @@ function useAdvertisers(year, queryLimit) {
   return advertisers;
 }
 
-const ScatterPlot = () => {  
+const ScatterPlot = () => {
   const queryLimit = 10;
 
   const advertisers2018 = useAdvertisers("2018", queryLimit);
@@ -111,32 +116,36 @@ const ScatterPlot = () => {
   return (
     <VictoryChart
       theme={VictoryTheme.material}
-      domain={{ x: [DOMAIN_START, DOMAIN_END], y: [range.min*.5, range.max*2] }}
-      scale={{ y: "log" }}
+      domain={{
+        x: [DOMAIN_START, DOMAIN_END],
+        y: [range.min * 0.5, range.max * 2],
+      }}
+      scale={{ y: 'log' }}
     >
       <VictoryLabel
         text={chartTitle}
-        x={CHART_TITLE_X} y = {CHART_TITLE_Y}
+        x={CHART_TITLE_X}
+        y={CHART_TITLE_Y}
         textAnchor="middle"
       />
 
-      <VictoryAxis tickValues = {[2018, 2019, 2020]} />
+      <VictoryAxis tickValues={[2018, 2019, 2020]} />
 
-      <VictoryAxis dependentAxis
-        tickValues = {[range.min, range.max]}
+      <VictoryAxis
+        dependentAxis
+        tickValues={[range.min, range.max]}
         label="# of ads (log scale)"
       />
 
       <VictoryScatter
-        labelComponent={ <VictoryTooltip/> }
-        labels={({ datum }) => datum.y }
-        style={{ data: { fill: ({ datum }) => datum.fill }}}
+        labelComponent={<VictoryTooltip />}
+        labels={({ datum }) => datum.y}
+        style={{ data: { fill: ({ datum }) => datum.fill } }}
         size={5}
         data={advertisers}
       />
-
     </VictoryChart>
   );
-}
+};
 
 export default ScatterPlot;

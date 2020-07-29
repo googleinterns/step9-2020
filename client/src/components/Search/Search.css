@@ -9,12 +9,16 @@
   flex-direction: column;
 }
 
-.filter-header {
+.filter-header {  
+  color: white;
+  cursor: pointer;
   position: absolute;
   top: 80px;
-  cursor: pointer;
   user-select: none;
-  color: white;
+}
+
+#position-left {
+  left: 20px;
 }
 
 .button-left {
