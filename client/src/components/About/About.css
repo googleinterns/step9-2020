@@ -1,6 +1,27 @@
-@import url('../../styles/colors.css');
+@import url("../../styles/colors.css");
+.info-container {
+  width: 40%;
+}
 
-/* body {
-  background-color: var(--primary-color);
-} */
+p {
+  text-align: justify;
+}
 
+.profile {
+  background-color: var(--background-color);
+  border-radius: 10%;
+  padding: 3%;
+  width: 30%;
+}
+
+.profile h3 {
+  color: var(--primary-color);
+  font-size: small; 
+  text-align: center;
+}
+
+.profile p {
+  color: var(--primary-color);
+  font-size: small; 
+  text-align: left;
+}
