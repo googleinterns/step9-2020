@@ -42,8 +42,8 @@ const INVALID_STRINGS = new Set(['',
                                 'yet',
                                 '|']);
 
-// Search results are identified by the `ais-Hits-item` class
-// `ais` is algolia instant search.
+// Search results are identified by the `ais-Hits-item` class.
+// `ais` stands for `algolia instant search`.
 const SEARCH_RESULT_CLASS = 'ais-Hits-item';
 
 // Word cloud chart options for rendering the cloud and animations. 

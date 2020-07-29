@@ -13,7 +13,8 @@ import { INVALID_STRINGS, SEARCH_RESULT_CLASS }
     from '../../constants/word_cloud_constants';
 
 /**
- * Check if a word is black listed 
+ * Check if a word is black listed by checking for membership in a 
+ * set of invalid strings. 
  * @param {string} word 
  * @return {boolean}
  */
