@@ -34,15 +34,17 @@ function createWordMap(wordList) {
   const wordMap = {};
 
   wordList.forEach(word => {
+    if (word !== '') {
 
-    // Remove all non alphanumeric or $-sign characters (i.e., punctuation)
-    // for comprehensive string matching without losing context.
-    const filteredWord = word.replace(/\W$/g, ''); 
-    
-    if(wordMap.hasOwnProperty(filteredWord)) {
-      wordMap[filteredWord].value += 1;
-    } else {
-      wordMap[filteredWord] = { text: filteredWord, value: 1 };
+      // Remove all non alphanumeric or $-sign characters (i.e., punctuation)
+      // for comprehensive string matching without losing context.
+      const filteredWord = word.replace(/\W$/g, ''); 
+      
+      if(wordMap.hasOwnProperty(filteredWord)) {
+        wordMap[filteredWord].value += 1;
+      } else {
+        wordMap[filteredWord] = { text: filteredWord, value: 1 };
+      }
     }
   });
 
