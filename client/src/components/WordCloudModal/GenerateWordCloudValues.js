@@ -9,7 +9,7 @@
  * Author: Rob Marcus
  */
 
-// Set of non-valid word cloud words/strings. 
+// Set of invalid word cloud words/strings. 
 const INVALID_WORDS = new Set(['',
                               'a',
                               'and',
