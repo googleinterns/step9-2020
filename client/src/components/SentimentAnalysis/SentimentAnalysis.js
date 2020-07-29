@@ -8,7 +8,7 @@ import {
 import { AnalysisInput, ColorBar, TermsDisplay } from './Helpers';
 import React, { useEffect, useState } from 'react';
 
-import { CLIENT_KEY } from '../../constants/capcha_config';
+import { CLIENT_KEY } from '../../constants/captcha_config';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import ShareModal from '../ShareModal/ShareModal';
@@ -126,8 +126,9 @@ const SentimentAnalysis = () => {
     const input = document.getElementById('analysis-container');
     html2canvas(input).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
-      saveAs(imgData, 'tardigrade-analysis.png');
-      setTimeout(() => setDownloadStatus('downloaded'), 2000);
+      const uniqueId = new Date().getTime();
+      saveAs(imgData, `tardigrade-analysis-${uniqueId}.png`);
+      setTimeout(() => setDownloadStatus('downloaded'), 1000);
     });
   };
 
