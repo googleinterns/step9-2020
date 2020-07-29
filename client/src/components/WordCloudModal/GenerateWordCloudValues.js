@@ -1,5 +1,5 @@
 /**
- * Description: react word cloud takes a list of json objects
+ * Description: React word cloud takes a list of json objects
  *              as input. This code generates the list by 
  *              getting search results from the DOM
  *              and counting instances of individual or hyphenated words
@@ -10,7 +10,7 @@
  */
 
 // Set of non-valid word cloud words/strings. 
-const nonValidWords = new Set(['',
+const INVALID_WORDS = new Set(['',
                               'a',
                               'and',
                               'at',
@@ -33,7 +33,7 @@ const nonValidWords = new Set(['',
  * @return {boolean}
  */
 function isWordValid(word) {
-  return !nonValidWords.has(word.toLowerCase());
+  return !INVALID_WORDS.has(word.toLowerCase());
 }
 
 /**
@@ -50,7 +50,7 @@ function makeWordMap(wordList) {
   wordList.forEach(word => {
 
     // Remove all non alphanumeric or $-sign characters (i.e., punctuation)
-    // for more comprehensive string matching. 
+    // for comprehensive string matching without losing context.
     const filteredWord = word.replace(/\W$/g, ''); 
     
     if(wordMap.hasOwnProperty(filteredWord)) {
