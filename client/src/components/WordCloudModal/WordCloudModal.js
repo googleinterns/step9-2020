@@ -1,7 +1,7 @@
-import React from 'react';
-import ReactWordcloud from 'react-wordcloud';
 import Modal from 'react-modal';
 import PropTypes from 'prop-types';
+import React from 'react';
+import ReactWordcloud from 'react-wordcloud';
 
 import generateWordCloudValues from './GenerateWordCloudValues';
 
@@ -35,7 +35,7 @@ const WordCloudModal = props => {
     >
       <h3
         className="filter-header button-right black-text"
-        onClick={() => setIsModalOpen(false)}
+        onClick={handleCloseModal}
       >
         Close
       </h3>

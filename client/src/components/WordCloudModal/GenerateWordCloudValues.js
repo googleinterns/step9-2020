@@ -1,3 +1,13 @@
+/**
+ * Description: react word cloud takes a list of json objects
+ *              as input. This code generates the list by 
+ *              getting search results from the DOM
+ *              and counting instances of individual or hyphenated words
+ *              using a dictionary mapping approach for efficiency.   
+ *              Un-interesting words are filtered from the word cloud.
+ * Date: 7/28
+ * Author: Rob Marcus
+ */
 
 // Set of non-valid word cloud words/strings. 
 const nonValidWords = new Set(['',
@@ -29,6 +39,8 @@ function isWordValid(word) {
 /**
  * Make a map relating string words (keys)  
  * to word cloud formatted json objects (values)
+ * Word cloud format is [{ text: word0, value: number0 }, ...]
+ * For speed, wordMap format is {word0: { text: word0, value: number0 }, ... }
  * @param {list[string]} wordList search results split space wise
  * @return {Object}
  */
@@ -52,17 +64,24 @@ function makeWordMap(wordList) {
 }
 
 /**
- * React word cloud 
+ * Generate the values of a react word cloud based on the current 
+ * algolia search results in the DOM.
+ * Word cloud format is [{ text: word0, value: number0 }, ...] 
+ * @return {Object}
  */
 const generateWordCloudValues = () => {
-  const searchResultsText = 
+  const searchResultsInnerTextList = 
       Array.from(document.getElementsByClassName('ais-Hits-item'))
            .map(searchResult => searchResult.innerText.split(' '));
                                             
   const searchResultsWordList = 
-      searchResultsText.flat().filter(word => isWordValid(word));
+      searchResultsInnerTextList.flat().filter(word => isWordValid(word));
 
-  return Object.values(makeWordMap(searchResultsWordList));
+  const searchResultsWordMap = makeWordMap(searchResultsWordList);
+
+  const wordCloudValues = Object.values(searchResultsWordMap);
+  
+  return wordCloudValues;
 }
 
 export default generateWordCloudValues;
