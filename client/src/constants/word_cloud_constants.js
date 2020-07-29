@@ -1,10 +1,15 @@
 /**
- * Description: Constants for the word cloud 
+ * Description: Constants for generating word cloud values and rendering 
+ *              the word cloud.
+ * Date: 7/29
+ * Author: Rob Marcus 
  */
 
 // Set of invalid word cloud strings/words. 
 // This is a super set of conjunctions, common prepositions, pronouns, 
 // and potential string artifacts that may pollute the word cloud. 
+// It is not fully comprehensive, but it covers many uninteresting 
+// words/strings from the word cloud. 
 const INVALID_STRINGS = new Set(['',
                                 'a',
                                 'and',

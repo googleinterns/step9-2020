@@ -70,6 +70,4 @@ const generateWordCloudValues = () => {
   return wordCloudValues;
 }
 
-//export default generateWordCloudValues;
-
 export { generateWordCloudValues };
