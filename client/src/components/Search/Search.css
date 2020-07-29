@@ -1,5 +1,5 @@
-.search-container {
-  width: 100%;
+.black-text {
+  color: black;
 }
 
 .container {
@@ -17,15 +17,11 @@
   user-select: none;
 }
 
-#position-left {
+.position-left {
   left: 20px;
 }
 
-.button-left {
-  left: 20px;
-}
-
-.button-right {
+.position-right {
   right: 20px;
 }
 
@@ -34,6 +30,6 @@
   flex-direction: row;
 }
 
-.black-text {
-  color: black;
+.search-container {
+  width: 100%;
 }

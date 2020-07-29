@@ -2,25 +2,10 @@ import Modal from 'react-modal';
 import React, { useState } from 'react';
 import ReactWordcloud from 'react-wordcloud';
 
-import generateWordCloudValues from './GenerateWordCloudValues';
+import { generateWordCloudValues } from './GenerateWordCloudValues';
+import { WORD_CLOUD_OPTIONS } from '../../constants/word_cloud_constants'
 
 Modal.setAppElement('#root');
-
-const wordCloudOptions = {
-    colors: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'],
-    enableTooltip: true,
-    deterministic: false,
-    fontFamily: 'impact',
-    fontSizes: [10, 60],
-    fontStyle: 'normal',
-    fontWeight: 'normal',
-    padding: 1,
-    rotations: 3,
-    rotationAngles: [0, 90],
-    scale: 'linear',
-    spiral: 'archimedean',
-    transitionDuration: 1000,
-};
 
 const WordCloudModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,7 +16,7 @@ const WordCloudModal = () => {
   return (
     <div>
       <h3
-        className="filter-header button-right"
+        className="filter-header position-right"
         onClick={handleOpenModal}
       >
         WORD CLOUD
@@ -41,13 +26,13 @@ const WordCloudModal = () => {
         onRequestClose={handleCloseModal}
       >
         <h3
-          className="filter-header button-right black-text"
+          className="filter-header position-right black-text"
           onClick={handleCloseModal}
         >
           Close
         </h3>
         <ReactWordcloud 
-          options={wordCloudOptions} 
+          options={WORD_CLOUD_OPTIONS} 
           words={generateWordCloudValues()} 
         />
       </Modal>

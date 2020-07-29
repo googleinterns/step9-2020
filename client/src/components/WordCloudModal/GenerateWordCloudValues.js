@@ -9,23 +9,8 @@
  * Author: Rob Marcus
  */
 
-// Set of invalid word cloud words/strings. 
-const INVALID_WORDS = new Set(['',
-                              'a',
-                              'and',
-                              'at',
-                              'for',
-                              'i',
-                              'in',
-                              'is',
-                              'it',
-                              'its',
-                              'of',
-                              'on',
-                              'the',
-                              'this',
-                              'to',
-                              '|']);
+import { INVALID_STRINGS, SEARCH_RESULT_CLASS } 
+    from '../../constants/word_cloud_constants';
 
 /**
  * Check if a word is black listed 
@@ -33,18 +18,18 @@ const INVALID_WORDS = new Set(['',
  * @return {boolean}
  */
 function isWordValid(word) {
-  return !INVALID_WORDS.has(word.toLowerCase());
+  return !INVALID_STRINGS.has(word.toLowerCase());
 }
 
 /**
- * Make a map relating string words (keys)  
+ * Create a map relating string words (keys)  
  * to word cloud formatted json objects (values)
  * Word cloud format is [{ text: word0, value: number0 }, ...]
  * For speed, wordMap format is {word0: { text: word0, value: number0 }, ... }
  * @param {list[string]} wordList search results split space wise
  * @return {Object}
  */
-function makeWordMap(wordList) {
+function createWordMap(wordList) {
   const wordMap = {};
 
   wordList.forEach(word => {
@@ -71,18 +56,20 @@ function makeWordMap(wordList) {
  */
 const generateWordCloudValues = () => {
   const searchResultsInnerTextList = 
-      Array.from(document.getElementsByClassName('ais-Hits-item'))
+      Array.from(document.getElementsByClassName(SEARCH_RESULT_CLASS))
            .map(searchResult => searchResult.innerText.split(' '))
            .flat();
                                             
   const searchResultsFilteredWordList = 
       searchResultsInnerTextList.filter(word => isWordValid(word));
 
-  const searchResultsWordMap = makeWordMap(searchResultsFilteredWordList);
+  const searchResultsWordMap = createWordMap(searchResultsFilteredWordList);
 
   const wordCloudValues = Object.values(searchResultsWordMap);
   
   return wordCloudValues;
 }
 
-export default generateWordCloudValues;
+//export default generateWordCloudValues;
+
+export { generateWordCloudValues };
