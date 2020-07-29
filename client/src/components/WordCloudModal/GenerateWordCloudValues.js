@@ -72,12 +72,13 @@ function makeWordMap(wordList) {
 const generateWordCloudValues = () => {
   const searchResultsInnerTextList = 
       Array.from(document.getElementsByClassName('ais-Hits-item'))
-           .map(searchResult => searchResult.innerText.split(' '));
+           .map(searchResult => searchResult.innerText.split(' '))
+           .flat();
                                             
-  const searchResultsWordList = 
-      searchResultsInnerTextList.flat().filter(word => isWordValid(word));
+  const searchResultsFilteredWordList = 
+      searchResultsInnerTextList.filter(word => isWordValid(word));
 
-  const searchResultsWordMap = makeWordMap(searchResultsWordList);
+  const searchResultsWordMap = makeWordMap(searchResultsFilteredWordList);
 
   const wordCloudValues = Object.values(searchResultsWordMap);
   
