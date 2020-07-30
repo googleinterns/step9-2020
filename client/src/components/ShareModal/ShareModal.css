@@ -1,0 +1,14 @@
+.share-url-input {
+  font-size: 18px;
+  padding: 5px 10px;
+  margin-right: 10px;
+  border-radius: 5px;
+  width: 250px;
+}
+
+.icon-container {
+  margin-top: 15px;
+  width: 50%;
+  display: flex;
+  justify-content: space-evenly;
+}

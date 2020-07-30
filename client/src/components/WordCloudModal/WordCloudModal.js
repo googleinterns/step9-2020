@@ -1,9 +1,9 @@
-import Modal from 'react-modal';
 import React, { useState } from 'react';
-import ReactWordcloud from 'react-wordcloud';
 
+import Modal from 'react-modal';
+import ReactWordcloud from 'react-wordcloud';
+import { WORD_CLOUD_OPTIONS } from '../../constants/word_cloud_constants';
 import { generateWordCloudValues } from './GenerateWordCloudValues';
-import { WORD_CLOUD_OPTIONS } from '../../constants/word_cloud_constants'
 
 Modal.setAppElement('#root');
 
@@ -15,25 +15,19 @@ const WordCloudModal = () => {
 
   return (
     <div>
-      <h3
-        className="filter-header position-right"
-        onClick={handleOpenModal}
-      >
+      <h3 className="filter-header position-right" onClick={handleOpenModal}>
         WORD CLOUD
       </h3>
-      <Modal 
-        isOpen={isModalOpen} 
-        onRequestClose={handleCloseModal}
-      >
+      <Modal isOpen={isModalOpen} onRequestClose={handleCloseModal}>
         <h3
           className="filter-header position-right black-text"
           onClick={handleCloseModal}
         >
           Close
         </h3>
-        <ReactWordcloud 
-          options={WORD_CLOUD_OPTIONS} 
-          words={generateWordCloudValues()} 
+        <ReactWordcloud
+          options={WORD_CLOUD_OPTIONS}
+          words={generateWordCloudValues()}
         />
       </Modal>
     </div>
