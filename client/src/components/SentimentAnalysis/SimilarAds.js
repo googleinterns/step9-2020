@@ -8,21 +8,17 @@ const SimilarAds = props => {
   const contentSentiment = `{"score": ${props.contentScore}, "magnitude": ${props.contentMagnitude}}`;
 
   const [results, setResults] = useState([]);
-  let resultItems = [];
 
   useEffect(() => {
     async function fetchSimilarAds() {
-      
-      let similarAdsPromises = [];
-      similarAdsPromises.push(database.collection(COLLECTION)
-            .where('headlineSentiment', '==', headlineSentiment)
-            .where('contentSentiment', '==', contentSentiment)
-            .limit(10)
-            .get()
-      ); 
-      let similarAds = await Promise.all(similarAdsPromises);
-
-      for (let ad of similarAds[0].docs) {
+      let similarAds = await database
+          .collection(COLLECTION)
+          .where('headlineSentiment', '==', headlineSentiment)
+          .where('contentSentiment', '==', contentSentiment)
+          .limit(9)
+          .get();
+      const resultItems = [];
+      for (let ad of similarAds.docs) {
         resultItems.push(
           <div className="similar-ad">
             <p><b>Headline</b>: {ad.data().headline}</p>

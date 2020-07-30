@@ -82,14 +82,14 @@
 }
 
 .similar-container {
-  width: 90%;
-  margin-right: 5%;
-  margin-left: 5%;
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-  padding-bottom: 40px;
   border-radius: 10px;
-  margin-bottom: 40px;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
   justify-content: center;
+  margin-bottom: 40px;
+  margin-left: 5%;
+  margin-right: 5%;
+  padding-bottom: 40px;
+  width: 90%;
 }
 
 .similar-card {
@@ -111,9 +111,8 @@
 }
 
 .similar-ad a {
-  text-decoration: none;
   color: var(--secondary-color);
-  transition: 0.5s;
+  text-decoration: none;
 }
 
 .similar-ad a:hover {
@@ -128,4 +127,5 @@ h4, #card-description {
 .results-container {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-evenly;
 }

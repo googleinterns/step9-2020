@@ -149,7 +149,7 @@ const SentimentAnalysis = () => {
     setIsModalOpen(true);
   };
 
-  function toString(sentimentValue) {
+  function convertSentimentToString(sentimentValue) {
     let str = sentimentValue.toString();
     return (str.includes('.') ? str : str + '.0');
   }
@@ -212,10 +212,10 @@ const SentimentAnalysis = () => {
         </div>
       </div>
       <SimilarAds 
-        headlineScore={toString(headline.sentiment.score)}
-        headlineMagnitude={toString(headline.sentiment.magnitude)}
-        contentScore={toString(content.sentiment.score)}
-        contentMagnitude={toString(content.sentiment.magnitude)}
+        headlineScore={convertSentimentToString(headline.sentiment.score)}
+        headlineMagnitude={convertSentimentToString(headline.sentiment.magnitude)}
+        contentScore={convertSentimentToString(content.sentiment.score)}
+        contentMagnitude={convertSentimentToString(content.sentiment.magnitude)}
       />
     </div>
   );
