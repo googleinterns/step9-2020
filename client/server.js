@@ -4,8 +4,12 @@ const app = express();
 
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'), err => {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
 });
 
 app.listen(8080);
