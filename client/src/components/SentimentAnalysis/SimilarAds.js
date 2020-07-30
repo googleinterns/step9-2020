@@ -50,7 +50,7 @@ const SimilarAds = props => {
           of {props.contentScore}, and content magnitude 
           of {props.contentMagnitude}:
         </p> 
-        <div>{results}</div>
+        <div className="results-container">{results}</div>
       </div>
     </div>
   );
