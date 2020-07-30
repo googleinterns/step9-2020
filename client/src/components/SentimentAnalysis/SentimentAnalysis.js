@@ -82,7 +82,6 @@ const SentimentAnalysis = () => {
    * Set the current headline and content analysis of
    * the component with new data
    * @param {Boolean} data - new data returned from API or Firestore
-   * @param {ReactElement} form - current analysis form
    * @returns {Void} doesn't return anything
    */
   const updatePage = data =>
@@ -118,7 +117,7 @@ const SentimentAnalysis = () => {
   };
 
   /**
-   * Generates a JSON file of the current result page and
+   * Generates a JSON file of the language analysis results and
    * automatically saves it to user's local machine
    * @returns {Void} doesn't return anything
    */
