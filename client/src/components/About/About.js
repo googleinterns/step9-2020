@@ -64,6 +64,7 @@ const About = () => {
           <Profile 
             name="Kira Toal"
             github="kirakira0"
+            link="https://github.com/kirakira0"
             type="intern"
             role="Google STEP Intern"
             university="Loyola Marymount University, '23"
@@ -76,6 +77,7 @@ const About = () => {
           <Profile 
             name="Robert Marcus"
             github="rob-marcus"
+            link="https://github.com/rob-marcus"
             type="intern"
             role="Google STEP Intern"
             university="Carnegie Mellon University, '22"
@@ -87,7 +89,8 @@ const About = () => {
           />
           <Profile 
             name="Scarlet Nguyen"
-            profile="scarletnguyen13"
+            github="scarletnguyen13"
+            link="https://github.com/scarletnguyen13"
             type="intern"
             role="Google STEP Intern"
             university="University of British Columbia, '23"

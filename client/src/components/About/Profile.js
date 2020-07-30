@@ -8,7 +8,11 @@ const Profile = props => {
         <div className="profile">
           <h3>{props.name}</h3>
           <p>Google STEP Intern</p>
-          <p>Github: {props.github}</p>
+          <p> Github:&nbsp;
+            <a href={props.link} target="_blank" rel="noopener noreferrer">
+              {props.github}
+            </a>
+          </p>
           <p>University: {props.university}</p>
           <p>Major: {props.major}</p>
           <p>Minor: {props.minor}</p>
