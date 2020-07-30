@@ -12,8 +12,8 @@ const PageNav = () => {
 
   return (
     <div className="header">
-      <h2 className="logo-text" onClick={() => setCurrentPage(HEADERS[0])}>
-        Political Tardigrade
+      <h2 className="logo-text" onClick={() => history.push('/')}>
+        Tardigrade
       </h2>
       <div className="search-body">
         {HEADERS.map((page, index) => (
