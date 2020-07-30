@@ -1,11 +1,14 @@
 import './PageNav.css';
 
+import { useHistory, useLocation } from 'react-router-dom';
+
 import { HEADERS } from '../../constants/header_constants';
-import PropTypes from 'prop-types';
 import React from 'react';
 
-const PageNav = props => {
-  const { currentPage, setCurrentPage } = props;
+const PageNav = () => {
+  const history = useHistory();
+  const location = useLocation();
+  const { pathname } = location;
 
   return (
     <div className="header">
@@ -13,23 +16,18 @@ const PageNav = props => {
         Political Tardigrade
       </h2>
       <div className="search-body">
-        {HEADERS.map((item, index) => (
+        {HEADERS.map((page, index) => (
           <p
-            className={currentPage === item ? 'selected-header' : ''}
+            className={pathname === page.route ? 'selected-header' : ''}
             key={index}
-            onClick={() => setCurrentPage(item)}
+            onClick={() => history.push(page.route)}
           >
-            {item}
+            {page.text}
           </p>
         ))}
       </div>
     </div>
   );
-};
-
-PageNav.propTypes = {
-  currentPage: PropTypes.string,
-  setCurrentPage: PropTypes.func,
 };
 
 export default PageNav;

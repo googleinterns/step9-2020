@@ -7,6 +7,7 @@ import FilterList from '../FilterList/FilterList';
 import { InstantSearch } from 'react-instantsearch-dom';
 import ResultList from '../ResultList/ResultList';
 import SearchBar from '../SearchBar/SearchBar';
+import WordCloudModal from '../WordCloudModal/WordCloudModal';
 
 const Search = () => {
   const [showFilter, setShowFilter] = useState(true);
@@ -19,7 +20,10 @@ const Search = () => {
     <div className="search-container">
       <div className="container">
         <InstantSearch searchClient={searchClient} indexName={algoliaIndex}>
-          <h3 className="filter-header" onClick={handleFilterToggle}>
+          <h3
+             className="filter-header position-left"
+             onClick={handleFilterToggle}
+          >
             {`(${showFilter ? '-' : '+'}) FILTERS`}
           </h3>
           <SearchBar />
@@ -28,6 +32,7 @@ const Search = () => {
             <ResultList />
           </div>
         </InstantSearch>
+        <WordCloudModal />
       </div>
     </div>
   );
