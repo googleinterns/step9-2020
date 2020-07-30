@@ -25,6 +25,8 @@ const CHART_TITLE_X = 175;
 const CHART_TITLE_Y = 30;
 const DOMAIN_START = 2017;
 const DOMAIN_END = 2021;
+const Y_LABEL_FONT_SIZE = 10;
+const Y_LABEL_PADDING = 35;
 
 /**
  * Turn a firestore snap into a victory formatted
@@ -133,8 +135,11 @@ const ScatterPlot = () => {
 
       <VictoryAxis
         dependentAxis
-        tickValues={[range.min, range.max]}
-        label="# of ads (log scale)"
+        tickValues={[range.min, range.min*2, Math.round(range.max/2), range.max]}
+        label="# ads (log scale)"
+        style={{ 
+            axisLabel: { fontSize: Y_LABEL_FONT_SIZE, padding: Y_LABEL_PADDING }
+        }}
       />
 
       <VictoryScatter
