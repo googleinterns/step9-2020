@@ -151,15 +151,11 @@ const SentimentAnalysis = () => {
 
   return (
     <div className="search-container" id="analysis-container">
-      <h3
-        className="filter-header"
-        id="position-left"
-        onClick={downloadScreenshot}
-      >
+      <h3 className="filter-header position-left" onClick={downloadScreenshot}>
         ⤓ {downloadStatus.toUpperCase()}
       </h3>
       {shareLink && (
-        <h3 className="filter-header" id="position-right" onClick={openModal}>
+        <h3 className="filter-header position-right" onClick={openModal}>
           SHARE ⤒
         </h3>
       )}
