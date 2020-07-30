@@ -19,11 +19,11 @@ const App = () => (
     <div>
       <PageNav />
       <Switch>
-        <Route path="/about" component={About} />
         <Route path="/visualization" component={Visualization} />
         <Route path="/analysis/:id?" component={SentimentAnalysis} />
         <Route path="/search" component={Search} />
-        <Redirect exact from="/" to="about" />
+        <Route path="/about" component={About} />
+        <Redirect exact from="/" to="search" />
       </Switch>
     </div>
   </Router>
