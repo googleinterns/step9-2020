@@ -6,8 +6,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
-const removeSingleQuote = str => str.replace(/'/g, '');
-
 /* Algolia's Hit: display a result item from search */
 const ResultItem = props => {
   // a hit (result) object that contains all info about a result item
@@ -21,19 +19,7 @@ const ResultItem = props => {
    */
   const handleAnalysis = () => {
     const { data } = hit;
-    const ad = {
-      headline: data.headline,
-      headlineAnalysis: {
-        sentiment: JSON.parse(data.headlineSentiment),
-        entities: JSON.parse(removeSingleQuote(data.headlineTerms)),
-      },
-      content: data.content,
-      contentAnalysis: {
-        sentiment: JSON.parse(data.contentSentiment),
-        entities: JSON.parse(removeSingleQuote(data.contentTerms)),
-      },
-    };
-    history.push({ pathname: '/analysis', state: { ad } });
+    history.push(`/analysis/${data.id}`);
   };
 
   return (
