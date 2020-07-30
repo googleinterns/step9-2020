@@ -31,6 +31,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.1",
     "react-share": "^4.2.1",
+    "react-wordcloud": "^1.2.6",
     "tinyurl": "^1.1.6",
     "victory": "^35.0.2"
   },
