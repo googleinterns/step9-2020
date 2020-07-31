@@ -14,7 +14,6 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import ShareModal from '../ShareModal/ShareModal';
 import TinyURL from 'tinyurl';
 import { database } from '../../firebase/firebase';
-import html2canvas from '@nidi/html2canvas';
 import { saveAs } from 'file-saver';
 import tardigrade from '../../images/tardigrade.png';
 import { useParams } from 'react-router-dom';
@@ -30,7 +29,6 @@ const SentimentAnalysis = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [shareLink, setShareLink] = useState(undefined);
   const [copyContent, setCopyContent] = useState('Copy');
-  const [downloadStatus, setDownloadStatus] = useState('download');
 
   const shortenLink = () => {
     const originalUrl = window.location.href;
@@ -52,12 +50,15 @@ const SentimentAnalysis = () => {
   };
 
   const handleDataFromFirestore = data => {
+    const form = document.getElementById('analysis-form');
     setHeadline({
+      text: form.headline.value,
       entities: data.headline_entities,
       sentiment: JSON.parse(data.headline_sentiment),
     });
 
     setContent({
+      text: form.content.value,
       entities: data.content_entities,
       sentiment: JSON.parse(data.content_sentiment),
     });
@@ -116,20 +117,16 @@ const SentimentAnalysis = () => {
   };
 
   /**
-   * Generates a PNG screenshot of the current result page and
+   * Generates a JSON file of the language analysis results and
    * automatically saves it to user's local machine
-   * Note: download as PNG because of its flexibility in dimensions
    * @returns {Void} doesn't return anything
    */
-  const downloadScreenshot = () => {
-    setDownloadStatus('downloading...');
-    const input = document.getElementById('analysis-container');
-    html2canvas(input).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
-      const uniqueId = new Date().getTime();
-      saveAs(imgData, `tardigrade-analysis-${uniqueId}.png`);
-      setTimeout(() => setDownloadStatus('downloaded'), 1000);
-    });
+  const downloadAnalysisJson = () => {
+    const json = JSON.stringify({ headline, content }, null, 2);
+    const uniqueId = new Date().getTime();
+    const blob = new Blob([json], { type: 'text/json' });
+    const url = URL.createObjectURL(blob);
+    saveAs(url, `tardigrade-${uniqueId}.json`);
   };
 
   useEffect(() => {
@@ -151,8 +148,11 @@ const SentimentAnalysis = () => {
 
   return (
     <div className="search-container" id="analysis-container">
-      <h3 className="filter-header position-left" onClick={downloadScreenshot}>
-        ⤓ {downloadStatus.toUpperCase()}
+      <h3
+        className="filter-header position-left"
+        onClick={downloadAnalysisJson}
+      >
+        ⤓ DOWNLOAD
       </h3>
       {shareLink && (
         <h3 className="filter-header position-right" onClick={openModal}>
@@ -169,6 +169,7 @@ const SentimentAnalysis = () => {
       <form
         className="search-header center bottom-padding"
         onSubmit={submitForm}
+        id="analysis-form"
       >
         <img src={tardigrade} className="logo" alt="logo" />
         <div className="center">
