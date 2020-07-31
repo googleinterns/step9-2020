@@ -11,7 +11,7 @@ const SimilarAds = props => {
 
   useEffect(() => {
     async function fetchSimilarAds() {
-      let similarAds = await database
+      const similarAds = await database
           .collection(COLLECTION)
           .where('headlineSentiment', '==', headlineSentiment)
           .where('contentSentiment', '==', contentSentiment)
@@ -20,14 +20,30 @@ const SimilarAds = props => {
       const resultItems = [];
       for (let ad of similarAds.docs) {
         resultItems.push(
-          <div className="similar-ad">
-            <p><b>Headline</b>: {ad.data().headline}</p>
-            <p><b>Content</b>: {ad.data().content}</p>
-            <p><b>Advertiser</b>: {ad.data().advertiser}</p>
-            <p><b>Link</b>: <a href={ad.data().link} target="_blank" rel="noopener noreferrer">
+          <ul className="similar-ad">
+            <li>
+              <span style={{fontWeight:'bold'}}>
+                Headline
+              </span>: {ad.data().headline}
+            </li>
+            <li>
+              <span style={{fontWeight:'bold'}}>
+                Content
+              </span>: {ad.data().content}
+            </li>
+            <li>
+              <span style={{fontWeight:'bold'}}>
+                Advertiser
+              </span>: {ad.data().advertiser}
+            </li>
+            <li>
+              <span style={{fontWeight:'bold'}}>
+                Link
+              </span>: <a href={ad.data().link} target="_blank" 
+                  rel="noopener noreferrer">
               {ad.data().link}</a>
-            </p>
-          </div>
+            </li>
+          </ul>
         );
       }
       setResults(resultItems);
