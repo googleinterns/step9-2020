@@ -15,14 +15,20 @@
 .highlight-body {
   text-align: justify;
   text-justify: inter-word;
+  margin-bottom: 50px;
 }
 
 .ais-Hits-item {
   padding: 25px;
+  position: relative;
 }
 
 .item-analysis {
+  width: 80%;
   padding-top: 5px !important;
   padding-bottom: 5px !important;
   border: 1px solid var(--primary-color) !important;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 20px;
 }
