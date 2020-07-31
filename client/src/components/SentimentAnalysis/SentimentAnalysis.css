@@ -80,3 +80,52 @@
 .bottom-padding {
   padding-bottom: 40px;
 }
+
+.similar-container {
+  border-radius: 10px;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  justify-content: center;
+  margin-bottom: 40px;
+  margin-left: 5%;
+  margin-right: 5%;
+  padding-bottom: 40px;
+  width: 90%;
+}
+
+.similar-card {
+  padding: 20px;
+}
+
+.similar-ad {
+  background-color: var(--primary-color);
+  border-radius: 5px;
+  padding: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  margin: 20px;
+  width: 25%;
+}
+
+.similar-ad li {
+  color: var(--background-color);
+}
+
+.similar-ad a {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+.similar-ad a:hover {
+  color: black;
+  transition: 0.5s;
+}
+
+h4, #card-description {
+  text-align: center;
+}
+
+.results-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}

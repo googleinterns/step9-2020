@@ -6,8 +6,8 @@ import {
   INPUT_LIST,
 } from '../../constants/analysis_constants';
 import { AnalysisInput, ColorBar, TermsDisplay } from './Helpers';
+import SimilarAds from './SimilarAds';
 import React, { useEffect, useState } from 'react';
-
 import { CLIENT_KEY } from '../../constants/captcha_config';
 import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -146,6 +146,11 @@ const SentimentAnalysis = () => {
     setIsModalOpen(true);
   };
 
+  function convertSentimentToString(sentimentValue) {
+    let str = sentimentValue.toString();
+    return (str.includes('.') ? str : str + '.0');
+  }
+
   return (
     <div className="search-container" id="analysis-container">
       <h3
@@ -207,6 +212,12 @@ const SentimentAnalysis = () => {
           <TermsDisplay termList={content.entities} />
         </div>
       </div>
+      <SimilarAds 
+        headlineScore={convertSentimentToString(headline.sentiment.score)}
+        headlineMagnitude={convertSentimentToString(headline.sentiment.magnitude)}
+        contentScore={convertSentimentToString(content.sentiment.score)}
+        contentMagnitude={convertSentimentToString(content.sentiment.magnitude)}
+      />
     </div>
   );
 };
