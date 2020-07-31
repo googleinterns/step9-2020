@@ -122,8 +122,7 @@ const SentimentAnalysis = () => {
    * @returns {Void} doesn't return anything
    */
   const downloadAnalysisJson = () => {
-    const indentationLevel = 2;
-    const json = JSON.stringify({ headline, content }, null, indentationLevel);
+    const json = JSON.stringify({ headline, content }, null, 2);
     const uniqueId = new Date().getTime();
     const blob = new Blob([json], { type: 'text/json' });
     const url = URL.createObjectURL(blob);
