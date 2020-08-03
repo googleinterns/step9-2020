@@ -121,7 +121,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.2.1</version>
         <configuration>
-            <mainClass>com.google.sps.utils.StateSubcollectionBuilder</mainClass>
+            <mainClass>com.google.sps.utils.ReportReader</mainClass>
         </configuration>
       </plugin>
     </plugins>
