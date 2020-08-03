@@ -10,6 +10,7 @@ import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.SetOptions;
+import com.google.cloud.firestore.WriteBatch;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -21,10 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.cloud.firestore.WriteBatch;
-
-
 /**
  * Description: Class creates collection by state. Each state collection contains
  *              two subcollections: 'advertisers', which contains information about
@@ -38,7 +35,7 @@ public class StateSubcollectionBuilder {
   private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
   private static final String MAIN_COLLECTION = "ads";
-  private static final String WRITE_COLLECTION = "dev_states";
+  private static final String WRITE_COLLECTION = "states";
   private static final Set<String> GEO_TARGETS = Constants.VALID_GEO_TARGETS;
   public static Firestore db; 
 
@@ -69,6 +66,9 @@ public class StateSubcollectionBuilder {
 
     for (QueryDocumentSnapshot document: documentsInState) {
       String advertiser = document.getString("advertiser");
+      
+      // Remove / from document names as they interfere with Firestore paths.
+      advertiser = advertiser.replaceAll("/", " ");
       long maxSpend = document.getLong("spendMax");
 
       if (advertiserSpendMap.containsKey(advertiser)) {
