@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 /**
  * Description: Class creates collection by state. Each state collection contains
  *              two subcollections: 'advertisers', which contains information about
