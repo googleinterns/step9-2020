@@ -9,7 +9,7 @@ import { STATES } from '../../../constants/geochart_constants';
 import { database } from '../../../firebase/firebase';
 
 const Geochart = () => {
-  const STATES_COLLECTION = 'dev_states';
+  const STATES_COLLECTION = 'states';
   const [adTotal, setAdTotal] = useState(0);
   const WIDTH = '700';
   const HEIGHT = '400';
