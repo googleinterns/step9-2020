@@ -16,19 +16,24 @@ import {
 
 /**
  * Check if a word is black listed by checking for membership in a
- * set of invalid strings.
+ * set of invalid strings and that it is not a trivial string
+ * i.e., string length <= 1. 
  * @param {string} word
  * @return {boolean}
  */
 function isWordValid(word) {
-  return !INVALID_STRINGS.has(word.toLowerCase());
+  return (typeof(word) === 'string') &&
+         (word.trim().length > 1) &&
+         (!INVALID_STRINGS.has(word.toLowerCase().trim()));
 }
 
 /**
  * Create a map relating string words (keys)
  * to word cloud formatted json objects (values)
+ * If an element of `wordList` is not a string a type error will be thrown.
  * Word cloud format is [{ text: word0, value: number0 }, ...]
- * For speed, wordMap format is {word0: { text: word0, value: number0 }, ... }
+ * wordMap format is {word0: { text: word0, value: number0 }, ... } for easily
+ * retrieving the word cloud input data without additional parsing. 
  * @param {list[string]} wordList search results split space wise
  * @return {Object}
  */
@@ -36,16 +41,12 @@ function createWordMap(wordList) {
   const wordMap = {};
 
   wordList.forEach(word => {
-    if (word !== '') {
-      // Remove all non alphanumeric or $-sign characters (i.e., punctuation)
-      // for comprehensive string matching without losing context.
-      const filteredWord = word.replace(/\W$/g, '');
-
-      if (wordMap.hasOwnProperty(filteredWord)) {
-        wordMap[filteredWord].value += 1;
-      } else {
-        wordMap[filteredWord] = { text: filteredWord, value: 1 };
-      }
+    if (typeof(word) !== 'string') {
+      throw new TypeError(`${word} is not a string`);
+    } else if (wordMap.hasOwnProperty(word)) {
+      wordMap[word].value += 1;
+    } else {
+      wordMap[word] = { text: word, value: 1 };
     }
   });
 
@@ -59,15 +60,15 @@ function createWordMap(wordList) {
  * @return {Object}
  */
 const generateWordCloudValues = () => {
-  const searchResultsInnerTextList = Array.from(
-    document.getElementsByClassName(SEARCH_RESULT_CLASS)
-  )
-    .map(searchResult => searchResult.innerText.split(' '))
-    .flat();
+  // `/\W+/` is regex for all alphanumeric characters
+  // So split(/\W+/) will split the text on any non a-z, A-Z, 0-9
+  const searchResultsInnerTextList = 
+      Array.from(document.getElementsByClassName(SEARCH_RESULT_CLASS))
+           .map(searchResult => searchResult.innerText.split(/\W+/))
+           .flat();
 
-  const searchResultsFilteredWordList = searchResultsInnerTextList.filter(
-    word => isWordValid(word)
-  );
+  const searchResultsFilteredWordList = 
+      searchResultsInnerTextList.filter(word => isWordValid(word));
 
   const searchResultsWordMap = createWordMap(searchResultsFilteredWordList);
 
