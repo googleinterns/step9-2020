@@ -13,6 +13,7 @@
 const INVALID_STRINGS = new Set([
   '',
   'a',
+  'analyze',
   'and',
   'at',
   'but',
@@ -54,7 +55,7 @@ const WORD_CLOUD_OPTIONS = {
   deterministic: false,
   enableTooltip: true,
   fontFamily: 'impact',
-  fontSizes: [10, 60],
+  fontSizes: [15, 60],
   fontStyle: 'normal',
   fontWeight: 'normal',
   padding: 1,
