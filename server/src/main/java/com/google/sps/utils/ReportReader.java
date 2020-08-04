@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -24,9 +25,9 @@ public class ReportReader {
   private static final String CSV_FILE_PATH = "/output.csv";
   // NUMBER_CSV_HEADER_ROWS helps the parser know what rows to skip when reading the CSV.
   private static final int NUMBER_CSV_HEADER_ROWS = 2;
-  private static final String COLLECTION = "ads";
-  private static final int START_ROW_INDEX = 20001;  // First row sent to processor (inclusive).
-  private static final int END_ROW_INDEX = 25000; // Last row sent to processor (inclusive).
+  private static String COLLECTION;
+  private static int START_ROW_INDEX; // First row sent to processor (inclusive).
+  private static int END_ROW_INDEX; // Last row sent to processor (inclusive).
   private static final String PATH_TO_SERVICE_ACCOUNT = "./serviceAccountKey.json"; 
   private static final String DATABASE_URL = "https://step9-2020-capstone.firebaseio.com"; 
 
@@ -59,6 +60,17 @@ public class ReportReader {
 
   public static void main(String[] args) throws IOException, Exception {
     InputStream inputStream = ReportReader.class.getResourceAsStream(CSV_FILE_PATH);
+    
+    // Get collection and number of ads from user.
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("Collection to write to: ");
+    COLLECTION = scanner.nextLine().trim();
+    System.out.print("First row to read (inclusive): ");
+    START_ROW_INDEX = scanner.nextInt();  
+    System.out.print("Last row to read (inclusive): ");
+    END_ROW_INDEX = scanner.nextInt();
+
+    // Read each row of the CSV.
     readCSV(inputStream);
   }
 }
