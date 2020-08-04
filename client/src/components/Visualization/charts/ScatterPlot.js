@@ -114,7 +114,6 @@ const ScatterPlot = () => {
   // Get the min and max tick values for each year in the chart.
   advertisers.forEach(year => {
     const range = getChartRange(year);
-
     ranges.push(range.min);
     ranges.push(range.max);
   });
