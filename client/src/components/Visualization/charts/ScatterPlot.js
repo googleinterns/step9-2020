@@ -15,6 +15,7 @@ import {
   VictoryScatter,
   VictoryTheme,
   VictoryTooltip,
+  VictoryZoomContainer
 } from 'victory';
 
 import { database } from '../../../firebase/firebase';
@@ -25,6 +26,8 @@ const CHART_TITLE_X = 175;
 const CHART_TITLE_Y = 30;
 const DOMAIN_START = 2017;
 const DOMAIN_END = 2021;
+const Y_LABEL_FONT_SIZE = 10;
+const Y_LABEL_PADDING = 40;
 
 /**
  * Turn a firestore snap into a victory formatted
@@ -102,23 +105,33 @@ function useAdvertisers(year, queryLimit) {
 const ScatterPlot = () => {
   const queryLimit = 10;
 
-  const advertisers2018 = useAdvertisers("2018", queryLimit);
-  const advertisers2019 = useAdvertisers("2019", queryLimit);
-  const advertisers2020 = useAdvertisers("2020", queryLimit);
+  const advertisers = [useAdvertisers("2018", queryLimit),
+                       useAdvertisers("2019", queryLimit),
+                       useAdvertisers("2020", queryLimit)];
 
-  const advertisers = [...advertisers2018,
-                       ...advertisers2019,
-                       ...advertisers2020];
+  const ranges = [];
 
-  const range = getChartRange(advertisers);
-  const chartTitle = `T${queryLimit} Most prolific ad words advertisers/year`;
+  // Get the min and max tick values for each year in the chart.
+  advertisers.forEach(year => {
+    const range = getChartRange(year);
+    ranges.push(range.min);
+    ranges.push(range.max);
+  });
+
+  // Get the global min and max for sizing chart range. 
+  const overallRange = { min: Math.min(...ranges), max: Math.max(...ranges) };
+
+  const chartTitle = `T${queryLimit} Most common ad words advertisers/year`;
 
   return (
     <VictoryChart
+      containerComponent={
+        <VictoryZoomContainer/>
+      }
       theme={VictoryTheme.material}
       domain={{
         x: [DOMAIN_START, DOMAIN_END],
-        y: [range.min * 0.5, range.max * 2],
+        y: [overallRange.min * 0.5, overallRange.max * 2],
       }}
       scale={{ y: 'log' }}
     >
@@ -133,8 +146,11 @@ const ScatterPlot = () => {
 
       <VictoryAxis
         dependentAxis
-        tickValues={[range.min, range.max]}
-        label="# of ads (log scale)"
+        tickValues={ranges}
+        label="# ads (log scale)"
+        style={{ 
+            axisLabel: { fontSize: Y_LABEL_FONT_SIZE, padding: Y_LABEL_PADDING }
+        }}
       />
 
       <VictoryScatter
@@ -142,7 +158,7 @@ const ScatterPlot = () => {
         labels={({ datum }) => datum.y}
         style={{ data: { fill: ({ datum }) => datum.fill } }}
         size={5}
-        data={advertisers}
+        data={advertisers.flat()}
       />
     </VictoryChart>
   );
