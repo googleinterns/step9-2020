@@ -15,6 +15,17 @@ const Geochart = () => {
   const WIDTH = '700';
   const HEIGHT = '400';
 
+  /**
+  * Format a number as US currency.
+  * @param {long} spend Spend in USD.
+  * @return {string} 
+  */
+  function formatStateSpend(spend) {
+    const options = { style: 'currency', currency: 'USD' };
+    const currencyFormat = new Intl.NumberFormat('en-US', options);
+    return currencyFormat.format(spend);    
+  }
+
   useEffect(() => {
     async function fetchStateTotals() {
 
@@ -22,7 +33,7 @@ const Geochart = () => {
       // The first column is the state to which the data is passed.
       // The value of the second column determines the state's color.
       // The third column is the string in the tooltip infobox.
-      let dataTable = [["State", "Total Ad Spend (USD)", {type: 'string', role: 'tooltip'}]];
+      let dataTable = [["State", "Total Ad Spend (USD)", { type: 'string', role: 'tooltip' }]];
 
       let stateSpendPromises = [];
       let topAdvertiserPromises = [];
@@ -54,9 +65,7 @@ const Geochart = () => {
 
           // Format total state ad spend as currency string.
           const stateSpend = stateTotal.data().totalStateSpend;
-          const options = {style: 'currency', currency: 'USD'};
-          const currencyFormat = new Intl.NumberFormat('en-US', options);
-          const formattedStateSpend = currencyFormat.format(stateSpend);
+          const formattedStateSpend = formatStateSpend(stateSpend);
 
           const tooltip = `Total Ad Spend (USD): ${formattedStateSpend}
                             Top Advertiser: ${topAdvertiser.docs[0].id}`;
