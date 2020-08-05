@@ -1,7 +1,8 @@
 /**
- * Description: Geochart implements a Google geochart component.
+ * Description: Geochart implements a Google Geochart component.
  * Author: Kira Toal
- * Date: 2020/07/21
+ * Date Created: 2020/07/21
+ * Last Update: 2020/08/04
  */
 import { Chart } from "react-google-charts";
 import React, { useState, useEffect } from 'react';
@@ -16,23 +17,25 @@ const Geochart = () => {
 
   useEffect(() => {
     async function fetchStateTotals() {
-      /* 
-      dataTable is read by the Chart component into Geochart format.
-      The states are colored according to the value in the second column of
-        the table ("Total Ad Spend (USD)").
-      The first column (state name) and third column (info on total state ad 
-        spend and top advertiser) are shown in the tooltip.
-      */ 
+
+      // Data table row format: [state name, total state spend, tooltip].
+      // The first column is the state to which the data is passed.
+      // The value of the second column determines the state's color.
+      // The third column is the string in the tooltip infobox.
       let dataTable = [["State", "Total Ad Spend (USD)", {type: 'string', role: 'tooltip'}]];
 
       let stateSpendPromises = [];
       let topAdvertiserPromises = [];
 
       for (let state of STATES) {
+
+        // Fetches the total ad spend in each state.
         stateSpendPromises.push(database.collection(STATES_COLLECTION)
             .doc(state.toLowerCase())
             .get()
         );
+
+        // Fetches the top advertiser by ad spend in each state.
         topAdvertiserPromises.push(database.collection(STATES_COLLECTION)
             .doc(state.toLowerCase())
             .collection('advertisers')
@@ -48,9 +51,17 @@ const Geochart = () => {
 
       for (let [stateTotal, topAdvertiser] of zippedResults) {
         if (stateTotal.data() !== undefined) {  
-          const tooltip = `Total Ad Spend (USD): ${stateTotal.data().totalStateSpend}
-              Top Advertiser: ${topAdvertiser.docs[0].id}`;
-          dataTable.push([stateTotal.id.toUpperCase(), stateTotal.data().totalStateSpend, tooltip]); 
+
+          // Format total state ad spend as currency string.
+          const stateSpend = stateTotal.data().totalStateSpend;
+          const options = {style: 'currency', currency: 'USD'};
+          const currencyFormat = new Intl.NumberFormat('en-US', options);
+          const formattedStateSpend = currencyFormat.format(stateSpend);
+
+          const tooltip = `Total Ad Spend (USD): ${formattedStateSpend}
+                            Top Advertiser: ${topAdvertiser.docs[0].id}`;
+
+          dataTable.push([stateTotal.id.toUpperCase(), stateSpend, tooltip]);
         }
       }
       setAdTotal(dataTable); // Update data table.
@@ -68,10 +79,6 @@ const Geochart = () => {
   return (
     <div className="search-header center">
       <h2>State Ad Spend Geochart</h2>
-      <p>
-        Hover over a state to view how much was spent on
-        Google Political Ads in that state from 2018-2020.
-      </p>
       {adTotal.length > 0 ? (
         <Chart
           chartType="GeoChart"
