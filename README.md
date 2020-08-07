@@ -70,8 +70,7 @@ npm install
 ## Usage
 The webapp is split into three main pages: search, data visualization, and language analysis. 
 ![splash page](https://github.com/googleinterns/step9-2020/blob/master/readme_files/Screen%20Shot%202020-08-07%20at%206.25.17%20PM.png)
-
-
+Ever wonder how many candidates like to flex their wrestling prowess? Just search for it!
 ![wrestling search result with filter](https://github.com/googleinterns/step9-2020/blob/master/readme_files/Screen%20Shot%202020-08-07%20at%206.31.33%20PM.png)
 You can also generate word clouds of search results to see what the overall language looks like. 
 ![word cloud sample](https://github.com/googleinterns/step9-2020/blob/master/readme_files/Screen%20Shot%202020-08-07%20at%206.33.59%20PM.png)
