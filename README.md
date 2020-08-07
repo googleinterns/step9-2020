@@ -69,9 +69,16 @@ npm install
 <!-- USAGE EXAMPLES -->
 ## Usage
 The webapp is split into three main pages: search, data visualization, and language analysis. 
+![splash page](https://github.com/googleinterns/step9-2020/blob/README/readme_files/Screen%20Shot%202020-08-07%20at%206.25.17%20PM.png)
 
-Search offers users the ability to query the dataset, filter by ad spend, impressions, or geo/gender targeting. There is also an option to generate a word cloud based on search results. 
 
-## License
+![wrestling search result with filter](https://github.com/googleinterns/step9-2020/blob/README/readme_files/Screen%20Shot%202020-08-07%20at%206.31.33%20PM.png)
+You can also generate word clouds of search results to see what the overall language looks like. 
+![word cloud sample](https://github.com/googleinterns/step9-2020/blob/README/readme_files/Screen%20Shot%202020-08-07%20at%206.33.59%20PM.png)
+For data visualization, we built two charts as a proof of concept that we could do fast, interactive visualizations on large parts of our data set. We have a scatter plot that shows top advertisers across time, and a geochart that shows top advertiser in each state by spend and overall ad money spent in each state.
+![scatterplot](https://github.com/googleinterns/step9-2020/blob/README/readme_files/image.gif)
+![geochart](https://github.com/googleinterns/step9-2020/blob/README/readme_files/Screen%20Shot%202020-08-07%20at%206.28.31%20PM.png)
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Users also have the ability to analyze ads for sentiment, or input their own ads for analysis. We also return ads with similar sentiment. They can also share and download these results.
+![sentiment analysis](https://github.com/googleinterns/step9-2020/blob/README/readme_files/sentimentAnalysis.png)
+![similar ads by sentiment analysis](https://github.com/googleinterns/step9-2020/blob/README/readme_files/similarAdsSentimentAnalysis.png)
