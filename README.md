@@ -4,9 +4,9 @@
 <img src="./client/src/images/tardigrade.png" width="250" height="200">
 <h3 align="center"> Political Tardigrade </h3>
 <p align="justify">
-Welcome to Political Tardigrade — a web app developed by three Google STEP interns over the course of approximately five weeks in the summer of 2020. The   mission of Political Tardigrade is to compile and highlight overarching trends in America’s political ad space for students, researchers, and advertisers. By making such data more accessible and easy to analyze, this product aims to promote sociopolitical awareness. 
+Welcome to Political Tardigrade — a web app developed by three Google STEP interns over the course of approximately five weeks in the summer of 2020. The   mission of Political Tardigrade is to compile and highlight overarching trends in America’s political ad space for students, researchers, and advertisers. By making such data more accessible and easy to analyze, this webapp aims to promote sociopolitical awareness. 
 </p>
-<p> Live link: https://step9-2020-capstone.uc.r.appspot.com/</p>
+~~Live link: https://step9-2020-capstone.uc.r.appspot.com/~~ This site is no longer live. 
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
