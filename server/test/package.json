@@ -10,6 +10,6 @@
   "license": "ISC",
   "devDependencies": {
     "@firebase/testing": "^0.20.5",
-    "mocha": "^8.0.1"
+    "mocha": "^8.4.0"
   }
 }
