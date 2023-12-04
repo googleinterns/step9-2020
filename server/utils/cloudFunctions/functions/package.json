@@ -16,7 +16,7 @@
   "dependencies": {
     "algoliasearch": "^4.3.0",
     "chai-as-promised": "^7.1.1",
-    "firebase-admin": "^8.10.0",
+    "firebase-admin": "^11.11.1",
     "firebase-functions": "^3.6.1",
     "nyc": "^15.1.0",
     "sinon-chai": "^3.5.0"
