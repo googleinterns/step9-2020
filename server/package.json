@@ -12,6 +12,6 @@
     "@firebase/testing": "^0.20.5"
   },
   "devDependencies": {
-    "jest": "^26.1.0"
+    "jest": "^29.7.0"
   }
 }
