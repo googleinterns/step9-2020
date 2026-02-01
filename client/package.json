@@ -35,7 +35,7 @@
     "victory": "^35.0.2"
   },
   "devDependencies": {
-    "eslint": "6.6.0",
+    "eslint": "9.26.0",
     "eslint-config-algolia": "13.2.3",
     "eslint-config-prettier": "3.6.0",
     "eslint-plugin-import": "2.19.1",
